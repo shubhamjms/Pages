@@ -382,7 +382,7 @@ page scroll down
 | --- | --- |
 | HomeContainer | Primary signature section: this week's five featured readings |
 | HomeContainer topic state | Three foundational readings, using a shorter scroll distance |
-| ToolDetailsContainer index state | Published VS Code and Edge extensions |
+| ToolDetailsContainer category state | Published tools in the selected category |
 
 Library, Series, Saved Reading, ReaderContainer, Search Results, and About remain stable and linear. Use the effect once per eligible body state and never inside readable article content.
 
@@ -408,9 +408,12 @@ content/
 │       │   └── {order}-{chapter-slug}.md
 │       └── images/
 ├── tools/
-│   └── {tool-slug}/
-│       ├── index.md
-│       └── images/
+│   ├── index.md
+│   └── {category-slug}/
+│       ├── category.yml
+│       └── {tool-slug}/
+│           ├── index.md
+│           └── images/
 ├── topics/
 │   └── {topic-slug}/
 │       └── index.md
@@ -426,12 +429,62 @@ content/
 - Every content folder contains one `index.md`; its front matter supplies structured fields and its body supplies readable Markdown.
 - A learning collection owns one `guide.yml`, one editorial `index.md`, and any number of ordered chapter Markdown files. Adding another folder under `learning/` creates another guide without a new component or route implementation.
 - A chapter filename supplies its order and slug. For example, `03-variables-and-data-types.md` becomes order `3` and slug `variables-and-data-types`; do not repeat either field in front matter.
+- `tools/index.md` owns the Tools library introduction. Each tool category owns one `category.yml`, and each child tool owns one `index.md` plus optional pictures. Adding another category folder does not require a new component.
+- A category slug comes from its folder, and a tool slug comes from its child folder. The canonical tool key is `{category-slug}/{tool-slug}`; use that qualified key in featured and related-tool references.
 - Item-specific pictures live beside the item under `images/` and use paths relative to `index.md`. Shared brand assets may live in the application's public asset folder.
 - `home.md` owns issue information and curated article/tool references. It does not duplicate article titles, summaries, dates, or reading times.
 - Topic counts, current topic articles, Library groups, latest articles, reading paths, and search records are generated from source entries.
 - `about.md` owns the About introduction and colophon. `site.yml` owns shell-level identity, navigation labels, and external URLs.
 - `announcement.yml` is optional. When it is absent or `enabled: false`, the shared modal root remains closed and contains no campaign content.
 - Components contain presentation and interaction only. Do not hard-code published content inside a container.
+
+### Concrete Learning Example
+
+```text
+content/learning/copilot-studio/
+├── guide.yml
+├── index.md
+├── chapters/
+│   ├── 00-what-is-copilot.md
+│   ├── 01-create-an-agent.md
+│   ├── 02-core-concepts.md
+│   ├── ...
+│   └── 18-skills-and-instruction-sets.md
+└── images/
+```
+
+- `guide.yml` defines the six parts and lists chapter slugs in reading order.
+- `index.md` is the optional guide introduction shown above the parts.
+- Each chapter file contains its own title, summary, level, type, and Markdown body.
+
+### Concrete Tools Example
+
+```text
+content/tools/
+├── index.md
+├── vs-code/
+│   ├── category.yml
+│   ├── dataverse-devtools/
+│   │   ├── index.md
+│   │   └── images/
+│   └── another-extension/
+│       ├── index.md
+│       └── images/
+├── dynamics-365/
+│   ├── category.yml
+│   └── sample-dynamics-tool/
+│       ├── index.md
+│       └── images/
+└── others/
+  ├── category.yml
+  └── sample-utility/
+    ├── index.md
+    └── images/
+```
+
+- Initial category titles are `VS Code Tools`, `Dynamics 365 Tools`, and `Others`.
+- A tool belongs to exactly one primary category. Its `platforms` metadata may still name several environments.
+- Moving a tool between categories changes its canonical route and requires the build to validate or redirect incoming references.
 
 ### Build and Update Flow
 
@@ -446,7 +499,7 @@ Markdown/YAML source
 ```
 
 - The browser never fetches or parses raw `.md` files.
-- The generated content index contains only fields needed by Home, Library, Learning, Topic, Series, Search, and tool-index cards.
+- The generated content index contains only fields needed by Home, Library, Learning, Topic, Series, Search, tool-category cards, and tool cards.
 - Full rendered article, learning chapter, and tool records are split by route so opening Home or Learning does not download every readable body.
 - The build rewrites relative chapter links such as `04-nodes.md#question-node` to `#/learn/{guide-slug}/nodes#question-node` and rejects links that do not resolve.
 - Markdown tables receive labeled horizontal wrappers, code fences receive language metadata, and Mermaid fences remain isolated diagram sources for the chapter renderer.
@@ -461,6 +514,9 @@ Markdown/YAML source
 | Titles, summaries, dates, topics, tags, body content | Item `index.md` |
 | Learning title, description, parts, and ordered chapter membership | `learning/{guide-slug}/guide.yml` |
 | Chapter title, summary, type, level, and body | Chapter Markdown front matter and body |
+| Tools library introduction | `tools/index.md` |
+| Tool category title, summary, and order | `tools/{category-slug}/category.yml` |
+| Tool title, summary, platforms, links, and body | `tools/{category-slug}/{tool-slug}/index.md` |
 | Lead article, featured order, archive highlight, featured tools | `home.md` |
 | Brand name, author identity, social and utility URLs, arrival messages | `config/site.yml` |
 | Slug and route | Derived from the content type and folder name |
@@ -516,8 +572,9 @@ AppShell
 | `#/learn/{guide-slug}/{chapter-slug}` | ReaderContainer / one learning chapter |
 | `#/read/{article-slug}` | ReaderContainer / essay, note, build, reference, or guide |
 | `#/series/{series-slug}` | ReaderContainer / Series |
-| `#/tools` | ToolDetailsContainer / extension index |
-| `#/tools/{tool-slug}` | ToolDetailsContainer / extension details |
+| `#/tools` | ToolDetailsContainer / all tool categories |
+| `#/tools/{category-slug}` | ToolDetailsContainer / one category index |
+| `#/tools/{category-slug}/{tool-slug}` | ToolDetailsContainer / one tool detail |
 
 - Normalize route slugs to lowercase kebab-case and percent-encode query values.
 - Unknown routes and missing production records render a not-found state inside `MainBody` with links to Home and Library.
@@ -534,7 +591,8 @@ Every populated primary body receives structured data and exposes a single visib
 ```yaml
 activeView:
   container: "home | learning | reader | tool"
-  state: "home | library | topic | search | saved | about | learning-library | learning-guide | learning-chapter | article | guide | series | tool-index | tool-detail"
+  state: "home | library | topic | search | saved | about | learning-library | learning-guide | learning-chapter | article | guide | series | tool-library | tool-category | tool-detail"
+  category: "{{ optional-category-slug }}"
   slug: "{{ optional-content-slug }}"
   title: "{{ document-title }}"
   loading: false
@@ -584,7 +642,9 @@ view-learning
 view-learning-{guide-slug}
 view-reader-{article-slug}
 view-reader-{guide-slug}-{chapter-slug}
-view-tool-{tool-slug}
+view-tool
+view-tool-{category-slug}
+view-tool-{category-slug}-{tool-slug}
 ```
 
 Examples:
@@ -599,15 +659,15 @@ reader-grounded-copilot-title
 reader-copilot-studio-what-is-copilot-title
 reader-grounded-copilot-section-actions
 reader-grounded-copilot-image-architecture-map
-tool-dataverse-devtools-description
-tool-dataverse-devtools-link-marketplace
-tool-dataverse-devtools-instruction-install
-tool-dataverse-devtools-faq-telemetry
+tool-vs-code-dataverse-devtools-description
+tool-vs-code-dataverse-devtools-link-marketplace
+tool-vs-code-dataverse-devtools-instruction-install
+tool-vs-code-dataverse-devtools-faq-telemetry
 ```
 
 **Rules**
 
-- Every routable article, learning guide, chapter, tool, topic, and series receives stable slugs from its folder or filename contract.
+- Every routable article, learning guide, chapter, tool category, tool, topic, and series receives stable slugs from its folder or filename contract. Tool identity includes both category and tool slugs.
 - Generate heading anchors deterministically from heading text and reject duplicate anchors within one record.
 - Give an FAQ item, release, picture, or link its own key only when it is separately linkable, persisted, or targeted by a test.
 - Never generate persistent anchors or storage keys from array positions such as `card-1` or `faq-3`.
@@ -801,7 +861,7 @@ home:
   featuredLearning:
     - "{{ guide-slug }}"
   featuredTools:
-    - "{{ tool-slug }}"
+    - "{{ category-slug }}/{{ tool-slug }}"
   now:
     reading: "{{ short-reading-note }}"
     testing: "{{ short-testing-note }}"
@@ -898,39 +958,54 @@ reader:
 
 ### ToolDetailsContainer
 
-The Tool Details body documents a VS Code or Edge extension. It is an instructional reference, not a marketplace storefront.
+The Tool body lists tool categories, lists tools within one category, or documents one tool. It supports extensions, web utilities, scripts, command-line tools, templates, and platform-specific helpers without becoming a marketplace storefront.
 
 ```text
-ToolDetailsContainer
-├── Platform, title, version, and status
-├── Short description
-├── Primary links
-│   ├── Open in Marketplace
-│   ├── View source
-│   └── Report an issue
+ToolDetailsContainer / library
+├── Compact Tools introduction
+├── Category cards
+│   ├── title and summary
+│   ├── published tool count
+│   └── recently updated tools
+└── Featured tools across categories
+
+ToolDetailsContainer / category
+├── Tools breadcrumb
+├── Category title and summary
+├── Optional featured tool
+└── Tool cards generated from child folders
+
+ToolDetailsContainer / detail
+├── Category, kind, platforms, title, version, and status
+├── Short description and primary links
 ├── Pictures or screenshots
-├── What it is useful for
-├── Uses and common scenarios
-├── Installation instructions
-├── Usage instructions
-├── Configuration and limitations
-├── FAQ accordion
-├── Release notes
+├── Why it exists and useful scenarios
+├── Optional installation and configuration
+├── Usage instructions and limitations
+├── Optional FAQ and release notes
 └── Related tools and reading
 ```
 
 ```yaml
 tool:
+  key: "{{ category-slug }}/{{ tool-slug }}"
+  category: "{{ category-slug }}"
   slug: "{{ tool-slug }}"
   title: "{{ tool-title }}"
-  platform: "vscode | edge"
-  version: "0.0.0"
+  kind: "extension | web-app | desktop-app | cli | script | library | template | utility"
+  platforms:
+    - "{{ platform-key }}"
+  version: "{{ optional-version }}"
   status: "stable | preview | archived"
   description: "{{ tool-description }}"
   links:
-    marketplace: "{{ marketplace-url }}"
-    repository: "{{ repository-url }}"
-    issues: "{{ issues-url }}"
+    primary:
+      label: "{{ primary-action-label }}"
+      url: "{{ primary-action-url }}"
+    marketplace: "{{ optional-marketplace-url }}"
+    documentation: "{{ optional-documentation-url }}"
+    repository: "{{ optional-repository-url }}"
+    issues: "{{ optional-issues-url }}"
   pictures:
     - src: "{{ image-path }}"
       alt: "{{ screenshot-description }}"
@@ -952,10 +1027,14 @@ tool:
       notes: "{{ release-notes }}"
 ```
 
-- Use familiar external-link icons for Marketplace, source, and issues.
+- `#/tools` orders category cards by `category.yml` order, then title. Category counts and recently updated tools are generated from validated child records.
+- `#/tools/{category-slug}` lists only that folder's production-visible tools. Tool cards show title, summary, kind, platforms, status, optional version, and updated date.
+- The initial categories are content, not code: `VS Code Tools`, `Dynamics 365 Tools`, and `Others` use the same category and tool-card components.
+- Use familiar external-link icons for primary, Marketplace, documentation, source, and issue links. Render only links supplied by the record.
 - FAQ items are collapsed by default and keyboard-operable.
 - Keep installation and usage steps linkable through heading anchors.
 - Tool screenshots use stable aspect ratios so loading does not shift the layout.
+- A category page uses one tool-card column below `48rem`, two from `48rem`, and up to three from `60rem`.
 
 ## Canonical Content Records
 
@@ -1055,33 +1134,69 @@ The current 19-file guide is the first instance of the generic model, not a spec
 
 Future guides supply their own parts and chapter membership in `guide.yml`; none of these labels or ranges belong in application code.
 
+### Tool Category Source
+
+Each `tools/{category-slug}/category.yml` defines category-level display data:
+
+```yaml
+title: "VS Code Tools"
+summary: "Extensions and utilities used directly inside Visual Studio Code."
+order: 1
+featured: true
+draft: false
+featuredTools:
+  - "dataverse-devtools"
+```
+
+- Required fields are `title`, `summary`, `order`, `featured`, and `draft`; `featuredTools` is optional.
+- Category slug comes from the folder and must not be repeated in `category.yml`.
+- Category membership comes from validated child tool folders. Do not maintain a second complete tool list in the manifest.
+- `featuredTools` contains child tool slugs from the same category only.
+- Published tool count, status counts, latest update, and route are generated.
+
 ### Tool Source
+
+For example, `tools/vs-code/dataverse-devtools/index.md` contains:
 
 ```yaml
 ---
 title: "Dataverse DevTools"
 summary: "Why the extension exists and how to use it."
-platform: "vscode | edge"
+kind: "extension"
+platforms:
+  - "vscode"
+  - "windows"
 version: "2.4.0"
-status: "stable | preview | archived"
+status: "stable"
 updated: "2026-08-26"
 draft: false
 links:
+  primary:
+    label: "Open in Marketplace"
+    url: "https://example.com/marketplace"
   marketplace: "https://example.com/marketplace"
+  documentation: "https://example.com/docs"
   repository: "https://example.com/repository"
   issues: "https://example.com/issues"
+relatedTools:
+  - "dynamics-365/solution-inspector"
 relatedArticles:
   - "grounding-a-useful-answer"
 ---
 ```
 
-- Required tool body headings are `Why it exists`, `Useful for`, `Installation`, `Usage`, `Configuration and limitations`, `FAQ`, and `Release notes`.
-- Questions under `FAQ` and versions under `Release notes` use `h3` headings so the build can create the accordion and release index without duplicating content in front matter.
+- Required tool fields are `title`, `summary`, `kind`, a non-empty `platforms` list, `status`, `updated`, and `draft`; `version`, `links`, `relatedTools`, and `relatedArticles` are optional.
+- `kind` is one of `extension`, `web-app`, `desktop-app`, `cli`, `script`, `library`, `template`, or `utility`.
+- Initial platform keys are `vscode`, `edge`, `web`, `windows`, `macos`, `linux`, `power-platform`, `dynamics-365`, and `cli`. Additional validated keys may be added without changing a view component.
+- Category, tool slug, canonical key, and route are derived from the two parent folders and must not appear in front matter.
+- Required tool body headings are `Why it exists`, `Useful for`, `Usage`, and `Limitations`. `Installation`, `Configuration`, `FAQ`, and `Release notes` are optional so web utilities and scripts do not need empty sections.
+- Questions under `FAQ` and versions under `Release notes` use `h3` headings when those sections exist, allowing the build to create the accordion and release index without duplicated front matter.
 - Tool URLs remain nested under `links`; do not also define flattened `marketplaceUrl` or `repositoryUrl` fields.
+- Every `relatedTools` value uses the qualified `{category-slug}/{tool-slug}` key and must resolve to a production-visible tool.
 
 ### Home, Topic, and Series Sources
 
-- `home.md` uses the HomeContainer record shown above and references content only by canonical slug.
+- `home.md` uses the HomeContainer record shown above. Article and guide references use canonical slugs; tool references use qualified `{category-slug}/{tool-slug}` keys.
 - A topic source requires `title` and `summary`; it may provide ordered `foundations`, `relatedTopics`, and `relatedSeries` slug lists. Its Markdown body is the editorial introduction.
 - A series source requires `title`, `summary`, `level`, and an ordered `parts` list of article slugs. Total time, completion count, and updated date are derived.
 - All referenced slugs must resolve to a production-visible record of the expected type.
@@ -1449,36 +1564,76 @@ Saved reading is stored locally unless authentication is introduced later. The p
 
 **Interaction:** reorder, mark complete, remove, export links, and clear completed. Do not require an account for the first version.
 
-### ToolDetailsContainer: Extension Notes
+### ToolDetailsContainer: Tools Library
 
-**Existing Figma reference frame:** `18 - Extensions / Notes`
-
-This is a reading page about the author's published extensions, not a storefront. Each entry links to the relevant marketplace.
+The Tools root is a compact directory of categories, followed by a small cross-category featured list.
 
 ```text
 +------------------------------------------------------------------+-------+
-| EXTENSION NOTE / VS CODE                                        |  in¹  |
+| TOOLS / 3 CATEGORIES                                             |  in¹  |
+| Tools                                                            |  in²  |
+| Utilities, extensions, and references used while building.      |       |
+|                                                                  |       |
+| [VS Code Tools] [Dynamics 365 Tools] [Others]                    |       |
+| 6 tools          4 tools              3 tools                    |       |
+|                                                                  |       |
+| Featured tools across categories                                 | S↓🦅  |
++------------------------------------------------------------------+-------+
+```
+
+- Category cards show title, summary, published tool count, and latest update from generated category records.
+- Render one category column below `48rem` and up to three from `60rem`.
+- Category cards link to `#/tools/{category-slug}`. Do not nest individual tool cards inside a category card.
+- Category order comes from `category.yml`; the component contains no special conditions for VS Code or Dynamics 365.
+
+### ToolDetailsContainer: Tool Category
+
+```text
++------------------------------------------------------------------+-------+
+| TOOLS / VS CODE TOOLS / {{ count }}                              |  in¹  |
+| VS Code Tools                                                    |  in²  |
+| Extensions and utilities used directly inside Visual Studio Code.|       |
+|                                                                  |       |
+| [Dataverse DevTools] [Tool title] [Tool title]                   |       |
+| Extension · Stable   Script · Preview  Utility · Stable          |       |
+|                                                                  | S↓🦅  |
++------------------------------------------------------------------+-------+
+```
+
+- Tool cards are generated from child folders and link to `#/tools/{category-slug}/{tool-slug}`.
+- Cards show summary, kind, platforms, status, optional version, and updated date.
+- Sort a configured featured tool first, then status (`stable`, `preview`, `archived`), then title.
+- Empty state: `No tools are published in this category yet` with a link back to all Tools.
+
+### ToolDetailsContainer: Tool Detail
+
+**Existing Figma reference frame:** `18 - Extensions / Notes`
+
+This is an instructional page about one published tool, not a storefront. The same detail structure works whether the tool is an extension, web utility, script, or command-line tool.
+
+```text
++------------------------------------------------------------------+-------+
+| TOOL / VS CODE TOOLS / EXTENSION                                |  in¹  |
 | Dataverse DevTools                                               |  in²  |
 | Why it exists, what changed, and what comes next.                |       |
-| v2.4.0 · Stable · VS Code · Updated Aug 2026                      |       |
-| [Open in Marketplace] [View source]                               |       |
-| Design problem                                                    |       |
-| Long-form explanation...                                         |       |
+| v2.4.0 · Stable · VS Code · Windows · Updated Aug 2026            |       |
+| [Open in Marketplace] [Documentation] [View source]               |       |
+| Why it exists                                                     |       |
+| Long-form Markdown explanation...                                |       |
 | Release notes: 2.4.0 / 2.3.0 / 2.2.0                             |       |
-| Marketplace · Repository · Issues · Related reading               | S↓🦅  |
+| Related tools · Related reading                                   | S↓🦅  |
 +------------------------------------------------------------------+-------+
 ```
 
 **Placeholders**
 
-- Extension front matter
-- `{{ extension.purpose }}`
-- `{{ extension.designNotes }}`
-- `{{ extension.releases[] }}`
-- `{{ extension.marketplaceUrl }}`, `{{ extension.repositoryUrl }}`
-- `{{ extension.relatedArticles[] }}`
+- Tool and category records
+- `{{ tool.purpose }}` and `{{ tool.uses[] }}`
+- Optional `{{ tool.installation }}`, `{{ tool.configuration }}`, `{{ tool.faq[] }}`, and `{{ tool.releases[] }}`
+- Supplied `{{ tool.links }}` only
+- Qualified `{{ tool.relatedTools[] }}` and `{{ tool.relatedArticles[] }}`
 
-**Inline context:** current version, platform, status, links, and compatibility form a metadata strip below the title; related reading appears after release notes.
+**Inline context:** kind, optional version, platforms, status, links, and compatibility form a metadata strip below the title; related tools and reading appear after the Markdown body.
 
 ### HomeContainer: About / Colophon
 
