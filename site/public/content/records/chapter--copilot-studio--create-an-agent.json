@@ -1,0 +1,155 @@
+{
+  "guideSlug": "copilot-studio",
+  "partKey": "fundamentals",
+  "slug": "create-an-agent",
+  "order": 1,
+  "title": "How to Create an Agent (Step-by-Step)",
+  "summary": "Create, configure, test, and publish a first agent in Copilot Studio.",
+  "type": "chapter",
+  "level": "beginner",
+  "updated": "2026-08-26",
+  "readingTime": 8,
+  "route": "#/learn/copilot-studio/create-an-agent",
+  "recordFile": "chapter--copilot-studio--create-an-agent",
+  "guideTitle": "Copilot Studio Guide",
+  "partTitle": "Fundamentals",
+  "position": 2,
+  "chapterCount": 19,
+  "html": "<p>A complete walkthrough for creating your very first agent in Microsoft Copilot Studio,\nincluding how to fill in the <strong>Description</strong>, <strong>Instructions</strong>, and pick the right <strong>Model</strong>.</p>\n<blockquote>\n<p>Do this <strong>once</strong> before starting <a href=\"#/learn/copilot-studio/lab1\">Lab 1</a>. Then read\n<a href=\"#/learn/copilot-studio/core-concepts\">02-core-concepts.md</a> for the deeper why.</p>\n</blockquote>\n<hr />\n<h2 id=\"prerequisites\">Prerequisites</h2>\n<ul>\n<li>A <strong>work or school account</strong> with access to Microsoft Copilot Studio, or a\n<a href=\"https://copilotstudio.microsoft.com\" target=\"_blank\" rel=\"noreferrer\">Copilot Studio trial</a>.</li>\n<li>Permission to use a <strong>Power Platform environment</strong> (your admin may control this).</li>\n<li>Modern browser (Edge or Chrome recommended).</li>\n</ul>\n<hr />\n<h2 id=\"step-1-sign-in-pick-an-environment\">Step 1 — Sign in &amp; pick an environment</h2>\n<ol>\n<li>Go to <strong><a href=\"https://copilotstudio.microsoft.com\" target=\"_blank\" rel=\"noreferrer\">https://copilotstudio.microsoft.com</a></strong> and sign in.</li>\n<li>In the <strong>top-right corner</strong>, click the <strong>environment picker</strong> and choose the environment you want to build in (for learning, pick a <strong>dev/sandbox</strong> environment, not production).</li>\n</ol>\n<blockquote>\n<p>An <strong>environment</strong> is an isolated container in Power Platform with its own data, security, and resources. Always know which environment you’re in.</p>\n</blockquote>\n<hr />\n<h2 id=\"step-2-start-creating\">Step 2 — Start creating</h2>\n<p>You’ll land on the <strong>Home</strong> page. You have three ways to create an agent — pick <strong>one</strong>:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Option</th>\n<th>When to use</th>\n<th>How</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>A. Natural-language create</strong> (recommended for beginners)</td>\n<td>You want the AI to suggest name, description, instructions, knowledge, and tools for you</td>\n<td>On the <strong>Home</strong> page, type a description in the “Describe your agent” box (up to <strong>1,024 characters</strong>) and press <strong>Enter</strong></td>\n</tr>\n<tr>\n<td><strong>B. Create blank agent</strong></td>\n<td>You want full manual control from scratch</td>\n<td>On the <strong>Home</strong> or <strong>Agents</strong> page, select <strong>Create blank agent</strong></td>\n</tr>\n<tr>\n<td><strong>C. Advanced create</strong></td>\n<td>You need to set the <strong>primary language</strong>, <strong>solution</strong>, or <strong>schema name</strong> before provisioning</td>\n<td><strong>Agents</strong> → arrow next to <strong>Create blank agent</strong> → <strong>Advanced create</strong></td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p>If you’re in a <strong>sovereign cloud</strong> (GCC, GCC High, DoD) or your admin disabled cross-geo, <strong>Option A</strong> may not appear. Use Option B instead.</p>\n</blockquote>\n<h3 id=\"example-for-option-a\">Example for Option A</h3>\n<p>In the “Describe your agent” box, type something like:</p>\n<pre aria-label=\"Code sample\"><code>Help Contoso employees with HR questions about time-off policies,\nbenefits, and payroll. Escalate complex cases to a human HR agent.\n</code></pre>\n<p>Press <strong>Enter</strong>. Copilot Studio will:</p>\n<ul>\n<li>Generate a <strong>name</strong> (e.g., <em>HR Assistant</em>).</li>\n<li>Draft a <strong>description</strong> and <strong>instructions</strong>.</li>\n<li>Suggest <strong>knowledge sources</strong>, <strong>tools</strong>, and <strong>triggers</strong> (you can accept/dismiss).</li>\n<li>Provision the agent (~10–30 seconds).</li>\n</ul>\n<p>You’ll land on the <strong>Overview</strong> page.</p>\n<hr />\n<h2 id=\"step-3-tour-of-the-overview-page\">Step 3 — Tour of the Overview page</h2>\n<p>The Overview page is your agent’s home base.</p>\n<pre aria-label=\"Code sample\"><code>┌──────────────────────────────────────────────────────────────────────────┐\n│  Overview │ Knowledge │ Tools │ Agents │ Topics │ Activity │ Analytics  │\n├──────────────────────────────────────────────────────────────────────────┤\n│  Details        ← name, icon, description                                │\n│  Instructions   ← the system prompt that guides agent behavior           │\n│  Model          ← which AI model the agent uses                          │\n│  Starter prompts ← suggested conversation openers (Teams/M365)           │\n│  Knowledge      ← websites, files, SharePoint, Dataverse                 │\n│  Tools          ← connectors, Power Automate flows, MCP servers          │\n└──────────────────────────────────────────────────────────────────────────┘\n</code></pre>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Section</th>\n<th>Purpose</th>\n<th>Char limit</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Details → Name</strong></td>\n<td>What humans (and the orchestrator) see</td>\n<td>short</td>\n</tr>\n<tr>\n<td><strong>Details → Description</strong></td>\n<td>One paragraph describing <em>what the agent does</em></td>\n<td><strong>1,024</strong></td>\n</tr>\n<tr>\n<td><strong>Instructions</strong></td>\n<td>The “system prompt” — <em>how</em> the agent should behave</td>\n<td><strong>8,000</strong></td>\n</tr>\n<tr>\n<td><strong>Model</strong></td>\n<td>The LLM that powers orchestration &amp; responses</td>\n<td>—</td>\n</tr>\n<tr>\n<td><strong>Starter prompts</strong></td>\n<td>Up to <strong>10</strong> suggested openers (Teams / M365 only)</td>\n<td>—</td>\n</tr>\n<tr>\n<td><strong>Knowledge</strong></td>\n<td>Up to many sources (websites, files, SharePoint, Dataverse, etc.)</td>\n<td>—</td>\n</tr>\n<tr>\n<td><strong>Tools</strong></td>\n<td>Connectors, flows, prompts, MCP servers</td>\n<td>—</td>\n</tr>\n</tbody>\n</table></div><hr />\n<h2 id=\"step-4-edit-details-name-icon-description\">Step 4 — Edit Details (Name, Icon, Description)</h2>\n<ol>\n<li>\n<p>In the <strong>Details</strong> section, select <strong>Edit</strong>.</p>\n</li>\n<li>\n<p><strong>Name</strong>: Give it a clear, human-friendly name (e.g., <em>HR Assistant</em>, <em>Order Tracker</em>).</p>\n</li>\n<li>\n<p><strong>Description</strong> (up to 1,024 chars): Describe what the agent does, who uses it, and the kinds of tasks it handles.</p>\n<blockquote>\n<p><strong>Why it matters:</strong> The description is shown to users in the app catalog <strong>and</strong> is used by the orchestrator to decide when <em>this agent</em> should be invoked (e.g., from Microsoft 365 Copilot or as a child agent of another agent). A vague description = poor routing.</p>\n</blockquote>\n<p><strong>Good example:</strong></p>\n<pre aria-label=\"Code sample\"><code>HR Assistant helps Contoso employees with HR-related questions about\ntime-off, benefits, payroll, and onboarding. It answers from the\nContoso HR knowledge base and escalates complex or sensitive issues\nto a human HR business partner.\n</code></pre>\n<p><strong>Bad example:</strong></p>\n<pre aria-label=\"Code sample\"><code>This is a chatbot.\n</code></pre>\n</li>\n<li>\n<p><strong>Icon</strong>: Click the agent icon → <strong>Change icon</strong> → upload a <strong>PNG ≤ 72 KB, max 192×192</strong>.</p>\n<p>Why? A distinctive icon helps users recognize the agent in Teams, M365 Copilot, and the channel list.</p>\n</li>\n<li>\n<p><strong>Save</strong>.</p>\n</li>\n</ol>\n<hr />\n<h2 id=\"step-5-write-the-instructions-the-system-prompt\">Step 5 — Write the Instructions (the “system prompt”)</h2>\n<p>In the <strong>Instructions</strong> section, select <strong>Edit</strong> and write the rules the agent must follow.</p>\n<ul>\n<li>Up to <strong>8,000 characters</strong> of plain text.</li>\n<li>Type <strong><code>/</code></strong> at any point to insert a reference to a specific <strong>tool</strong>, <strong>topic</strong>, <strong>agent</strong>, <strong>knowledge source</strong>, <strong>variable</strong>, or <strong>Power Fx expression</strong>.</li>\n<li>After editing, <strong>Test</strong> in the right-hand pane. <strong>Publish</strong> to push live.</li>\n</ul>\n<h3 id=\"a-reusable-instruction-template\">A reusable instruction template</h3>\n<pre aria-label=\"Code sample\"><code>Role\nYou are &lt;agent name&gt;, a &lt;role&gt; for &lt;audience&gt;. You help users &lt;main goals&gt;.\n\nTone &amp; style\n- Friendly, professional, concise.\n- Use short paragraphs and bullet points.\n- Always include a clear next step.\n- If unsure, say so and offer to escalate.\n\nWhat you can do\n- Answer questions from the connected knowledge sources.\n- Use the &lt;Tool A&gt; tool to &lt;do X&gt;.\n- Use the &lt;Topic B&gt; topic to &lt;do Y&gt;.\n\nWhat you must NOT do\n- Do not invent policies, prices, or dates.\n- Do not share information you don't have a source for.\n- Do not give legal, medical, or financial advice.\n\nHow to respond\n- For policy questions, cite the source in your reply.\n- For account changes, call /&lt;Tool A&gt; with the user's ID.\n- If the user asks for a human, redirect to /&lt;Topic Escalate&gt;.\n\nIf you don't know\nSay \"I don't have that information yet — would you like me to connect\nyou to a person?\" and then offer the escalation option.\n</code></pre>\n<h3 id=\"tips-for-great-instructions\">Tips for great Instructions</h3>\n<ul>\n<li><strong>Be specific.</strong> Vague rules → unpredictable behavior.</li>\n<li><strong>Reference real objects</strong> with <code>/</code> (<code>/MyTool</code>, <code>/MyTopic</code>, <code>/Global.UserName</code>). Names carry more weight than descriptions in routing.</li>\n<li><strong>Define the tone &amp; format</strong> (lists, tables, citations).</li>\n<li><strong>State guardrails</strong> (what NOT to do).</li>\n<li><strong>Avoid naming knowledge sources directly</strong> — describe them generically (e.g., “the HR policy library”) so the agent picks them on relevance.</li>\n<li><strong>Iterate</strong>: change one thing at a time, then re-test.</li>\n</ul>\n<hr />\n<h2 id=\"step-6-pick-the-model-and-know-why\">Step 6 — Pick the Model (and know why)</h2>\n<p>Open the <strong>Model</strong> section and pick the primary AI model. The current options group into three <strong>categories</strong>:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Tag</th>\n<th>Best for</th>\n<th>Latency</th>\n<th>Cost</th>\n<th>Reasoning</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>General</strong></td>\n<td>Everyday chat, FAQs, summarizing, drafting, light grounding</td>\n<td><strong>Lowest</strong></td>\n<td><strong>Lowest</strong></td>\n<td>Shallow → moderate</td>\n</tr>\n<tr>\n<td><strong>Auto</strong></td>\n<td>Mixed workloads — some chat, some complex steps</td>\n<td>Variable</td>\n<td>Variable</td>\n<td>Adaptive per turn</td>\n</tr>\n<tr>\n<td><strong>Deep</strong></td>\n<td>Multistep reasoning, policy/contract analysis, multi-tool workflows</td>\n<td><strong>Highest</strong></td>\n<td><strong>Highest</strong></td>\n<td>Multistep, tool-rich</td>\n</tr>\n</tbody>\n</table></div><h3 id=\"quick-decision-guide\">Quick decision guide</h3>\n<ul>\n<li><strong>Building your first agent / chat / FAQ?</strong> → Stay on the <strong>default General</strong> model (<code>GPT-4.1</code> today, or <code>GPT-5 Chat</code> where available).</li>\n<li><strong>Mixed traffic — knowledge + actions?</strong> → Try <strong>Auto</strong> (e.g., <code>GPT-5 Auto</code>).</li>\n<li><strong>Complex reasoning, multi-step workflows, long documents?</strong> → Use a <strong>Deep</strong> model (e.g., <code>GPT-5 Reasoning</code>, <code>Claude Opus</code>).</li>\n<li><strong>Experimenting only — not production?</strong> → Try <strong>Experimental</strong> / <strong>Preview</strong> models, but never publish them to real users.</li>\n</ul>\n<h3 id=\"how-to-change-it\">How to change it</h3>\n<ol>\n<li><strong>Overview</strong> → <strong>Model</strong> section.</li>\n<li>Pick a model from the dropdown.</li>\n<li>Test in the chat pane. You can switch back any time.</li>\n</ol>\n<blockquote>\n<p>See <a href=\"#/learn/copilot-studio/models-and-instructions\">09-models-and-instructions.md</a> for the full model list, regional availability, governance, and a deeper “why this model” decision tree.</p>\n</blockquote>\n<hr />\n<h2 id=\"step-7-add-knowledge-optional-but-powerful\">Step 7 — Add Knowledge (optional but powerful)</h2>\n<p>Knowledge lets the agent answer with <strong>generative AI</strong> grounded in your sources.</p>\n<ol>\n<li><strong>Knowledge</strong> section → <strong>Add knowledge</strong>.</li>\n<li>Pick a source type:\n<ul>\n<li><strong>Public website</strong> (URL)</li>\n<li><strong>SharePoint</strong> site, folder, file</li>\n<li><strong>Uploaded files</strong> (PDF, DOCX, TXT, …)</li>\n<li><strong>Dataverse</strong>, <strong>Microsoft Graph</strong>, <strong>Azure AI Search</strong>, etc.</li>\n</ul>\n</li>\n<li>Add the source, give it a clear <strong>name</strong> and <strong>description</strong> (description matters for routing).</li>\n<li><strong>Add to agent</strong>.</li>\n</ol>\n<p>Test by asking a question whose answer lives in the source.</p>\n<hr />\n<h2 id=\"step-8-add-a-topic-your-first-scripted-flow\">Step 8 — Add a Topic (your first scripted flow)</h2>\n<ol>\n<li>Top nav → <strong>Topics</strong> → <strong>+ Add a topic</strong> → <strong>From blank</strong>.</li>\n<li>Add 5–10 <strong>trigger phrases</strong> (classic) or a clear <strong>description</strong> (generative orchestration).</li>\n<li>Build the flow with <strong>Message</strong> and <strong>Question</strong> nodes (see <a href=\"#/learn/copilot-studio/nodes-message-and-question\">04-nodes-message-and-question.md</a>).</li>\n<li><strong>Save</strong>.</li>\n</ol>\n<p>Lab 1 walks through this in detail.</p>\n<hr />\n<h2 id=\"step-9-test-the-agent\">Step 9 — Test the agent</h2>\n<p>The <strong>Test your agent</strong> chat panel is on the right.</p>\n<ol>\n<li>Type a message that should trigger your topic, or a question that should use knowledge.</li>\n<li>Useful test-pane controls:\n<ul>\n<li><strong>Track between topics</strong> — visualize which node/topic ran.</li>\n<li><strong>Variables tab</strong> — watch variable values fill in real time.</li>\n<li><strong>Activity map</strong> — see what the orchestrator decided (generative mode).</li>\n<li><strong>Start new test session</strong> ⟳ — clears session state (good after changing variables/instructions).</li>\n</ul>\n</li>\n</ol>\n<blockquote>\n<p>If you change <strong>Instructions</strong>, <strong>Model</strong>, or knowledge, click <strong>Start new test session</strong> so the next message uses the latest configuration.</p>\n</blockquote>\n<hr />\n<h2 id=\"step-10-add-suggested-prompts-teams-m365\">Step 10 — Add Suggested prompts (Teams / M365)</h2>\n<p>Only visible in Microsoft Teams and Microsoft 365 Copilot — not in the Copilot Studio test pane.</p>\n<ol>\n<li><strong>Overview → Suggested prompts → Add suggested prompts</strong>.</li>\n<li>Add up to <strong>10</strong>. Each has a short <strong>title</strong> and the <strong>prompt</strong> text.</li>\n<li><strong>Save</strong>.</li>\n</ol>\n<hr />\n<h2 id=\"step-11-publish\">Step 11 — Publish</h2>\n<p>When you’re happy:</p>\n<ol>\n<li>Top bar → <strong>Publish</strong> → <strong>Publish</strong>.</li>\n<li>Open the <strong>Channels</strong> page to enable channels: <strong>Demo website</strong>, <strong>Teams</strong>, <strong>Microsoft 365 Copilot</strong>, <strong>custom website</strong>, <strong>telephony</strong>, etc.</li>\n<li>For each channel, follow the prompts to grab the embed code or share link.</li>\n</ol>\n<blockquote>\n<p><strong>Publish whenever you change</strong> the description, instructions, model, topics, or knowledge — except for <strong>secret environment variables</strong>, which are read at runtime and don’t require republish.</p>\n</blockquote>\n<hr />\n<h2 id=\"step-12-iterate\">Step 12 — Iterate</h2>\n<ul>\n<li>Review the <strong>Activity</strong> and <strong>Analytics</strong> tabs to see what users actually ask.</li>\n<li>Refine <strong>Instructions</strong>, add <strong>knowledge</strong>, or tune <strong>descriptions</strong> based on real behavior.</li>\n<li>Make <strong>one change at a time</strong> and re-test so you can see its effect.</li>\n</ul>\n<hr />\n<h2 id=\"common-pitfalls\">Common pitfalls</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Pitfall</th>\n<th>Fix</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Agent answers nothing useful</td>\n<td>The <strong>Description</strong> is too short or the <strong>Instructions</strong> are vague. Rewrite both.</td>\n</tr>\n<tr>\n<td>Wrong topic / tool triggers</td>\n<td>Make <strong>topic / tool descriptions</strong> more specific. In generative mode, names carry more weight than descriptions.</td>\n</tr>\n<tr>\n<td>Hallucinated answers</td>\n<td>Add <strong>knowledge sources</strong>; turn off “Allow ungrounded responses” in the agent’s generative AI settings.</td>\n</tr>\n<tr>\n<td>Variables not remembered across topics</td>\n<td>Make them <strong>Global</strong> (see <a href=\"#/learn/copilot-studio/variables-and-data-types\">03-variables-and-data-types.md</a>).</td>\n</tr>\n<tr>\n<td>Test works, deployed agent doesn’t</td>\n<td>You forgot to <strong>Publish</strong>.</td>\n</tr>\n<tr>\n<td>Costs higher than expected</td>\n<td>You’re on a <strong>Deep</strong> model for simple chat. Switch to <strong>General</strong>.</td>\n</tr>\n<tr>\n<td>Test session uses old behavior</td>\n<td>Click <strong>Start new test session</strong> ⟳.</td>\n</tr>\n</tbody>\n</table></div><hr />\n<h2 id=\"what-to-read-next\">What to read next</h2>\n<ol>\n<li><a href=\"#/learn/copilot-studio/core-concepts\">02-core-concepts.md</a> — the mental model (now includes Description, Instructions, Model deep dives).</li>\n<li><a href=\"#/learn/copilot-studio/models-and-instructions\">09-models-and-instructions.md</a> — full model reference and a model-picking decision tree.</li>\n<li><a href=\"#/learn/copilot-studio/lab1\">06-lab1.md</a> — build your first real flow.</li>\n</ol>\n<hr />\n<h2 id=\"official-microsoft-documentation-references\">Official Microsoft documentation (references)</h2>\n<p>The content in this section is based on the following Microsoft Learn pages:</p>\n<ul>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-get-started\" target=\"_blank\" rel=\"noreferrer\">Quickstart: Create and deploy an agent</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-first-bot\" target=\"_blank\" rel=\"noreferrer\">Create and delete agents</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-instructions\" target=\"_blank\" rel=\"noreferrer\">Write agent instructions</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-select-agent-model\" target=\"_blank\" rel=\"noreferrer\">Select a primary AI model for your agent</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/configure-starter-prompts\" target=\"_blank\" rel=\"noreferrer\">Configure suggested (starter) prompts</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio\" target=\"_blank\" rel=\"noreferrer\">Add knowledge sources</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-get-started-teams\" target=\"_blank\" rel=\"noreferrer\">Quickstart: Create a classic agent and publish it to Microsoft Teams</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-test-bot\" target=\"_blank\" rel=\"noreferrer\">Test your agent</a></li>\n</ul>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "Prerequisites",
+      "id": "prerequisites"
+    },
+    {
+      "level": 2,
+      "text": "Step 1 — Sign in & pick an environment",
+      "id": "step-1-sign-in-pick-an-environment"
+    },
+    {
+      "level": 2,
+      "text": "Step 2 — Start creating",
+      "id": "step-2-start-creating"
+    },
+    {
+      "level": 3,
+      "text": "Example for Option A",
+      "id": "example-for-option-a"
+    },
+    {
+      "level": 2,
+      "text": "Step 3 — Tour of the Overview page",
+      "id": "step-3-tour-of-the-overview-page"
+    },
+    {
+      "level": 2,
+      "text": "Step 4 — Edit Details (Name, Icon, Description)",
+      "id": "step-4-edit-details-name-icon-description"
+    },
+    {
+      "level": 2,
+      "text": "Step 5 — Write the Instructions (the \"system prompt\")",
+      "id": "step-5-write-the-instructions-the-system-prompt"
+    },
+    {
+      "level": 3,
+      "text": "A reusable instruction template",
+      "id": "a-reusable-instruction-template"
+    },
+    {
+      "level": 3,
+      "text": "Tips for great Instructions",
+      "id": "tips-for-great-instructions"
+    },
+    {
+      "level": 2,
+      "text": "Step 6 — Pick the Model (and know why)",
+      "id": "step-6-pick-the-model-and-know-why"
+    },
+    {
+      "level": 3,
+      "text": "Quick decision guide",
+      "id": "quick-decision-guide"
+    },
+    {
+      "level": 3,
+      "text": "How to change it",
+      "id": "how-to-change-it"
+    },
+    {
+      "level": 2,
+      "text": "Step 7 — Add Knowledge (optional but powerful)",
+      "id": "step-7-add-knowledge-optional-but-powerful"
+    },
+    {
+      "level": 2,
+      "text": "Step 8 — Add a Topic (your first scripted flow)",
+      "id": "step-8-add-a-topic-your-first-scripted-flow"
+    },
+    {
+      "level": 2,
+      "text": "Step 9 — Test the agent",
+      "id": "step-9-test-the-agent"
+    },
+    {
+      "level": 2,
+      "text": "Step 10 — Add Suggested prompts (Teams / M365)",
+      "id": "step-10-add-suggested-prompts-teams-m365"
+    },
+    {
+      "level": 2,
+      "text": "Step 11 — Publish",
+      "id": "step-11-publish"
+    },
+    {
+      "level": 2,
+      "text": "Step 12 — Iterate",
+      "id": "step-12-iterate"
+    },
+    {
+      "level": 2,
+      "text": "Common pitfalls",
+      "id": "common-pitfalls"
+    },
+    {
+      "level": 2,
+      "text": "What to read next",
+      "id": "what-to-read-next"
+    },
+    {
+      "level": 2,
+      "text": "Official Microsoft documentation (references)",
+      "id": "official-microsoft-documentation-references"
+    }
+  ],
+  "hasMermaid": false,
+  "previous": {
+    "guideSlug": "copilot-studio",
+    "partKey": "fundamentals",
+    "slug": "what-is-copilot",
+    "order": 0,
+    "title": "What is Copilot? (and Copilot Studio)",
+    "summary": "Understand copilots, agents, and where Copilot Studio fits in the Microsoft ecosystem.",
+    "type": "chapter",
+    "level": "beginner",
+    "updated": "2026-08-26",
+    "readingTime": 8,
+    "route": "#/learn/copilot-studio/what-is-copilot",
+    "recordFile": "chapter--copilot-studio--what-is-copilot"
+  },
+  "next": {
+    "guideSlug": "copilot-studio",
+    "partKey": "fundamentals",
+    "slug": "core-concepts",
+    "order": 2,
+    "title": "Core Concepts",
+    "summary": "Learn the topics, triggers, nodes, variables, entities, and actions behind an agent.",
+    "type": "chapter",
+    "level": "beginner",
+    "updated": "2026-08-26",
+    "readingTime": 10,
+    "route": "#/learn/copilot-studio/core-concepts",
+    "recordFile": "chapter--copilot-studio--core-concepts"
+  }
+}

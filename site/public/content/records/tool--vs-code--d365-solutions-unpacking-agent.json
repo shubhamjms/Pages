@@ -1,0 +1,59 @@
+{
+  "categorySlug": "vs-code",
+  "slug": "d365-solutions-unpacking-agent",
+  "key": "vs-code/d365-solutions-unpacking-agent",
+  "title": "D365 CRM Solutions Unpacking Agent",
+  "summary": "Export Dataverse solutions and unpack them into source files from a dedicated VS Code sidebar without deleting existing files.",
+  "kind": "extension",
+  "platforms": [
+    "vscode",
+    "windows",
+    "dynamics-365",
+    "dataverse"
+  ],
+  "version": "1.1.0",
+  "status": "stable",
+  "updated": "2026-08-27",
+  "route": "#/tools/vs-code/d365-solutions-unpacking-agent",
+  "recordFile": "tool--vs-code--d365-solutions-unpacking-agent",
+  "categoryTitle": "VS Code Extensions",
+  "html": "<h2 id=\"why-it-exists\">Why it exists</h2>\n<p>Dynamics 365 and Dataverse solution work often requires builders to switch between environment authentication, Web API exports, and command-line unpacking. D365 CRM Solutions Unpacking Agent brings that workflow into a dedicated VS Code sidebar.</p>\n<p>The extension authenticates to a Dynamics 365 or Dataverse environment, exports a selected solution through the Dataverse Web API, and unpacks it into source files with a self-managed <code>SolutionPackager.exe</code>. Existing files are never deleted as part of the workflow.</p>\n<h2 id=\"useful-for\">Useful for</h2>\n<ul>\n<li>authenticating to Dynamics 365 and Dataverse environments from VS Code;</li>\n<li>exporting managed or unmanaged solutions;</li>\n<li>unpacking solution archives into source-controlled files;</li>\n<li>keeping the export and unpack workflow in a single sidebar;</li>\n<li>preserving existing files while refreshing solution contents.</li>\n</ul>\n<h2 id=\"installation\">Installation</h2>\n<p>Install <strong>D365 CRM Solutions Unpacking Agent</strong> from the Visual Studio Marketplace. The extension identifier is <code>codefox.d365-solutions-unpacking-agent-vscode</code> and version 1.1.0 supports VS Code 1.90.0 and newer.</p>\n<p>The extension is published by <strong>codefox</strong>, authored by <strong>Jadhav Shubhamm</strong>, and licensed under MIT.</p>\n<h2 id=\"usage\">Usage</h2>\n<p>Open the extension sidebar, authenticate to the target environment, select the solution to export, and choose the destination for its unpacked source. The extension downloads the solution through the Dataverse Web API and manages the Solution Packager executable used to unpack it.</p>\n<h2 id=\"limitations\">Limitations</h2>\n<p>The workflow requires valid environment credentials and sufficient Dataverse privileges to export solutions. It targets VS Code on Windows because solution unpacking relies on <code>SolutionPackager.exe</code>; environment policies and solution dependencies still apply.</p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "Why it exists",
+      "id": "why-it-exists"
+    },
+    {
+      "level": 2,
+      "text": "Useful for",
+      "id": "useful-for"
+    },
+    {
+      "level": 2,
+      "text": "Installation",
+      "id": "installation"
+    },
+    {
+      "level": 2,
+      "text": "Usage",
+      "id": "usage"
+    },
+    {
+      "level": 2,
+      "text": "Limitations",
+      "id": "limitations"
+    }
+  ],
+  "hasMermaid": false,
+  "links": {
+    "marketplace": {
+      "label": "Install from the Visual Studio Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=codefox.d365-solutions-unpacking-agent-vscode"
+    }
+  },
+  "relatedTools": [
+    "edge/eagleeye"
+  ],
+  "relatedArticles": []
+}

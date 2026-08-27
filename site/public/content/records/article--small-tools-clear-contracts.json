@@ -1,0 +1,43 @@
+{
+  "slug": "small-tools-clear-contracts",
+  "title": "Small tools, clear contracts",
+  "summary": "A focused tool with explicit inputs and outputs often outlives a broad platform promise.",
+  "type": "essay",
+  "topic": "builder-tools",
+  "published": "2026-07-28",
+  "updated": "2026-07-28",
+  "readingTime": 1,
+  "tags": [
+    "tools",
+    "maintenance"
+  ],
+  "route": "#/read/small-tools-clear-contracts",
+  "recordFile": "article--small-tools-clear-contracts",
+  "html": "<p>A small tool is easy to underestimate. Its narrow scope can be an advantage when the contract is explicit and the work can be inspected.</p>\n<h2 id=\"name-the-job\">Name the job</h2>\n<p>The tool should have one sentence that explains the change it makes for a builder. If that sentence keeps accumulating conjunctions, the ownership boundary is probably too wide.</p>\n<h2 id=\"keep-inputs-boring\">Keep inputs boring</h2>\n<p>Prefer stable formats, validated identifiers, and familiar controls. Novel input mechanisms rarely improve a repetitive engineering task.</p>\n<h2 id=\"return-a-useful-result\">Return a useful result</h2>\n<p>Show what happened, where it happened, and what the builder can do next. A success toast without evidence is only decoration.</p>\n<h2 id=\"make-removal-possible\">Make removal possible</h2>\n<p>Tools age. Clear dependencies and portable data make replacement an ordinary maintenance decision rather than a crisis.</p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "Name the job",
+      "id": "name-the-job"
+    },
+    {
+      "level": 2,
+      "text": "Keep inputs boring",
+      "id": "keep-inputs-boring"
+    },
+    {
+      "level": 2,
+      "text": "Return a useful result",
+      "id": "return-a-useful-result"
+    },
+    {
+      "level": 2,
+      "text": "Make removal possible",
+      "id": "make-removal-possible"
+    }
+  ],
+  "hasMermaid": false,
+  "relatedArticles": [
+    "evidence-before-automation"
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "guideSlug": "copilot-studio",
+  "partKey": "building-blocks",
+  "slug": "entities-and-slot-filling",
+  "order": 5,
+  "title": "Entities & Slot Filling",
+  "summary": "Recognize structured information and gather missing values naturally.",
+  "type": "chapter",
+  "level": "beginner",
+  "updated": "2026-08-26",
+  "readingTime": 5,
+  "route": "#/learn/copilot-studio/entities-and-slot-filling",
+  "recordFile": "chapter--copilot-studio--entities-and-slot-filling",
+  "guideTitle": "Copilot Studio Guide",
+  "partTitle": "Building Blocks",
+  "position": 6,
+  "chapterCount": 19,
+  "html": "<p>Entities are how the agent <strong>understands the <em>information</em> inside what a user says</strong> — not just\nwhich topic to trigger, but the actual values (a date, an email, a product, a yes/no).</p>\n<hr />\n<h2 id=\"1-what-is-an-entity\">1. What is an entity?</h2>\n<p>An <strong>entity</strong> is a unit of information that represents a real-world type of subject — a phone number,\na city, a person’s name, a color, a date. With entities, the agent can pull the relevant value out of\nfree-form text and <strong>save it for later use</strong>.</p>\n<p>Example: a user says <em>“I tried to use my gift card but it doesn’t work.”</em> The agent can both route to\nthe right topic <strong>and</strong> recognize <em>gift card</em> as a value — even if those exact words weren’t a trigger\nphrase.</p>\n<p>There are two families: <strong>prebuilt</strong> (ready-made) and <strong>custom</strong> (you create).</p>\n<hr />\n<h2 id=\"2-prebuilt-entities\">2. Prebuilt entities</h2>\n<p>Copilot Studio ships with entities for the most common information types. You just pick one in a\n<strong>Question</strong> node’s <strong>Identify</strong> box. Full list and the type each one stores:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Prebuilt entity</th>\n<th>Stored as</th>\n<th>Recognizes things like</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Age</td>\n<td>Number</td>\n<td>“I’m 30 years old” → <code>30</code></td>\n</tr>\n<tr>\n<td>Boolean</td>\n<td>Boolean</td>\n<td>“yes / no / sure / nope” → <code>true</code>/<code>false</code></td>\n</tr>\n<tr>\n<td>City</td>\n<td>String</td>\n<td>“Seattle”</td>\n</tr>\n<tr>\n<td>Color</td>\n<td>String</td>\n<td>“dark blue”</td>\n</tr>\n<tr>\n<td>Continent</td>\n<td>String</td>\n<td>“Asia”</td>\n</tr>\n<tr>\n<td>Country or region</td>\n<td>String</td>\n<td>“Canada”</td>\n</tr>\n<tr>\n<td>Date and time</td>\n<td>DateTime</td>\n<td>“next Friday at 3pm”</td>\n</tr>\n<tr>\n<td>Email</td>\n<td>String</td>\n<td>“<a href=\"mailto:sam@contoso.com\">sam@contoso.com</a>”</td>\n</tr>\n<tr>\n<td>Event</td>\n<td>String</td>\n<td>“Thanksgiving”</td>\n</tr>\n<tr>\n<td>Integer</td>\n<td>Number</td>\n<td>“42”</td>\n</tr>\n<tr>\n<td>Language</td>\n<td>String</td>\n<td>“Spanish”</td>\n</tr>\n<tr>\n<td>Money</td>\n<td>Number</td>\n<td>“It costs 1000 dollars” → <code>1000</code></td>\n</tr>\n<tr>\n<td>Number</td>\n<td>Number</td>\n<td>“3.14”</td>\n</tr>\n<tr>\n<td>Ordinal</td>\n<td>Number</td>\n<td>“the second one”</td>\n</tr>\n<tr>\n<td>Organization</td>\n<td>String</td>\n<td>“Microsoft”</td>\n</tr>\n<tr>\n<td>Percentage</td>\n<td>Number</td>\n<td>“20%”</td>\n</tr>\n<tr>\n<td>Person name</td>\n<td>String</td>\n<td>“Maria Garcia”</td>\n</tr>\n<tr>\n<td>Phone number</td>\n<td>String</td>\n<td>“+1 425-555-0100”</td>\n</tr>\n<tr>\n<td>Point of interest</td>\n<td>String</td>\n<td>“Eiffel Tower”</td>\n</tr>\n<tr>\n<td>Speed</td>\n<td>Number</td>\n<td>“60 mph”</td>\n</tr>\n<tr>\n<td>State</td>\n<td>String</td>\n<td>“Texas”</td>\n</tr>\n<tr>\n<td>Street address</td>\n<td>String</td>\n<td>“1 Microsoft Way”</td>\n</tr>\n<tr>\n<td>Temperature</td>\n<td>Number</td>\n<td>“75 degrees”</td>\n</tr>\n<tr>\n<td>URL</td>\n<td>String</td>\n<td>“<a href=\"https://contoso.com\" target=\"_blank\" rel=\"noreferrer\">https://contoso.com</a>”</td>\n</tr>\n<tr>\n<td>Weight</td>\n<td>Number</td>\n<td>“5 kg”</td>\n</tr>\n<tr>\n<td>Zip code</td>\n<td>String</td>\n<td>“98052”</td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p>Notice extraction is <strong>smart</strong>: from <em>“It costs 1000 dollars”</em> the <strong>Money</strong> entity stores the\nnumber <code>1000</code>, dropping the surrounding words. That’s the power of entities vs. raw text.</p>\n</blockquote>\n<p>To browse them: <strong>Settings → Entities</strong> (you’ll see prebuilt + any custom ones).</p>\n<hr />\n<h2 id=\"3-custom-entities\">3. Custom entities</h2>\n<p>When prebuilt types don’t cover your domain (pizza sizes, coffee types, ticket categories), create a\n<strong>custom entity</strong>. Two kinds:</p>\n<h3 id=\"a-closed-list-entity\">a) Closed list entity</h3>\n<p>A fixed list of allowed values, each with optional <strong>synonyms</strong>. Best when answers come from a known\nset.</p>\n<p>Example — <strong>Coffee Type</strong>:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Value</th>\n<th>Synonyms</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Espresso</td>\n<td>short black, shot</td>\n</tr>\n<tr>\n<td>Latte</td>\n<td>caffè latte, milky coffee</td>\n</tr>\n<tr>\n<td>Cappuccino</td>\n<td>cap, cappa</td>\n</tr>\n<tr>\n<td>Americano</td>\n<td>long black</td>\n</tr>\n</tbody>\n</table></div><p>Now if a user types <em>“I’ll have a long black”</em>, the agent recognizes <strong>Americano</strong>. Closed-list\nentities store a <strong>Choice</strong>, and can be shown as <strong>buttons</strong> in a Question node.</p>\n<p><strong>Create one:</strong></p>\n<ol>\n<li><strong>Settings → Entities → New entity → Closed list</strong>.</li>\n<li>Name it (e.g., <code>Coffee Type</code>).</li>\n<li>Add each <strong>item</strong> and its <strong>synonyms</strong> (one synonym per line or comma-separated).</li>\n<li>Save.</li>\n</ol>\n<h3 id=\"b-regular-expression-regex-entity\">b) Regular expression (regex) entity</h3>\n<p>Matches a <strong>pattern</strong> — perfect for structured IDs like order numbers, case numbers, or SKUs.</p>\n<p>Example — an order ID that is <code>ORD-</code> followed by 6 digits:</p>\n<pre aria-label=\"Code sample\"><code>ORD-\\d{6}\n</code></pre>\n<p>A user message <em>“my order ORD-123456 is late”</em> yields the match <code>ORD-123456</code>.</p>\n<p><strong>Create one:</strong></p>\n<ol>\n<li><strong>Settings → Entities → New entity → Regular expression (regex)</strong>.</li>\n<li>Name it (e.g., <code>Order ID</code>).</li>\n<li>Enter the pattern.</li>\n<li>Save.</li>\n</ol>\n<blockquote>\n<p>There’s also <strong>CLU</strong> (Azure Conversational Language Understanding) integration for advanced NLU —\nimported CLU entities appear on the Entities page and are used just like custom/prebuilt ones.\nThat’s an advanced topic; closed-list and regex cover most beginner needs.</p>\n</blockquote>\n<hr />\n<h2 id=\"4-slot-filling\">4. Slot filling</h2>\n<p><strong>Slot filling</strong> = taking the entity value the AI extracted and <strong>putting it into a variable</strong> (the\n“slot”). Every time a Question node recognizes an entity and saves it to a variable, that’s slot filling.</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart LR\n    U[\"User: 'I want to go trekking'\"] --&gt; E[Entity recognizes: Hiking]\n    E --&gt; V[\"Variable myActivity = Hiking (slot filled)\"]\n</pre></div><p>If you defined <em>trekking</em> as a synonym of <em>Hiking</em>, the user can type either and the slot fills with\nthe canonical value <strong>Hiking</strong>. Watch this happen live in the <strong>Test</strong> pane’s <strong>Variables</strong> tab.</p>\n<h3 id=\"proactive-slot-filling-the-smart-skip\">Proactive slot filling (the “smart skip”)</h3>\n<p>The agent listens for <strong>multiple pieces of information at once</strong> and <strong>fills several slots up front</strong> —\nthen <strong>skips</strong> the questions it already has answers for.</p>\n<p>Example: user says <em>“I want to buy a pair of hiking boots under $100.”</em></p>\n<ul>\n<li>Trigger: shopping for outdoor activities.</li>\n<li>Slot 1 (activity entity): <strong>Hiking</strong>.</li>\n<li>Slot 2 (Money entity): <strong>100</strong>.</li>\n</ul>\n<p>The agent skips the “what activity?” and “what budget?” questions because both slots are already\nfilled. This makes conversations feel natural instead of like a rigid form.</p>\n<h3 id=\"multiple-entities-at-one-turn\">Multiple entities at one turn</h3>\n<p>With <strong>Identify → One of multiple entities</strong>, a single question can accept any one of up to 5 entities\n(e.g., account number <em>or</em> phone number). The answer is stored as a <strong>Record</strong> with one field per\nentity; branch using <strong>is not Blank</strong>. (See <a href=\"#/learn/copilot-studio/nodes-message-and-question\">04-nodes-message-and-question.md</a>.)</p>\n<hr />\n<h2 id=\"5-when-to-use-what\">5. When to use what</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>You need to capture…</th>\n<th>Use</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>An email, date, number, phone, address</td>\n<td><strong>Prebuilt entity</strong></td>\n</tr>\n<tr>\n<td>A yes/no answer</td>\n<td><strong>Boolean</strong> prebuilt entity</td>\n</tr>\n<tr>\n<td>A pick from <em>your</em> fixed list (sizes, types)</td>\n<td><strong>Closed list</strong> custom entity (+ synonyms, buttons)</td>\n</tr>\n<tr>\n<td>A structured ID/code (ORD-123456)</td>\n<td><strong>Regex</strong> custom entity</td>\n</tr>\n<tr>\n<td>Exact raw text (feedback, free notes)</td>\n<td><strong>User’s entire response</strong> (no entity)</td>\n</tr>\n<tr>\n<td>One of several possible identifiers</td>\n<td><strong>One of multiple entities</strong></td>\n</tr>\n</tbody>\n</table></div><hr />\n<h3 id=\"key-takeaways\">Key takeaways</h3>\n<ul>\n<li><strong>Entities</strong> extract <em>values</em> from text; <strong>prebuilt</strong> for common types, <strong>custom</strong> for your domain.</li>\n<li><strong>Closed list</strong> = fixed values + synonyms (+ buttons). <strong>Regex</strong> = pattern matching for IDs.</li>\n<li><strong>Slot filling</strong> = saving an extracted entity into a variable.</li>\n<li><strong>Proactive slot filling</strong> lets the agent capture several values at once and <strong>skip</strong> questions.</li>\n</ul>\n<hr />\n<h2 id=\"official-microsoft-documentation-references\">Official Microsoft documentation (references)</h2>\n<p>The content in this section is based on the following Microsoft Learn pages:</p>\n<ul>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-entities-slot-filling\" target=\"_blank\" rel=\"noreferrer\">Use entities and slot filling in agents</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-variables-about#entities\" target=\"_blank\" rel=\"noreferrer\">Variables overview — entities and their base types</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-ask-a-question\" target=\"_blank\" rel=\"noreferrer\">Ask a question (Question node)</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-clu-integration\" target=\"_blank\" rel=\"noreferrer\">Conversational language understanding (CLU) integration</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-clu-entity-registration\" target=\"_blank\" rel=\"noreferrer\">CLU entity registration</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/voice-hold-resume\" target=\"_blank\" rel=\"noreferrer\">Use Hold and resume (custom entities for hold/resume words)</a></li>\n</ul>\n<p>Next: <a href=\"#/learn/copilot-studio/lab1\">06-lab1.md</a></p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "1. What is an entity?",
+      "id": "1-what-is-an-entity"
+    },
+    {
+      "level": 2,
+      "text": "2. Prebuilt entities",
+      "id": "2-prebuilt-entities"
+    },
+    {
+      "level": 2,
+      "text": "3. Custom entities",
+      "id": "3-custom-entities"
+    },
+    {
+      "level": 3,
+      "text": "a) Closed list entity",
+      "id": "a-closed-list-entity"
+    },
+    {
+      "level": 3,
+      "text": "b) Regular expression (regex) entity",
+      "id": "b-regular-expression-regex-entity"
+    },
+    {
+      "level": 2,
+      "text": "4. Slot filling",
+      "id": "4-slot-filling"
+    },
+    {
+      "level": 3,
+      "text": "Proactive slot filling (the \"smart skip\")",
+      "id": "proactive-slot-filling-the-smart-skip"
+    },
+    {
+      "level": 3,
+      "text": "Multiple entities at one turn",
+      "id": "multiple-entities-at-one-turn"
+    },
+    {
+      "level": 2,
+      "text": "5. When to use what",
+      "id": "5-when-to-use-what"
+    },
+    {
+      "level": 3,
+      "text": "Key takeaways",
+      "id": "key-takeaways"
+    },
+    {
+      "level": 2,
+      "text": "Official Microsoft documentation (references)",
+      "id": "official-microsoft-documentation-references"
+    }
+  ],
+  "hasMermaid": true,
+  "previous": {
+    "guideSlug": "copilot-studio",
+    "partKey": "building-blocks",
+    "slug": "nodes-message-and-question",
+    "order": 4,
+    "title": "Nodes: Message & Question (and all the others)",
+    "summary": "Choose and combine conversation nodes to control an agent's behavior.",
+    "type": "chapter",
+    "level": "beginner",
+    "updated": "2026-08-26",
+    "readingTime": 15,
+    "route": "#/learn/copilot-studio/nodes-message-and-question",
+    "recordFile": "chapter--copilot-studio--nodes-message-and-question"
+  },
+  "next": {
+    "guideSlug": "copilot-studio",
+    "partKey": "hands-on-labs",
+    "slug": "lab1",
+    "order": 6,
+    "title": "Lab 1: Coffee Shop Ordering Assistant",
+    "summary": "Build a guided ordering assistant using entities, variables, and branching.",
+    "type": "lab",
+    "level": "beginner",
+    "updated": "2026-08-26",
+    "readingTime": 5,
+    "route": "#/learn/copilot-studio/lab1",
+    "recordFile": "chapter--copilot-studio--lab1"
+  }
+}

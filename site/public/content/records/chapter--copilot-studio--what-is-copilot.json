@@ -1,0 +1,122 @@
+{
+  "guideSlug": "copilot-studio",
+  "partKey": "fundamentals",
+  "slug": "what-is-copilot",
+  "order": 0,
+  "title": "What is Copilot? (and Copilot Studio)",
+  "summary": "Understand copilots, agents, and where Copilot Studio fits in the Microsoft ecosystem.",
+  "type": "chapter",
+  "level": "beginner",
+  "updated": "2026-08-26",
+  "readingTime": 8,
+  "route": "#/learn/copilot-studio/what-is-copilot",
+  "recordFile": "chapter--copilot-studio--what-is-copilot",
+  "guideTitle": "Copilot Studio Guide",
+  "partTitle": "Fundamentals",
+  "position": 1,
+  "chapterCount": 19,
+  "html": "<p>Before the deeper concepts, here’s the big picture in plain language: <strong>what Copilot is, why people\nuse it, how it’s used, how you build one, what Copilot Studio is, and why you need it.</strong></p>\n<blockquote>\n<p>New to everything? Read this first, then <a href=\"#/learn/copilot-studio/create-an-agent\">01-create-an-agent.md</a> to build one,\nthen <a href=\"#/learn/copilot-studio/core-concepts\">02-core-concepts.md</a> for the deeper <em>why</em>.</p>\n</blockquote>\n<hr />\n<h2 id=\"what-is-copilot\">What is Copilot?</h2>\n<p>A <strong>Copilot</strong> is an <strong>AI-powered assistant</strong> that understands natural language and helps people get\nthings done — answering questions, finding information, and taking actions on their behalf.</p>\n<ul>\n<li>It’s built on <strong>large language models (LLMs)</strong> so it can understand and generate human-like text.</li>\n<li>A Copilot can <strong>chat</strong> (web, Teams, phone) and <strong>act</strong> (look up an order, file a ticket, send an email).</li>\n<li>In Microsoft’s world, the assistants you build are called <strong>agents</strong> (formerly <em>bots</em> / <em>chatbots</em> /\n<em>Power Virtual Agents</em>).</li>\n</ul>\n<blockquote>\n<p><strong>One line:</strong> A Copilot is a conversational assistant that <em>talks</em> like a person and <em>works</em> like an app.</p>\n</blockquote>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart LR\n    U[User asks in plain language] --&gt; C[Copilot]\n    C --&gt; K[Reads your knowledge]\n    C --&gt; T[Calls tools / systems]\n    K --&gt; A[Helpful, grounded answer]\n    T --&gt; A\n</pre></div><hr />\n<h2 id=\"why-is-copilot-used\">Why is Copilot used?</h2>\n<p>Because it removes friction between people and information/systems.</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Problem</th>\n<th>How a Copilot helps</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Employees can’t find policies fast</td>\n<td>Answers instantly from your HR/IT docs</td>\n</tr>\n<tr>\n<td>Support teams are overloaded</td>\n<td>Deflects common questions 24/7, escalates the rest</td>\n</tr>\n<tr>\n<td>Apps are complex to navigate</td>\n<td>Users just <em>ask</em> instead of clicking through menus</td>\n</tr>\n<tr>\n<td>Repetitive tasks waste time</td>\n<td>Automates lookups, status checks, form-filling</td>\n</tr>\n<tr>\n<td>Knowledge is scattered</td>\n<td>One assistant, grounded across many sources</td>\n</tr>\n</tbody>\n</table></div><p><strong>Business value:</strong> faster answers, lower support cost, consistent service, 24/7 availability, and\nhappier users — without writing a traditional app for every task.</p>\n<hr />\n<h2 id=\"how-is-copilot-used\">How is Copilot used?</h2>\n<p>People interact with a Copilot through <strong>channels</strong>, and the Copilot responds using <strong>knowledge</strong> and\n<strong>tools</strong>.</p>\n<ol>\n<li><strong>The user asks</strong> in natural language (types or speaks) — in a website widget, <strong>Microsoft Teams</strong>,\n<strong>Microsoft 365 Copilot</strong>, or over the <strong>phone</strong>.</li>\n<li><strong>The Copilot understands</strong> the intent using AI.</li>\n<li><strong>It grounds</strong> the answer in your data (documents, records, live systems).</li>\n<li><strong>It acts</strong> if needed (runs a flow, calls an API, books something).</li>\n<li><strong>It replies</strong> — often with <strong>citations</strong> — and can escalate to a human when appropriate.</li>\n</ol>\n<blockquote>\n<p>Example: <em>“What’s the status of order 12345?”</em> → the agent calls your order system → replies\n<em>“Shipped, arriving Tuesday.”</em></p>\n</blockquote>\n<hr />\n<h2 id=\"how-do-you-build-a-copilot\">How do you build a Copilot?</h2>\n<p>At a high level, building an agent is five repeatable steps:</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart LR\n    S1[1 Describe the agent] --&gt; S2[2 Add instructions]\n    S2 --&gt; S3[3 Add knowledge]\n    S3 --&gt; S4[4 Add tools/topics]\n    S4 --&gt; S5[5 Test &amp; publish]\n    S5 --&gt;|iterate| S1\n</pre></div><ol>\n<li><strong>Describe</strong> what the agent does and for whom (the <strong>Description</strong>).</li>\n<li><strong>Instruct</strong> how it should behave (tone, rules, guardrails — the <strong>Instructions</strong>).</li>\n<li><strong>Ground</strong> it on your <strong>Knowledge</strong> (websites, SharePoint, files, data).</li>\n<li><strong>Empower</strong> it with <strong>Tools</strong> and <strong>Topics</strong> (connectors, Power Automate flows, scripted flows).</li>\n<li><strong>Test</strong> in the test pane, then <strong>Publish</strong> to channels — and <strong>iterate</strong>.</li>\n</ol>\n<blockquote>\n<p>The full hands-on walkthrough is in <a href=\"#/learn/copilot-studio/create-an-agent\">01-create-an-agent.md</a>.</p>\n</blockquote>\n<hr />\n<h2 id=\"what-is-copilot-studio\">What is Copilot Studio?</h2>\n<p><strong>Microsoft Copilot Studio</strong> is the <strong>low-code / no-code tool for building, managing, and publishing\nCopilot agents.</strong> You design conversations on a visual canvas — no deep coding required.</p>\n<p>It gives you everything in one place:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Capability</th>\n<th>What it means</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Visual authoring</strong></td>\n<td>Drag-and-drop <strong>topics</strong> and <strong>nodes</strong> to design conversations</td>\n</tr>\n<tr>\n<td><strong>Generative AI</strong></td>\n<td>Pick a <strong>model</strong> and ground answers on your <strong>knowledge</strong></td>\n</tr>\n<tr>\n<td><strong>Tools &amp; actions</strong></td>\n<td>Connect <strong>Power Automate</strong>, <strong>connectors</strong>, <strong>HTTP</strong>, and <strong>MCP servers</strong></td>\n</tr>\n<tr>\n<td><strong>Orchestration</strong></td>\n<td><strong>Classic</strong> (trigger phrases) or <strong>generative</strong> (AI plans the steps)</td>\n</tr>\n<tr>\n<td><strong>Multi-channel publishing</strong></td>\n<td>Website, <strong>Teams</strong>, <strong>Microsoft 365 Copilot</strong>, phone, and more</td>\n</tr>\n<tr>\n<td><strong>Governance</strong></td>\n<td>Environments, security, <strong>DLP</strong>, and lifecycle management (ALM)</td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p>Copilot Studio was previously called <strong>Power Virtual Agents</strong>. It’s part of the <strong>Power Platform</strong>.</p>\n</blockquote>\n<hr />\n<h2 id=\"copilot-studio-for-non-coders-no-programming-needed\">Copilot Studio for non-coders (no programming needed)</h2>\n<p>If you’ve never written code, relax — Copilot Studio is built for you. You <strong>describe</strong> what you want\nin plain English and <strong>drag boxes</strong> on a canvas. Think of it like building with LEGO blocks instead\nof pouring the plastic yourself.</p>\n<h3 id=\"everyday-analogies\">Everyday analogies</h3>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Copilot Studio term</th>\n<th>Think of it as…</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Agent</strong></td>\n<td>Your assistant / helpful employee</td>\n</tr>\n<tr>\n<td><strong>Topic</strong></td>\n<td>One thing the assistant knows how to handle (“take an order”)</td>\n</tr>\n<tr>\n<td><strong>Trigger phrase</strong></td>\n<td>The words a customer might say to start that task</td>\n</tr>\n<tr>\n<td><strong>Node</strong></td>\n<td>One step in a recipe (say this, then ask that)</td>\n</tr>\n<tr>\n<td><strong>Variable</strong></td>\n<td>A sticky note that remembers an answer (“name = Sam”)</td>\n</tr>\n<tr>\n<td><strong>Knowledge</strong></td>\n<td>The binder of documents the assistant can read from</td>\n</tr>\n<tr>\n<td><strong>Tool</strong></td>\n<td>A button that does a job (look up an order, send an email)</td>\n</tr>\n<tr>\n<td><strong>Publish</strong></td>\n<td>Opening the shop so real people can talk to it</td>\n</tr>\n</tbody>\n</table></div><h3 id=\"what-you-actually-do-no-code\">What you actually do (no code)</h3>\n<ol>\n<li><strong>Type a sentence</strong> describing your assistant — Copilot Studio drafts it for you.</li>\n<li><strong>Drag and drop</strong> steps (message, question) on a visual canvas.</li>\n<li><strong>Click</strong> to add your documents as knowledge.</li>\n<li><strong>Type</strong> the rules in plain English (the instructions).</li>\n<li><strong>Test</strong> by chatting with it, then <strong>Publish</strong>.</li>\n</ol>\n<blockquote>\n<p>You only ever <strong>type plain language</strong> and <strong>arrange boxes</strong>. No syntax, no installs, no servers.</p>\n</blockquote>\n<h3 id=\"real-world-work-that-can-become-an-agent\">Real-world work that can become an agent</h3>\n<p>The easiest way to spot an agent opportunity: look for <strong>questions people keep asking</strong> or <strong>repetitive\nsteps people keep doing</strong>. If a task is <em>“someone asks → you look something up → you reply,”</em> it can\nusually become an agent.</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Real-world situation (today)</th>\n<th>As an agent</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Staff keep emailing HR <em>“how many leave days do I have left?”</em></td>\n<td><strong>HR leave assistant</strong> answers from the policy + leave system, 24/7</td>\n</tr>\n<tr>\n<td>Customers call to ask <em>“where’s my order?”</em></td>\n<td><strong>Order-status agent</strong> looks up the order number and replies instantly</td>\n</tr>\n<tr>\n<td>IT gets the same <em>“how do I reset my VPN/password?”</em> tickets</td>\n<td><strong>IT helpdesk agent</strong> walks users through the fix, creates a ticket only if needed</td>\n</tr>\n<tr>\n<td>Front desk repeats opening hours, address, parking</td>\n<td><strong>FAQ agent</strong> answers from a simple knowledge page</td>\n</tr>\n<tr>\n<td>Sales reps re-explain pricing tiers and product specs</td>\n<td><strong>Product info agent</strong> answers from the product catalog</td>\n</tr>\n<tr>\n<td>Employees ask <em>“how do I claim expenses?”</em></td>\n<td><strong>Policy agent</strong> explains the steps and links the form</td>\n</tr>\n<tr>\n<td>Clinic staff field <em>“how do I book/cancel an appointment?”</em></td>\n<td><strong>Booking agent</strong> collects details and schedules via a tool</td>\n</tr>\n<tr>\n<td>New hires ask the same onboarding questions</td>\n<td><strong>Onboarding buddy</strong> answers from the employee handbook</td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p><strong>Rule of thumb:</strong> <em>High volume + repetitive + answer lives in a document or system</em> = a great first agent.</p>\n</blockquote>\n<h3 id=\"how-a-real-task-maps-to-agent-pieces\">How a real task maps to agent pieces</h3>\n<p>Take <em>“Where’s my order?”</em> and see how it becomes an agent — no code, just arranging steps:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>The real task</th>\n<th>Agent piece</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Customer says “track my order”</td>\n<td><strong>Trigger phrase</strong></td>\n</tr>\n<tr>\n<td>You ask “what’s your order number?”</td>\n<td><strong>Question</strong> node → saved in a variable</td>\n</tr>\n<tr>\n<td>You look it up in the system</td>\n<td><strong>Tool</strong> (connector / Power Automate)</td>\n</tr>\n<tr>\n<td>You tell them the status</td>\n<td><strong>Message</strong> node with the result</td>\n</tr>\n<tr>\n<td>It’s a complex complaint</td>\n<td><strong>Escalate</strong> to a human</td>\n</tr>\n</tbody>\n</table></div><h3 id=\"tiny-example-turning-an-faq-into-an-agent-start-to-finish\">Tiny example — turning an FAQ into an agent (start to finish)</h3>\n<p>The simplest real use case: a shop answering opening hours.</p>\n<ol>\n<li><strong>Create the agent</strong> — type: <em>“Answer questions about Copilot Coffee’s opening hours and location.”</em></li>\n<li><strong>Add a topic</strong> called <em>Store Hours</em>.</li>\n<li><strong>Trigger phrases</strong> (what customers actually type):<pre aria-label=\"Code sample\"><code>what time do you open\nare you open on sunday\nstore hours\nwhen do you close\n</code></pre>\n</li>\n<li><strong>Message node</strong> (what the assistant replies):<pre aria-label=\"Code sample\"><code>☕ We're open Mon–Fri 7am–6pm, Sat 8am–4pm, and closed Sundays.\n</code></pre>\n</li>\n<li><strong>Test</strong> — type <em>“are you open sunday?”</em> → it replies with the hours. <strong>Publish.</strong></li>\n</ol>\n<p>That’s a working assistant — built with <strong>zero code</strong>, just typing and clicking.</p>\n<h3 id=\"a-slightly-bigger-example-collecting-info\">A slightly bigger example — collecting info</h3>\n<p>Want the assistant to take a customer’s name and coffee order? You add <strong>Question</strong> nodes that\n<em>remember</em> answers in variables, then a message that repeats them back:</p>\n<pre aria-label=\"Code sample\"><code>Question: \"What's your name?\"            → remembers it as  CustomerName\nQuestion: \"Which coffee would you like?\" → remembers it as  Coffee\nMessage:  \"Thanks {CustomerName}! One {Coffee} coming up. ☕\"\n</code></pre>\n<p>The <code>{CustomerName}</code> and <code>{Coffee}</code> are just sticky notes the assistant fills in automatically. This\nexact build is the hands-on <a href=\"#/learn/copilot-studio/lab1\">Lab 1</a>.</p>\n<h3 id=\"when-would-a-non-coder-use-each-piece\">When would a non-coder use each piece?</h3>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>You want the assistant to…</th>\n<th>Use this (no code)</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Say something fixed</td>\n<td><strong>Message</strong> node</td>\n</tr>\n<tr>\n<td>Ask and remember an answer</td>\n<td><strong>Question</strong> node (+ a variable)</td>\n</tr>\n<tr>\n<td>Answer from your documents</td>\n<td><strong>Knowledge</strong> (upload files / add a website)</td>\n</tr>\n<tr>\n<td>Do different things based on the answer</td>\n<td><strong>Condition</strong> (pick from a list)</td>\n</tr>\n<tr>\n<td>Take a real action (email, lookup)</td>\n<td><strong>Tool</strong> (a ready-made connector or flow)</td>\n</tr>\n<tr>\n<td>Hand off to a human</td>\n<td><strong>Escalate</strong> / Redirect</td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p><strong>Beginner tip:</strong> Start with <strong>Message</strong> and <strong>Question</strong> nodes only. That alone builds genuinely\nuseful assistants. Add knowledge and tools once you’re comfortable.</p>\n</blockquote>\n<h3 id=\"common-beginner-worries-answered\">Common beginner worries — answered</h3>\n<ul>\n<li><em>“Do I need to install anything?”</em> — No. It runs in your web browser.</li>\n<li><em>“Will I break something?”</em> — No. Changes aren’t live until you <strong>Publish</strong>, and you can always test first.</li>\n<li><em>“Do I need to know AI?”</em> — No. Pick the default model and write rules in plain English.</li>\n<li><em>“What if it doesn’t understand?”</em> — Add more trigger phrases or clearer instructions, then re-test.</li>\n</ul>\n<hr />\n<h2 id=\"why-do-we-need-copilot-studio\">Why do we need Copilot Studio?</h2>\n<p>Because building a reliable conversational AI from scratch is hard — and Copilot Studio handles the\nheavy lifting.</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Without Copilot Studio</th>\n<th>With Copilot Studio</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Write and host LLM/RAG plumbing yourself</td>\n<td>Add <strong>knowledge</strong>, it grounds automatically</td>\n</tr>\n<tr>\n<td>Hand-build NLU and intent routing</td>\n<td><strong>Classic / generative orchestration</strong> built in</td>\n</tr>\n<tr>\n<td>Custom-code every integration</td>\n<td><strong>Connectors + Power Automate + MCP</strong> out of the box</td>\n</tr>\n<tr>\n<td>Build channel integrations one by one</td>\n<td><strong>Publish once</strong>, reach many channels</td>\n</tr>\n<tr>\n<td>Manage security &amp; compliance manually</td>\n<td><strong>Environments, DLP, ALM</strong> included</td>\n</tr>\n<tr>\n<td>Needs developers for everything</td>\n<td><strong>Low-code</strong> — makers and citizen developers can build</td>\n</tr>\n</tbody>\n</table></div><p><strong>In short:</strong> Copilot Studio lets you go from idea to a published, governed, multi-channel agent\n<strong>quickly</strong> — without reinventing AI infrastructure.</p>\n<hr />\n<h3 id=\"key-takeaways\">Key takeaways</h3>\n<ul>\n<li>A <strong>Copilot</strong> = an AI assistant that <em>talks</em> like a person and <em>works</em> like an app (Microsoft calls\nthem <strong>agents</strong>).</li>\n<li>It’s <strong>used</strong> to answer questions, automate tasks, and deflect support — across web, Teams, M365, and phone.</li>\n<li>You <strong>build</strong> one in five steps: Describe → Instruct → Ground → Empower → Test/Publish.</li>\n<li><strong>Copilot Studio</strong> is the <strong>low-code</strong> platform that makes all of this fast, governed, and multi-channel.</li>\n</ul>\n<hr />\n<h2 id=\"official-microsoft-documentation-references\">Official Microsoft documentation (references)</h2>\n<ul>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-what-is-copilot-studio\" target=\"_blank\" rel=\"noreferrer\">What is Copilot Studio?</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/\" target=\"_blank\" rel=\"noreferrer\">Copilot Studio overview</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-first-bot\" target=\"_blank\" rel=\"noreferrer\">Quickstart: Create and deploy an agent</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-get-started\" target=\"_blank\" rel=\"noreferrer\">Key concepts — agents</a></li>\n</ul>\n<p>Next: <a href=\"#/learn/copilot-studio/core-concepts\">02-core-concepts.md</a></p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "What is Copilot?",
+      "id": "what-is-copilot"
+    },
+    {
+      "level": 2,
+      "text": "Why is Copilot used?",
+      "id": "why-is-copilot-used"
+    },
+    {
+      "level": 2,
+      "text": "How is Copilot used?",
+      "id": "how-is-copilot-used"
+    },
+    {
+      "level": 2,
+      "text": "How do you build a Copilot?",
+      "id": "how-do-you-build-a-copilot"
+    },
+    {
+      "level": 2,
+      "text": "What is Copilot Studio?",
+      "id": "what-is-copilot-studio"
+    },
+    {
+      "level": 2,
+      "text": "Copilot Studio for non-coders (no programming needed)",
+      "id": "copilot-studio-for-non-coders-no-programming-needed"
+    },
+    {
+      "level": 3,
+      "text": "Everyday analogies",
+      "id": "everyday-analogies"
+    },
+    {
+      "level": 3,
+      "text": "What you actually do (no code)",
+      "id": "what-you-actually-do-no-code"
+    },
+    {
+      "level": 3,
+      "text": "Real-world work that can become an agent",
+      "id": "real-world-work-that-can-become-an-agent"
+    },
+    {
+      "level": 3,
+      "text": "How a real task maps to agent pieces",
+      "id": "how-a-real-task-maps-to-agent-pieces"
+    },
+    {
+      "level": 3,
+      "text": "Tiny example — turning an FAQ into an agent (start to finish)",
+      "id": "tiny-example-turning-an-faq-into-an-agent-start-to-finish"
+    },
+    {
+      "level": 3,
+      "text": "A slightly bigger example — collecting info",
+      "id": "a-slightly-bigger-example-collecting-info"
+    },
+    {
+      "level": 3,
+      "text": "When would a non-coder use each piece?",
+      "id": "when-would-a-non-coder-use-each-piece"
+    },
+    {
+      "level": 3,
+      "text": "Common beginner worries — answered",
+      "id": "common-beginner-worries-answered"
+    },
+    {
+      "level": 2,
+      "text": "Why do we need Copilot Studio?",
+      "id": "why-do-we-need-copilot-studio"
+    },
+    {
+      "level": 3,
+      "text": "Key takeaways",
+      "id": "key-takeaways"
+    },
+    {
+      "level": 2,
+      "text": "Official Microsoft documentation (references)",
+      "id": "official-microsoft-documentation-references"
+    }
+  ],
+  "hasMermaid": true,
+  "previous": null,
+  "next": {
+    "guideSlug": "copilot-studio",
+    "partKey": "fundamentals",
+    "slug": "create-an-agent",
+    "order": 1,
+    "title": "How to Create an Agent (Step-by-Step)",
+    "summary": "Create, configure, test, and publish a first agent in Copilot Studio.",
+    "type": "chapter",
+    "level": "beginner",
+    "updated": "2026-08-26",
+    "readingTime": 8,
+    "route": "#/learn/copilot-studio/create-an-agent",
+    "recordFile": "chapter--copilot-studio--create-an-agent"
+  }
+}
