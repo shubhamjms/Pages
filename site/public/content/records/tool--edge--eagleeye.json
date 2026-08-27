@@ -1,0 +1,58 @@
+{
+  "categorySlug": "edge",
+  "slug": "eagleeye",
+  "key": "edge/eagleeye",
+  "title": "EagleEYE",
+  "summary": "Detect supported Dynamics 365 model-driven apps and inspect the current cloud and host from a compact Microsoft Edge sidebar.",
+  "kind": "extension",
+  "platforms": [
+    "edge",
+    "dynamics-365",
+    "dataverse"
+  ],
+  "version": "0.1.2",
+  "status": "stable",
+  "updated": "2026-08-18",
+  "route": "#/tools/edge/eagleeye",
+  "recordFile": "tool--edge--eagleeye",
+  "categoryTitle": "Edge Extensions",
+  "html": "<h2 id=\"why-it-exists\">Why it exists</h2>\n<p>Builders often move between several Dynamics 365 environments and need a quick way to confirm whether the active tab is a supported model-driven app. EagleEYE performs that check from a compact Microsoft Edge sidebar and reports the matched cloud category and host.</p>\n<h2 id=\"useful-for\">Useful for</h2>\n<ul>\n<li>detecting supported Dynamics 365 model-driven app tabs;</li>\n<li>seeing a clear connected or disconnected status;</li>\n<li>identifying the current Dynamics cloud category and host;</li>\n<li>avoiding activation on unrelated Microsoft and web pages;</li>\n<li>checking environment context without leaving the browser.</li>\n</ul>\n<h2 id=\"installation\">Installation</h2>\n<p>Install <strong>EagleEYE - Dynamics D365 Tools</strong> from Microsoft Edge Add-ons. Version 0.1.2 is published by <strong>Shubhamm</strong>.</p>\n<h2 id=\"usage\">Usage</h2>\n<p>Open a Dynamics 365 model-driven app, then open EagleEYE from the Edge sidebar. The extension validates the active tab and displays its connection status, matched cloud, and resolved host. Unsupported pages receive a disconnected status.</p>\n<h2 id=\"limitations\">Limitations</h2>\n<p>This release is a focused environment-awareness baseline. It detects and reports supported Dynamics hosts but does not modify pages or provide broader administration features. Its runtime validation intentionally keeps the extension inactive on unsupported sites.</p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "Why it exists",
+      "id": "why-it-exists"
+    },
+    {
+      "level": 2,
+      "text": "Useful for",
+      "id": "useful-for"
+    },
+    {
+      "level": 2,
+      "text": "Installation",
+      "id": "installation"
+    },
+    {
+      "level": 2,
+      "text": "Usage",
+      "id": "usage"
+    },
+    {
+      "level": 2,
+      "text": "Limitations",
+      "id": "limitations"
+    }
+  ],
+  "hasMermaid": false,
+  "links": {
+    "marketplace": {
+      "label": "Install from Microsoft Edge Add-ons",
+      "url": "https://microsoftedge.microsoft.com/addons/detail/gphpjheamaiiacfgadcnkhjhpfmmicbf"
+    }
+  },
+  "relatedTools": [
+    "vs-code/d365-solutions-unpacking-agent"
+  ],
+  "relatedArticles": []
+}

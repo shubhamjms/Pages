@@ -1,0 +1,38 @@
+{
+  "slug": "agents-need-boundaries",
+  "title": "Agents need boundaries readers can see",
+  "summary": "Instructions, permissions, and review points should be visible enough to reason about.",
+  "type": "note",
+  "topic": "ai-copilot",
+  "published": "2026-08-14",
+  "updated": "2026-08-14",
+  "readingTime": 1,
+  "tags": [
+    "security",
+    "instructions"
+  ],
+  "route": "#/read/agents-need-boundaries",
+  "recordFile": "article--agents-need-boundaries",
+  "html": "<p>An agent boundary is useful only when builders can locate it and readers can understand its effect.</p>\n<h2 id=\"instructions-are-not-permissions\">Instructions are not permissions</h2>\n<p>Instructions shape behavior, while permissions determine capability. Asking an agent not to access a record is not a substitute for removing that access.</p>\n<h2 id=\"make-escalation-ordinary\">Make escalation ordinary</h2>\n<p>A handoff is not a failure. It is a designed outcome for uncertainty, high-impact changes, and situations where a person has context the system does not.</p>\n<h2 id=\"keep-review-points-close\">Keep review points close</h2>\n<p>Place confirmation near the action it governs. A generic warning at the beginning of a long process does little to support judgment at the moment it matters.</p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "Instructions are not permissions",
+      "id": "instructions-are-not-permissions"
+    },
+    {
+      "level": 2,
+      "text": "Make escalation ordinary",
+      "id": "make-escalation-ordinary"
+    },
+    {
+      "level": 2,
+      "text": "Keep review points close",
+      "id": "keep-review-points-close"
+    }
+  ],
+  "hasMermaid": false,
+  "relatedArticles": [
+    "evidence-before-automation"
+  ]
+}

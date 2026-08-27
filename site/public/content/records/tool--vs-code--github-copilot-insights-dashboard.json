@@ -1,0 +1,111 @@
+{
+  "categorySlug": "vs-code",
+  "slug": "github-copilot-insights-dashboard",
+  "key": "vs-code/github-copilot-insights-dashboard",
+  "title": "GHCP Account & Usage Dashboard",
+  "summary": "See the active GitHub Copilot account and inspect cross-workspace sessions, real AI usage, MCP servers, and models from one offline VS Code dashboard.",
+  "kind": "extension",
+  "platforms": [
+    "vscode",
+    "github-copilot",
+    "ai"
+  ],
+  "version": "2.0.4",
+  "status": "stable",
+  "updated": "2026-06-08",
+  "route": "#/tools/vs-code/github-copilot-insights-dashboard",
+  "recordFile": "tool--vs-code--github-copilot-insights-dashboard",
+  "categoryTitle": "VS Code Extensions",
+  "titleImage": "./content/tools/vs-code/github-copilot-insights-dashboard/ghcp-dashboard.png",
+  "html": "<h2 id=\"overview\">Overview</h2>\n<p>Ever struggled to confirm which GitHub Copilot account is active in VS Code, or understand what your real AI usage looks like? <strong>GHCP Account &amp; Usage Dashboard</strong> brings account, session, usage, model, and MCP information into one unified view directly inside VS Code.</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Detail</th>\n<th>Value</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Extension name</td>\n<td>GHCP Account &amp; Usage Dashboard</td>\n</tr>\n<tr>\n<td>Unique identifier</td>\n<td><code>shubhj.ghcp-dashboard</code></td>\n</tr>\n<tr>\n<td>Publisher</td>\n<td>ShubhJ</td>\n</tr>\n<tr>\n<td>Version</td>\n<td>2.0.4</td>\n</tr>\n<tr>\n<td>VS Code compatibility</td>\n<td><code>^1.95.0</code></td>\n</tr>\n<tr>\n<td>Operation</td>\n<td>100% offline</td>\n</tr>\n</tbody>\n</table></div><h2 id=\"why-it-exists\">Why it exists</h2>\n<p>Copilot information is otherwise spread across account sessions, local workspace storage, chat history, editor statistics, model registrations, and MCP configuration files. The dashboard connects those local sources so builders can identify the account Copilot is using, review meaningful usage evidence, and inspect their AI environment without leaving the editor.</p>\n<p>All dashboard data is sourced locally. The extension does not require an internet connection or external API calls after installation.</p>\n<h2 id=\"useful-for\">Useful for</h2>\n<ul>\n<li>viewing connected GitHub, Microsoft, and GitHub Enterprise accounts;</li>\n<li>detecting which account is actively used by GitHub Copilot;</li>\n<li>browsing Agent, Ask, Chat, Plan, and custom-agent sessions across workspaces;</li>\n<li>reviewing AI rate, accepted suggestions, typed versus AI characters, chat edits, and sessions;</li>\n<li>inspecting MCP servers, registered tools, and configuration locations;</li>\n<li>reviewing available language models, vendors, token limits, and context-window measurements;</li>\n<li>checking whether the local Copilot environment is ready or missing required configuration.</li>\n</ul>\n<h2 id=\"dashboard-views\">Dashboard views</h2>\n<h3 id=\"dashboard-overview\">Dashboard overview</h3>\n<p>Shows Copilot extension status and version, the detected active account, current AI usage metrics, interactive charts, recent workspace sessions, and warnings when <code>editor.aiStats.enabled</code> is disabled.</p>\n<h3 id=\"chat-sessions\">Chat Sessions</h3>\n<p>Browses Copilot conversations across all workspaces with filters for mode, workspace, search text, and sort order. Expand a session to inspect prompts, responses, model attribution, checkpoints, file edits, and code changes. Sessions from the current workspace can be reopened directly.</p>\n<h3 id=\"ai-stats\">AI Stats</h3>\n<p>Reads real usage data from workspace <code>state.vscdb</code> files. The dashboard tracks AI rate, AI and typed characters, accepted suggestions, chat edits, and sessions with workspace and period filters. It also detects disabled or stale AI statistics and explains when data cannot be recovered.</p>\n<h3 id=\"accounts\">Accounts</h3>\n<p>Lists connected GitHub, Microsoft, and GitHub Enterprise accounts with connection status, OAuth scopes, trusted extensions, session details, and Copilot policy information.</p>\n<h3 id=\"model-mcp\">Model &amp; MCP</h3>\n<p>Lists available language models through <code>vscode.lm.selectChatModels()</code>, including vendor, family, version, and token limits. It also discovers MCP servers from workspace files, user configuration, and VS Code settings, then shows their commands, tools, tags, and source files.</p>\n<h3 id=\"sidebar-and-readiness\">Sidebar and readiness</h3>\n<p>The compact sidebar summarizes weekly AI metrics, Copilot status, the last-used account, model count, and MCP servers. Readiness checks report clear ready, warning, or error states with actions for resolving missing configuration.</p>\n<h2 id=\"commands\">Commands</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Command</th>\n<th>Purpose</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>GHCP: Open Account &amp; Usage Dashboard</code></td>\n<td>Open the full dashboard panel.</td>\n</tr>\n<tr>\n<td><code>GHCP: Refresh Account Data</code></td>\n<td>Refresh accounts, statistics, sessions, and MCP configuration.</td>\n</tr>\n<tr>\n<td><code>GHCP: Switch GitHub Account</code></td>\n<td>Sign in, sign out, or manage GitHub and Microsoft accounts.</td>\n</tr>\n</tbody>\n</table></div><p>The <code>GHCP</code> status-bar item also opens the dashboard.</p>\n<h2 id=\"installation\">Installation</h2>\n<p>Install <strong>GHCP Account &amp; Usage Dashboard</strong> from the Visual Studio Marketplace using identifier <code>shubhj.ghcp-dashboard</code>. After installation, select the GitHub icon in the Activity Bar and choose <strong>Open Full Dashboard</strong>.</p>\n<h2 id=\"usage\">Usage</h2>\n<ol>\n<li>Open the GHCP sidebar from the VS Code Activity Bar.</li>\n<li>Select <strong>Open Full Dashboard</strong>.</li>\n<li>Sign in to GitHub when prompted.</li>\n<li>Use the Overview, Chat Sessions, AI Stats, Accounts, and Model &amp; MCP tabs to inspect the local environment.</li>\n<li>Run <strong>GHCP: Refresh Account Data</strong> after changing accounts, settings, or MCP configuration.</li>\n</ol>\n<h2 id=\"privacy-and-data-sources\">Privacy and data sources</h2>\n<ul>\n<li>Account information comes from the VS Code authentication API and local <code>state.vscdb</code> data.</li>\n<li>AI statistics and chat sessions are read from VS Code workspace storage.</li>\n<li>MCP servers are read from local configuration files and VS Code settings.</li>\n<li>State database access is read-only.</li>\n<li>Access tokens are partially masked and never shown in full.</li>\n<li>Webview content uses a Content Security Policy with nonces.</li>\n<li>No dashboard data is sent to an external server.</li>\n</ul>\n<h2 id=\"limitations\">Limitations</h2>\n<p>AI usage history is available only when VS Code has recorded it through <code>editor.aiStats.enabled</code>; data missed while that setting is disabled cannot be reconstructed. Chat sessions can be reopened only from their original workspace. Model, MCP, account, and session views depend on what is installed or configured locally, and VS Code may not flush its latest statistics until a session ends or the workspace is restarted.</p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "Overview",
+      "id": "overview"
+    },
+    {
+      "level": 2,
+      "text": "Why it exists",
+      "id": "why-it-exists"
+    },
+    {
+      "level": 2,
+      "text": "Useful for",
+      "id": "useful-for"
+    },
+    {
+      "level": 2,
+      "text": "Dashboard views",
+      "id": "dashboard-views"
+    },
+    {
+      "level": 3,
+      "text": "Dashboard overview",
+      "id": "dashboard-overview"
+    },
+    {
+      "level": 3,
+      "text": "Chat Sessions",
+      "id": "chat-sessions"
+    },
+    {
+      "level": 3,
+      "text": "AI Stats",
+      "id": "ai-stats"
+    },
+    {
+      "level": 3,
+      "text": "Accounts",
+      "id": "accounts"
+    },
+    {
+      "level": 3,
+      "text": "Model & MCP",
+      "id": "model-mcp"
+    },
+    {
+      "level": 3,
+      "text": "Sidebar and readiness",
+      "id": "sidebar-and-readiness"
+    },
+    {
+      "level": 2,
+      "text": "Commands",
+      "id": "commands"
+    },
+    {
+      "level": 2,
+      "text": "Installation",
+      "id": "installation"
+    },
+    {
+      "level": 2,
+      "text": "Usage",
+      "id": "usage"
+    },
+    {
+      "level": 2,
+      "text": "Privacy and data sources",
+      "id": "privacy-and-data-sources"
+    },
+    {
+      "level": 2,
+      "text": "Limitations",
+      "id": "limitations"
+    }
+  ],
+  "hasMermaid": false,
+  "links": {
+    "marketplace": {
+      "label": "Install from the Visual Studio Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=ShubhJ.ghcp-dashboard"
+    },
+    "video": {
+      "label": "Watch the dashboard overview",
+      "url": "https://www.youtube.com/watch?v=MBr1_hbbHzs"
+    }
+  },
+  "relatedTools": [],
+  "relatedArticles": []
+}

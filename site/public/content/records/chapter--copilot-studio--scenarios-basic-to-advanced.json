@@ -1,0 +1,140 @@
+{
+  "guideSlug": "copilot-studio",
+  "partKey": "hands-on-labs",
+  "slug": "scenarios-basic-to-advanced",
+  "order": 8,
+  "title": "Scenarios: Basic to Advanced",
+  "summary": "Progress from simple responses to grounded, action-oriented agent scenarios.",
+  "type": "chapter",
+  "level": "intermediate",
+  "updated": "2026-08-26",
+  "readingTime": 6,
+  "route": "#/learn/copilot-studio/scenarios-basic-to-advanced",
+  "recordFile": "chapter--copilot-studio--scenarios-basic-to-advanced",
+  "guideTitle": "Copilot Studio Guide",
+  "partTitle": "Hands-On Labs",
+  "position": 9,
+  "chapterCount": 19,
+  "html": "<p>A ladder of practice scenarios. Each lists the <strong>concepts</strong>, a <strong>suggested flow</strong>, and <strong>tips</strong>.\nWork down the list — difficulty and realism increase as you go.</p>\n<p>Legend: 🟢 Basic · 🟡 Intermediate · 🔴 Advanced</p>\n<hr />\n<h2 id=\"scenario-1-hello-greeting\">🟢 Scenario 1 — “Hello” greeting</h2>\n<p><strong>Goal:</strong> Agent greets the user warmly with a little variety.\n<strong>Concepts:</strong> Topic, Trigger phrases, <strong>Message node</strong>, message variations.</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    T[Trigger: hi/hello/hey] --&gt; M[Message: random greeting variation]\n</pre></div><p><strong>Tips:</strong> Add 3–4 greeting variations in one Message node so it feels human. Keep trigger phrases short.</p>\n<hr />\n<h2 id=\"scenario-2-single-faq-answer\">🟢 Scenario 2 — Single FAQ answer</h2>\n<p><strong>Goal:</strong> Answer “What’s your return policy?” with a fixed message.\n<strong>Concepts:</strong> Topic, <strong>Message node</strong>.</p>\n<p><strong>Flow:</strong> Trigger (<code>return policy</code>, <code>can I return</code>, <code>refund</code>) → Message with the policy text + a link.</p>\n<p><strong>Tips:</strong> This is the simplest useful topic. Later, replace many FAQ topics with <strong>knowledge sources</strong></p>\n<ul>\n<li>generative answers.</li>\n</ul>\n<hr />\n<h2 id=\"scenario-3-multiple-choice-menu\">🟢 Scenario 3 — Multiple-choice menu</h2>\n<p><strong>Goal:</strong> Offer 3 options as buttons and respond to the choice.\n<strong>Concepts:</strong> <strong>Question node</strong> (Multiple choice), <strong>Choice</strong> variable, <strong>Condition</strong>.</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    Q[Question: Pick a department  -&gt; buttons] --&gt; C{Condition on choice}\n    C --&gt;|Sales| S[Message: Sales info]\n    C --&gt;|Support| Su[Message: Support info]\n    C --&gt;|Billing| B[Message: Billing info]\n</pre></div><p><strong>Tips:</strong> Multiple-choice renders buttons automatically; users can also type. Store as a <strong>Choice</strong>.</p>\n<hr />\n<h2 id=\"scenario-4-collect-a-name-and-echo-it\">🟢 Scenario 4 — Collect a name and echo it</h2>\n<p><strong>Goal:</strong> Ask the user’s name, then greet them by it.\n<strong>Concepts:</strong> <strong>Question node</strong>, <strong>prebuilt entity</strong> (Person name), <strong>variable</strong>, variable-in-message.</p>\n<p><strong>Flow:</strong> Question (Person name → <code>UserName</code>) → Message <code>Nice to meet you, {UserName}!</code></p>\n<p><strong>Tips:</strong> Insert the variable with the <strong><code>{x}</code></strong> icon. Rename <code>Var1</code> → <code>UserName</code> immediately.</p>\n<hr />\n<h2 id=\"scenario-5-appointment-booking-mixed-prebuilt-entities\">🟡 Scenario 5 — Appointment booking (mixed prebuilt entities)</h2>\n<p><strong>Goal:</strong> Collect name, email, and a date/time for an appointment, then confirm.\n<strong>Concepts:</strong> Multiple <strong>prebuilt entities</strong> (Person name, Email, Date and time), several variables.</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    Q1[Person name -&gt; Name] --&gt; Q2[Email -&gt; Email]\n    Q2 --&gt; Q3[Date and time -&gt; When]\n    Q3 --&gt; M[Message: confirm Name/Email/When]\n</pre></div><p><strong>Tips:</strong> The <strong>Email</strong> entity validates format; the <strong>Date and time</strong> entity understands\n“next Tuesday at 2.” Confirm everything back in one message.</p>\n<hr />\n<h2 id=\"scenario-6-custom-closed-list-synonyms\">🟡 Scenario 6 — Custom closed-list + synonyms</h2>\n<p><strong>Goal:</strong> Recognize a product category from natural phrasing.\n<strong>Concepts:</strong> <strong>Custom entity</strong> (closed list), synonyms, buttons, slot filling.</p>\n<p><strong>Flow:</strong> Question (custom <code>Product Category</code> entity, options-as-buttons → <code>Category</code>) → branch messages.</p>\n<p><strong>Tips:</strong> Add synonyms (e.g., <em>trekking</em> → <strong>Hiking</strong>) so typed answers still map to your canonical\nvalues. This is the foundation of <a href=\"#/learn/copilot-studio/lab1\">Lab 1</a>.</p>\n<hr />\n<h2 id=\"scenario-7-remember-the-user-across-topics-global-variable\">🟡 Scenario 7 — Remember the user across topics (global variable)</h2>\n<p><strong>Goal:</strong> Ask the name once; reuse it in every topic.\n<strong>Concepts:</strong> <strong>Global variable</strong>, multi-topic reuse, session lifecycle.</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    W[Welcome: set Global.UserName] --&gt; O[Other topics use Global.UserName]\n</pre></div><p><strong>Tips:</strong> Convert the topic variable to <strong>Global</strong>. If a topic needs it before it’s set, the agent\nauto-jumps to where it’s defined, asks, and returns. This is the core of <a href=\"#/learn/copilot-studio/lab2\">Lab 2</a>.</p>\n<hr />\n<h2 id=\"scenario-8-validate-and-reprompt\">🟡 Scenario 8 — Validate and reprompt</h2>\n<p><strong>Goal:</strong> Keep asking until you get a valid value; escalate after N tries.\n<strong>Concepts:</strong> <strong>Question properties</strong> (reprompt/retries), <strong>Condition</strong>, counter variable.</p>\n<p><strong>Flow:</strong> Question → on no-recognition, reprompt up to 2× → if still failing, <strong>Redirect</strong> to a\n“Talk to a human” topic.</p>\n<p><strong>Tips:</strong> Use the node’s <strong>Properties → reprompt</strong> settings. For custom counting, increment a\n<strong>Number</strong> variable with <strong>Set variable value</strong> and branch on it.</p>\n<hr />\n<h2 id=\"scenario-9-conditional-branching-with-power-fx\">🟡 Scenario 9 — Conditional branching with Power Fx</h2>\n<p><strong>Goal:</strong> Different message based on a numeric threshold.\n<strong>Concepts:</strong> <strong>Number</strong> variable, <strong>Condition</strong> node, <strong>Power Fx</strong>.</p>\n<p><strong>Flow:</strong> Question (Number → <code>Score</code>) → Condition <code>Topic.Score &gt;= 50</code> → Pass/Fail messages.</p>\n<p><strong>Tips:</strong> Power Fx examples: <code>If(Topic.Score &gt;= 50, \"Pass\", \"Fail\")</code>, <code>!IsBlank(Topic.Email)</code>,\n<code>Upper(Topic.Name)</code>.</p>\n<hr />\n<h2 id=\"scenario-10-one-of-multiple-entities-flexible-identifier\">🔴 Scenario 10 — One of multiple entities (flexible identifier)</h2>\n<p><strong>Goal:</strong> Accept an <strong>order ID</strong> <em>or</em> a <strong>phone number</strong> in a single question.\n<strong>Concepts:</strong> <strong>Identify → One of multiple entities</strong>, <strong>Record</strong> variable, <strong>is not Blank</strong> branching.</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    Q[Question: One of multiple entities -&gt; Identifier] --&gt; C{Which field is filled?}\n    C --&gt;|Identifier.order is not Blank| O[Look up by order]\n    C --&gt;|Identifier.phone is not Blank| P[Look up by phone]\n    C --&gt;|All others| U[Ask again / escalate]\n</pre></div><p><strong>Tips:</strong> The result is a <strong>Record</strong> with one field per entity. Only the <strong>first</strong> matched entity is\ncaptured if the user provides several. Branch with <strong>is not Blank</strong>.</p>\n<hr />\n<h2 id=\"scenario-11-proactive-slot-filling-skip-known-answers\">🔴 Scenario 11 — Proactive slot filling (skip known answers)</h2>\n<p><strong>Goal:</strong> From <em>“I want hiking boots under $100”</em>, fill activity <strong>and</strong> budget at once and skip those\nquestions.\n<strong>Concepts:</strong> <strong>Proactive slot filling</strong>, multiple entities, natural conversation.</p>\n<p><strong>Tips:</strong> Author the questions normally; the agent fills any slots it can detect up front and <strong>skips</strong>\nthe corresponding Question nodes. Verify with <strong>Track between topics</strong> — you’ll see nodes get skipped.</p>\n<hr />\n<h2 id=\"scenario-12-look-up-data-with-power-automate\">🔴 Scenario 12 — Look up data with Power Automate</h2>\n<p><strong>Goal:</strong> Take an order ID and return a real status from an external system.\n<strong>Concepts:</strong> <strong>Call an action</strong> (Power Automate flow), input/output parameters, variables.</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    Q[Question: Order ID -&gt; OrderId] --&gt; A[Call an action: flow takes OrderId, returns Status]\n    A --&gt; M[Message: Your order is {Status}]\n</pre></div><p><strong>Tips:</strong> The flow’s <strong>inputs</strong> map to your variables; its <strong>outputs</strong> become new variables you use in\nlater nodes. Keep secrets in <strong>environment variables</strong>, not hard-coded.</p>\n<hr />\n<h2 id=\"scenario-13-generative-answers-from-knowledge\">🔴 Scenario 13 — Generative answers from knowledge</h2>\n<p><strong>Goal:</strong> Answer open questions from your website/docs without scripting every FAQ.\n<strong>Concepts:</strong> <strong>Knowledge sources</strong>, <strong>Generative answers</strong> node, fallback behavior.</p>\n<p><strong>Flow:</strong> Add knowledge (URL/SharePoint/files) → in a topic (or the fallback <strong>Conversational boosting</strong>\nsystem topic), use a <strong>Generative answers</strong> node over those sources.</p>\n<p><strong>Tips:</strong> Great for long-tail questions. Combine with scripted topics for transactions (booking,\nlookups) where you need control.</p>\n<hr />\n<h2 id=\"scenario-14-authenticated-personalized-greeting\">🔴 Scenario 14 — Authenticated, personalized greeting</h2>\n<p><strong>Goal:</strong> Greet a signed-in user by name from their profile — no question needed.\n<strong>Concepts:</strong> <strong>Authentication</strong>, <strong>system/user variables</strong> (<code>User.DisplayName</code>, <code>User.IsLoggedIn</code>).</p>\n<p><strong>Flow:</strong> Condition <code>System.User.IsLoggedIn = true</code> → Message <code>Welcome back, {System.User.DisplayName}!</code>\nelse prompt to sign in.</p>\n<p><strong>Tips:</strong> Requires authentication configured in <strong>Settings → Security</strong>. Use <strong>Sensitive data</strong> flags\nfor anything confidential so it stays out of transcripts/logs.</p>\n<hr />\n<h2 id=\"scenario-15-multi-environment-with-environment-variables-alm\">🔴 Scenario 15 — Multi-environment with environment variables (ALM)</h2>\n<p><strong>Goal:</strong> Use the right API endpoint/key per environment (dev/test/prod) without editing topics.\n<strong>Concepts:</strong> <strong>Environment variables</strong> (read-only in Copilot Studio), solutions, publishing.</p>\n<p><strong>Tips:</strong> Reference environment variables for endpoints/keys. Admins set values per environment in\nPower Apps. <strong>Secret</strong> environment variables are read at runtime (no republish needed); others require\n<strong>republish</strong> after a value change.</p>\n<hr />\n<h2 id=\"suggested-practice-order\">Suggested practice order</h2>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart LR\n    A[1-4 Basics] --&gt; B[5-9 Intermediate]\n    B --&gt; C[10-15 Advanced]\n</pre></div><ol>\n<li>Do <strong>1–4</strong> to get comfortable with topics, messages, questions, and one variable.</li>\n<li>Do <strong>5–9</strong> to combine entities, globals, validation, and Power Fx (this is <a href=\"#/learn/copilot-studio/lab1\">Lab 1</a> +\n<a href=\"#/learn/copilot-studio/lab2\">Lab 2</a> territory).</li>\n<li>Tackle <strong>10–15</strong> to reach production-grade agents: flexible input, external data, knowledge, auth,\nand ALM.</li>\n</ol>\n<hr />\n<h3 id=\"where-to-go-next\">Where to go next</h3>\n<ul>\n<li>Re-read <a href=\"#/learn/copilot-studio/entities-and-slot-filling\">05-entities-and-slot-filling.md</a> before Scenarios 10–11.</li>\n<li>Explore <strong>knowledge sources</strong> and <strong>generative orchestration</strong> for Scenario 13+.</li>\n<li>Learn <strong>Power Automate</strong> basics for Scenario 12.</li>\n<li>Read about <strong>Application Lifecycle Management (ALM)</strong> and <strong>solutions</strong> for Scenario 15.</li>\n</ul>\n<hr />\n<h2 id=\"official-microsoft-documentation-references\">Official Microsoft documentation (references)</h2>\n<p>The scenarios above draw on the following Microsoft Learn pages:</p>\n<ul>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-send-message\" target=\"_blank\" rel=\"noreferrer\">Send a message (Message node)</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-ask-a-question\" target=\"_blank\" rel=\"noreferrer\">Ask a question (Question node)</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-entities-slot-filling\" target=\"_blank\" rel=\"noreferrer\">Use entities and slot filling in agents</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-variables\" target=\"_blank\" rel=\"noreferrer\">Work with variables</a> · <a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-variables-bot\" target=\"_blank\" rel=\"noreferrer\">Global variables</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-using-conditions\" target=\"_blank\" rel=\"noreferrer\">Use conditions</a> · <a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-power-fx\" target=\"_blank\" rel=\"noreferrer\">Use Power Fx</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-flow\" target=\"_blank\" rel=\"noreferrer\">Add actions / call Power Automate flows</a> · <a href=\"https://learn.microsoft.com/microsoft-copilot-studio/add-tools-custom-agent\" target=\"_blank\" rel=\"noreferrer\">Add tools to custom agents</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio\" target=\"_blank\" rel=\"noreferrer\">Boost conversations with generative answers (knowledge)</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions\" target=\"_blank\" rel=\"noreferrer\">Orchestrate agent behavior with generative AI</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-end-user-authentication\" target=\"_blank\" rel=\"noreferrer\">Add user authentication to topics</a></li>\n<li><a href=\"https://learn.microsoft.com/power-apps/maker/data-platform/environmentvariables\" target=\"_blank\" rel=\"noreferrer\">Environment variables</a> · <a href=\"https://learn.microsoft.com/power-platform/alm/basics-alm\" target=\"_blank\" rel=\"noreferrer\">Application Lifecycle Management (ALM) basics</a></li>\n</ul>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "🟢 Scenario 1 — \"Hello\" greeting",
+      "id": "scenario-1-hello-greeting"
+    },
+    {
+      "level": 2,
+      "text": "🟢 Scenario 2 — Single FAQ answer",
+      "id": "scenario-2-single-faq-answer"
+    },
+    {
+      "level": 2,
+      "text": "🟢 Scenario 3 — Multiple-choice menu",
+      "id": "scenario-3-multiple-choice-menu"
+    },
+    {
+      "level": 2,
+      "text": "🟢 Scenario 4 — Collect a name and echo it",
+      "id": "scenario-4-collect-a-name-and-echo-it"
+    },
+    {
+      "level": 2,
+      "text": "🟡 Scenario 5 — Appointment booking (mixed prebuilt entities)",
+      "id": "scenario-5-appointment-booking-mixed-prebuilt-entities"
+    },
+    {
+      "level": 2,
+      "text": "🟡 Scenario 6 — Custom closed-list + synonyms",
+      "id": "scenario-6-custom-closed-list-synonyms"
+    },
+    {
+      "level": 2,
+      "text": "🟡 Scenario 7 — Remember the user across topics (global variable)",
+      "id": "scenario-7-remember-the-user-across-topics-global-variable"
+    },
+    {
+      "level": 2,
+      "text": "🟡 Scenario 8 — Validate and reprompt",
+      "id": "scenario-8-validate-and-reprompt"
+    },
+    {
+      "level": 2,
+      "text": "🟡 Scenario 9 — Conditional branching with Power Fx",
+      "id": "scenario-9-conditional-branching-with-power-fx"
+    },
+    {
+      "level": 2,
+      "text": "🔴 Scenario 10 — One of multiple entities (flexible identifier)",
+      "id": "scenario-10-one-of-multiple-entities-flexible-identifier"
+    },
+    {
+      "level": 2,
+      "text": "🔴 Scenario 11 — Proactive slot filling (skip known answers)",
+      "id": "scenario-11-proactive-slot-filling-skip-known-answers"
+    },
+    {
+      "level": 2,
+      "text": "🔴 Scenario 12 — Look up data with Power Automate",
+      "id": "scenario-12-look-up-data-with-power-automate"
+    },
+    {
+      "level": 2,
+      "text": "🔴 Scenario 13 — Generative answers from knowledge",
+      "id": "scenario-13-generative-answers-from-knowledge"
+    },
+    {
+      "level": 2,
+      "text": "🔴 Scenario 14 — Authenticated, personalized greeting",
+      "id": "scenario-14-authenticated-personalized-greeting"
+    },
+    {
+      "level": 2,
+      "text": "🔴 Scenario 15 — Multi-environment with environment variables (ALM)",
+      "id": "scenario-15-multi-environment-with-environment-variables-alm"
+    },
+    {
+      "level": 2,
+      "text": "Suggested practice order",
+      "id": "suggested-practice-order"
+    },
+    {
+      "level": 3,
+      "text": "Where to go next",
+      "id": "where-to-go-next"
+    },
+    {
+      "level": 2,
+      "text": "Official Microsoft documentation (references)",
+      "id": "official-microsoft-documentation-references"
+    }
+  ],
+  "hasMermaid": true,
+  "previous": {
+    "guideSlug": "copilot-studio",
+    "partKey": "hands-on-labs",
+    "slug": "lab2",
+    "order": 7,
+    "title": "Lab 2: Multi-Topic Customer Support Agent",
+    "summary": "Build a support agent that routes requests across coordinated topics.",
+    "type": "lab",
+    "level": "intermediate",
+    "updated": "2026-08-26",
+    "readingTime": 6,
+    "route": "#/learn/copilot-studio/lab2",
+    "recordFile": "chapter--copilot-studio--lab2"
+  },
+  "next": {
+    "guideSlug": "copilot-studio",
+    "partKey": "deep-dive",
+    "slug": "models-and-instructions",
+    "order": 9,
+    "title": "Models, Description & Instructions",
+    "summary": "Shape agent behavior with model choices, descriptions, and precise instructions.",
+    "type": "chapter",
+    "level": "intermediate",
+    "updated": "2026-08-26",
+    "readingTime": 10,
+    "route": "#/learn/copilot-studio/models-and-instructions",
+    "recordFile": "chapter--copilot-studio--models-and-instructions"
+  }
+}

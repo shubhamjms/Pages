@@ -1,0 +1,95 @@
+{
+  "guideSlug": "copilot-studio",
+  "partKey": "advanced-features",
+  "slug": "mcp",
+  "order": 15,
+  "title": "MCP (Model Context Protocol)",
+  "summary": "Understand how MCP exposes tools and context to compatible agents.",
+  "type": "chapter",
+  "level": "advanced",
+  "updated": "2026-08-26",
+  "readingTime": 6,
+  "route": "#/learn/copilot-studio/mcp",
+  "recordFile": "chapter--copilot-studio--mcp",
+  "guideTitle": "Copilot Studio Guide",
+  "partTitle": "Advanced Features",
+  "position": 16,
+  "chapterCount": 19,
+  "html": "<p><strong>MCP</strong> lets your agent connect to external <strong>tools, data, and capabilities</strong> through a single,\nstandardized protocol — instead of hand-building a custom integration for each system. In Copilot\nStudio you can add an <strong>MCP server</strong> as a <strong>tool</strong>, and the agent can then call whatever that server\nexposes.</p>\n<blockquote>\n<p>Think of MCP as a <strong>universal adapter</strong> (like USB-C) between AI agents and the systems they need to\nuse. Build/expose once, and any MCP-aware agent can plug in.</p>\n</blockquote>\n<hr />\n<h2 id=\"mcp-for-beginners-plain-english\">MCP for beginners (plain English)</h2>\n<p>Imagine your agent is a <strong>new employee</strong>. They’re smart and can chat, but they can’t actually <em>do</em>\nmuch until you give them access to the company’s tools — the ticket system, the order database, the\nshared drive. <strong>MCP is the standard “access badge + instructions”</strong> that lets your agent use those\noutside tools safely.</p>\n<p><strong>An everyday analogy</strong></p>\n<ul>\n<li>Your phone charger uses <strong>USB-C</strong> — one plug fits many devices. You don’t need a different cable for\nevery gadget.</li>\n<li><strong>MCP is USB-C for AI agents.</strong> One standard way to plug an agent into many different systems.</li>\n</ul>\n<p><strong>Two simple roles</strong></p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Role</th>\n<th>Plain meaning</th>\n<th>Who</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>MCP client</strong></td>\n<td>The thing that <em>wants</em> to use a tool</td>\n<td>Your <strong>agent</strong></td>\n</tr>\n<tr>\n<td><strong>MCP server</strong></td>\n<td>The thing that <em>offers</em> the tool</td>\n<td>The external <strong>system</strong> (or a wrapper around it)</td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p>The <strong>server</strong> says <em>“here’s what I can do”</em>; the <strong>client (your agent)</strong> says <em>“great, please do\nthis one.”</em></p>\n</blockquote>\n<p><strong>What an MCP server can give your agent</strong></p>\n<ul>\n<li><strong>Do something</strong> — e.g., <em>create a support ticket</em>, <em>look up an order</em> (called <strong>tools/actions</strong>).</li>\n<li><strong>Read something</strong> — e.g., <em>fetch a document or record</em> (called <strong>resources/data</strong>).</li>\n<li><strong>Reuse a prompt</strong> — a ready-made instruction the server provides (<strong>prompts</strong>).</li>\n</ul>\n<p><strong>A 10-second example</strong></p>\n<blockquote>\n<p>A customer says <em>“Where’s my order #123?”</em> Your agent doesn’t know — but an <strong>MCP server</strong> for the\norder system offers a <code>getOrderStatus</code> tool. The agent calls it, gets <em>“Shipped, arriving Tuesday,”</em>\nand tells the customer. You never had to build that lookup from scratch.</p>\n</blockquote>\n<p><strong>Why a beginner should care</strong></p>\n<ul>\n<li>You <strong>don’t write integration code</strong> — you connect an existing MCP server as a <strong>tool</strong>.</li>\n<li>The same server can be reused by <strong>other agents</strong>, so work isn’t repeated.</li>\n<li>It’s <strong>safe by design</strong> — admins control access, and security/DLP rules still apply.</li>\n</ul>\n<blockquote>\n<p>You’ll go deeper below, but that’s the whole idea: <strong>MCP is a standard way for your agent to borrow\ntools and data from other systems.</strong></p>\n</blockquote>\n<hr />\n<h2 id=\"1-what-is-mcp\">1. What is MCP?</h2>\n<p><strong>MCP (Model Context Protocol)</strong> is an <strong>open standard</strong> for connecting AI applications (like agents)\nto external systems. It defines a common “language” so an agent (the <strong>client</strong>) and a system (the\n<strong>server</strong>) can talk without bespoke glue code.</p>\n<ul>\n<li><strong>Open &amp; standardized</strong> — one protocol many tools/vendors implement.</li>\n<li><strong>Capability-based</strong> — a server advertises what it can do; the agent discovers and uses it.</li>\n<li><strong>Two-way</strong> — the agent can call actions and read data; the server returns structured results.</li>\n</ul>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart LR\n    A[Agent = MCP client] &lt;--&gt;|MCP protocol| S[MCP server]\n    S --&gt; T[Tools / actions]\n    S --&gt; D[Data / resources]\n    S --&gt; P[Prompts]\n</pre></div><blockquote>\n<p><strong>Why it exists:</strong> without a standard, every system needs a custom connector. MCP replaces “N×M\ncustom integrations” with “one protocol both sides speak.”</p>\n</blockquote>\n<hr />\n<h2 id=\"2-the-building-blocks-of-mcp\">2. The building blocks of MCP</h2>\n<p>An MCP server can expose three kinds of capabilities:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Capability</th>\n<th>What it is</th>\n<th>Example</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Tools</strong></td>\n<td>Actions the agent can <strong>call</strong> (functions)</td>\n<td><code>createTicket</code>, <code>getOrderStatus</code></td>\n</tr>\n<tr>\n<td><strong>Resources</strong></td>\n<td><strong>Data</strong> the agent can read</td>\n<td>A document, a record, a file listing</td>\n</tr>\n<tr>\n<td><strong>Prompts</strong></td>\n<td>Reusable <strong>prompt templates</strong> the server offers</td>\n<td>“Summarize this ticket”</td>\n</tr>\n</tbody>\n</table></div><p>The two sides:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Role</th>\n<th>Who plays it</th>\n<th>Job</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>MCP client</strong></td>\n<td>Your <strong>agent</strong> (Copilot Studio)</td>\n<td>Discovers and calls capabilities</td>\n</tr>\n<tr>\n<td><strong>MCP server</strong></td>\n<td>The external system/wrapper</td>\n<td>Exposes tools/resources/prompts</td>\n</tr>\n</tbody>\n</table></div><hr />\n<h2 id=\"3-how-mcp-works-step-by-step\">3. How MCP works (step by step)</h2>\n<ol>\n<li><strong>Connect</strong> — the agent (client) connects to an MCP server endpoint.</li>\n<li><strong>Discover</strong> — the server advertises its <strong>tools, resources, and prompts</strong> (names + schemas).</li>\n<li><strong>Decide</strong> — the agent’s orchestrator reads those descriptions and decides what to call for the\nuser’s request.</li>\n<li><strong>Call</strong> — the agent invokes a tool with structured <strong>inputs</strong> (matching the schema).</li>\n<li><strong>Execute</strong> — the server runs the action against the real system.</li>\n<li><strong>Return</strong> — the server sends back a structured <strong>result</strong>.</li>\n<li><strong>Respond</strong> — the agent uses the result in its reply (or chains another tool/topic).</li>\n</ol>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    U[User request] --&gt; O{Agent orchestrator}\n    O --&gt;|discover| S[MCP server lists tools]\n    O --&gt;|pick + call with inputs| C[Invoke tool]\n    C --&gt; X[Server executes on real system]\n    X --&gt; R[Structured result]\n    R --&gt; O\n    O --&gt; A[Answer to user]\n</pre></div><blockquote>\n<p>Because capabilities are <strong>self-described</strong>, generative orchestration can pick the right MCP tool\nthe same way it picks topics — by <strong>name + description</strong>. Good descriptions matter.</p>\n</blockquote>\n<hr />\n<h2 id=\"4-mcp-in-copilot-studio\">4. MCP in Copilot Studio</h2>\n<ul>\n<li>Add an <strong>MCP server</strong> under <strong>Tools → Add a tool</strong> (where supported in your environment).</li>\n<li>Once added, its tools appear alongside connectors, flows, and prompts — the agent can call them.</li>\n<li>Reference them by name with <strong><code>/</code></strong> in <strong>Instructions</strong> to steer when they’re used.</li>\n<li>Authentication, governance, and <strong>DLP</strong> still apply — admins control what’s allowed.</li>\n</ul>\n<p><strong>Example — IT support agent</strong></p>\n<pre aria-label=\"Code sample\"><code>User: \"My laptop won't connect to VPN and I need a ticket.\"\n→ Agent calls MCP tool  getKnowledge(\"VPN connect\")   (resource)\n→ Walks the user through the fix\n→ Still broken? Agent calls MCP tool  createTicket({ issue, user })  (action)\n→ Returns the ticket number to the user\n</code></pre>\n<hr />\n<h2 id=\"5-why-mcp-matters\">5. Why MCP matters</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Without MCP</th>\n<th>With MCP</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Custom connector per system</td>\n<td><strong>One standard</strong> many systems implement</td>\n</tr>\n<tr>\n<td>Tight coupling, lots of glue code</td>\n<td><strong>Loose coupling</strong> via a shared protocol</td>\n</tr>\n<tr>\n<td>Hard to reuse across agents</td>\n<td><strong>Reusable</strong> by any MCP-aware client</td>\n</tr>\n<tr>\n<td>Each integration re-invents auth/schema</td>\n<td><strong>Consistent</strong> discovery, schema, results</td>\n</tr>\n</tbody>\n</table></div><p><strong>Benefits:</strong> faster integration, reuse across agents/vendors, consistent security, and access to a\ngrowing ecosystem of ready-made MCP servers.</p>\n<hr />\n<h2 id=\"6-limitations-considerations\">6. Limitations &amp; considerations</h2>\n<ul>\n<li><strong>Server availability/feature support</strong> in Copilot Studio depends on your <strong>license, region, and\ncloud</strong> — check what’s enabled in your environment.</li>\n<li><strong>You trust the server.</strong> It runs real actions — vet the source, scope permissions, and respect\n<strong>DLP</strong> policies.</li>\n<li><strong>Auth &amp; secrets</strong> must be configured correctly; expired tokens break calls.</li>\n<li><strong>Latency &amp; reliability</strong> depend on the server and the systems behind it (throttling, timeouts).</li>\n<li><strong>Good descriptions required</strong> — vague tool/resource descriptions → the orchestrator won’t pick them.</li>\n<li><strong>Schema must match</strong> — inputs the agent sends must fit the tool’s expected schema.</li>\n<li><strong>Not a knowledge index</strong> — MCP <em>resources</em> return data on demand; for document Q&amp;A, also use\n<strong>knowledge sources</strong> (see <a href=\"#/learn/copilot-studio/knowledge-integration\">12-knowledge-integration.md</a>).</li>\n</ul>\n<hr />\n<h3 id=\"key-takeaways\">Key takeaways</h3>\n<ul>\n<li><strong>MCP = open standard</strong> that connects agents (clients) to external systems (servers) — a “USB-C for AI.”</li>\n<li>A server exposes <strong>tools</strong> (actions), <strong>resources</strong> (data), and <strong>prompts</strong> (templates).</li>\n<li>Flow: <strong>connect → discover → decide → call → execute → return → respond.</strong></li>\n<li>In Copilot Studio, add an <strong>MCP server as a tool</strong>; <strong>names + descriptions</strong> drive when it’s used.</li>\n<li>Mind <strong>trust, auth, DLP, latency</strong>, and <strong>region/license</strong> support.</li>\n</ul>\n<hr />\n<h2 id=\"official-microsoft-documentation-references\">Official Microsoft documentation (references)</h2>\n<ul>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/agent-extend-action-mcp\" target=\"_blank\" rel=\"noreferrer\">Extend your agent with Model Context Protocol (MCP)</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-plugin-actions\" target=\"_blank\" rel=\"noreferrer\">Add tools to a custom agent</a></li>\n<li><a href=\"https://modelcontextprotocol.io/\" target=\"_blank\" rel=\"noreferrer\">Model Context Protocol — official spec</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/admin-data-loss-prevention\" target=\"_blank\" rel=\"noreferrer\">Data Loss Prevention (DLP) for agents</a></li>\n</ul>\n<p>Next: revisit <a href=\"#/learn/copilot-studio/core-concepts#02-core-concepts__5-orchestration-classic-vs-generative\">02-core-concepts.md</a> — MCP tools are chosen by the same orchestration logic.</p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "MCP for beginners (plain English)",
+      "id": "mcp-for-beginners-plain-english"
+    },
+    {
+      "level": 2,
+      "text": "1. What is MCP?",
+      "id": "1-what-is-mcp"
+    },
+    {
+      "level": 2,
+      "text": "2. The building blocks of MCP",
+      "id": "2-the-building-blocks-of-mcp"
+    },
+    {
+      "level": 2,
+      "text": "3. How MCP works (step by step)",
+      "id": "3-how-mcp-works-step-by-step"
+    },
+    {
+      "level": 2,
+      "text": "4. MCP in Copilot Studio",
+      "id": "4-mcp-in-copilot-studio"
+    },
+    {
+      "level": 2,
+      "text": "5. Why MCP matters",
+      "id": "5-why-mcp-matters"
+    },
+    {
+      "level": 2,
+      "text": "6. Limitations & considerations",
+      "id": "6-limitations-considerations"
+    },
+    {
+      "level": 3,
+      "text": "Key takeaways",
+      "id": "key-takeaways"
+    },
+    {
+      "level": 2,
+      "text": "Official Microsoft documentation (references)",
+      "id": "official-microsoft-documentation-references"
+    }
+  ],
+  "hasMermaid": true,
+  "previous": {
+    "guideSlug": "copilot-studio",
+    "partKey": "advanced-features",
+    "slug": "ai-prompts",
+    "order": 14,
+    "title": "AI Prompts",
+    "summary": "Create reusable generative building blocks with clear inputs and outputs.",
+    "type": "chapter",
+    "level": "advanced",
+    "updated": "2026-08-26",
+    "readingTime": 4,
+    "route": "#/learn/copilot-studio/ai-prompts",
+    "recordFile": "chapter--copilot-studio--ai-prompts"
+  },
+  "next": {
+    "guideSlug": "copilot-studio",
+    "partKey": "security-patterns",
+    "slug": "security-guidelines",
+    "order": 16,
+    "title": "Security Guidelines for Agents",
+    "summary": "Apply identity, permission, data, and review controls to agent solutions.",
+    "type": "reference",
+    "level": "advanced",
+    "updated": "2026-08-26",
+    "readingTime": 9,
+    "route": "#/learn/copilot-studio/security-guidelines",
+    "recordFile": "chapter--copilot-studio--security-guidelines"
+  }
+}

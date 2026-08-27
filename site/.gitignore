@@ -1,0 +1,21 @@
+# Installed dependencies
+node_modules/
+
+# Generated build and content output
+dist/
+.vite/
+src/generated/
+
+# Test and tool output
+coverage/
+*.log
+
+# Local environment overrides
+.env
+.env.*
+!.env.example
+*.local
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
