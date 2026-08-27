@@ -3,7 +3,7 @@ name: Deploy fieldnotes to Pages
 on:
   push:
     branches:
-      - main
+      - web-checks
   workflow_dispatch:
 
 permissions:

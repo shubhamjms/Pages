@@ -26,4 +26,4 @@ The content generator validates metadata, relationships, internal links, and req
 
 ## Deployment
 
-Pushes to `main` run `.github/workflows/deploy-pages.yml` and publish `site/dist/` to [shubhamjms.github.io/Pages](https://shubhamjms.github.io/Pages/).
+Pushes to `web-checks` run `.github/workflows/deploy-pages.yml` and publish `site/dist/` to [shubhamjms.github.io/Pages](https://shubhamjms.github.io/Pages/).
