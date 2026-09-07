@@ -277,6 +277,46 @@ function buildArticles(topicSlugs) {
   return summaries.sort((left, right) => right.published.localeCompare(left.published));
 }
 
+function buildLinkedInArticles() {
+  const relativePath = "linkedin-articles.yml";
+  const absolutePath = path.join(contentRoot, relativePath);
+  const sourcePath = sourceLabel(absolutePath);
+  if (!fs.existsSync(absolutePath)) throw new Error(`${sourcePath}: required article inventory is missing.`);
+
+  const entries = YAML.parse(fs.readFileSync(absolutePath, "utf8"));
+  if (!Array.isArray(entries)) throw new Error(`${sourcePath}: article inventory must be a YAML array.`);
+
+  const urls = new Set();
+  return entries
+    .map((entry, index) => {
+      const itemPath = `${sourcePath}: entry ${index + 1}`;
+      if (!entry || typeof entry !== "object") throw new Error(`${itemPath} must be an object.`);
+      const title = requireString(entry.title, "title", itemPath);
+      const published = requireDate(entry.published, "published", itemPath);
+      const linkedinUrl = requireString(entry.linkedinUrl, "linkedinUrl", itemPath);
+      const coverImage = requireString(entry.coverImage, "coverImage", itemPath);
+      let parsedUrl;
+      try {
+        parsedUrl = new URL(linkedinUrl);
+      } catch {
+        throw new Error(`${itemPath}: linkedinUrl must be a valid URL.`);
+      }
+      if (parsedUrl.protocol !== "https:" || !parsedUrl.hostname.endsWith("linkedin.com") || !parsedUrl.pathname.startsWith("/pulse/")) {
+        throw new Error(`${itemPath}: linkedinUrl must be a LinkedIn Pulse URL.`);
+      }
+      if (urls.has(linkedinUrl)) throw new Error(`${itemPath}: linkedinUrl is duplicated.`);
+      if (!coverImage.startsWith("./article-covers/")) {
+        throw new Error(`${itemPath}: coverImage must point to ./article-covers/.`);
+      }
+      if (!fs.existsSync(path.join(projectRoot, "public", coverImage.slice(2)))) {
+        throw new Error(`${itemPath}: coverImage "${coverImage}" does not exist in public/.`);
+      }
+      urls.add(linkedinUrl);
+      return { title, published, linkedinUrl, coverImage };
+    })
+    .sort((left, right) => right.published.localeCompare(left.published));
+}
+
 function readGuideConfig(guideSlug) {
   const configPath = path.join(contentRoot, "learning", guideSlug, "guide.yml");
   if (!fs.existsSync(configPath)) throw new Error(`${sourceLabel(configPath)}: required guide config is missing.`);
@@ -631,6 +671,7 @@ export function generateContent() {
   const topics = buildTopics();
   const topicSlugs = new Set(topics.map((topic) => topic.slug));
   const articles = buildArticles(topicSlugs);
+  const linkedinArticles = buildLinkedInArticles();
   const guides = buildGuides();
   const toolLibrary = buildTools(new Set(articles.map((article) => article.slug)));
   validateHome(
@@ -651,12 +692,13 @@ export function generateContent() {
       articleCount: articles.filter((article) => article.topic === topic.slug).length,
     })),
     articles,
+    linkedinArticles,
     guides,
     toolLibrary: toolLibrary.library,
     toolCategories: toolLibrary.categories,
   });
   const toolCount = toolLibrary.categories.reduce((total, category) => total + category.toolCount, 0);
-  console.log(`Generated ${articles.length} articles, ${guides.length} guides, and ${toolCount} tools.`);
+  console.log(`Generated ${articles.length} fieldnotes, ${linkedinArticles.length} LinkedIn articles, ${guides.length} guides, and ${toolCount} tools.`);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

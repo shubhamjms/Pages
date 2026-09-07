@@ -305,6 +305,93 @@ p { text-wrap: pretty; }
   background: rgba(221, 243, 252, 0.24);
 }
 
+.linkedin-article-list {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  list-style: none;
+}
+
+.linkedin-article-item {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(23, 32, 27, 0.14);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.76);
+  backdrop-filter: blur(20px) saturate(118%);
+}
+
+.linkedin-article-cover {
+  aspect-ratio: 16 / 9;
+  display: block;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  background: #101312;
+}
+
+.linkedin-article-cover img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 220ms ease;
+}
+
+.linkedin-article-cover:hover img {
+  transform: scale(1.02);
+}
+
+.linkedin-article-body {
+  min-height: 210px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.linkedin-article-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+}
+
+.linkedin-article-number {
+  color: rgba(31, 117, 153, 0.34);
+  font-family: var(--editorial);
+  font-size: 1.9rem;
+  line-height: 1;
+}
+
+.linkedin-article-item time {
+  color: var(--muted-ink);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+}
+
+.linkedin-article-item h3 {
+  margin: 0.8rem 0 1.5rem;
+  font-family: var(--editorial);
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.linkedin-article-item h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.linkedin-article-item h3 a:hover {
+  color: var(--sky);
+}
+
+.linkedin-article-item .text-link {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
 .inline-empty {
   padding: 3rem 0;
   border-top: 1px solid var(--line);
@@ -1340,6 +1427,9 @@ p { text-wrap: pretty; }
   .page-deck { font-size: 1.15rem; }
   .filter-bar { padding: 1.25rem; grid-template-columns: 1fr; }
   .content-section, .guide-part, .tool-library-intro { padding: 4rem 1.25rem; }
+  .linkedin-article-list { grid-template-columns: 1fr; }
+  .linkedin-article-body { min-height: 190px; padding: 1.25rem; }
+  .linkedin-article-item h3 { font-size: 1.45rem; }
   .topic-overview { padding: 2.5rem 1.25rem; grid-template-columns: 1fr; gap: 2rem; }
   .related-band { margin: 4rem 1.25rem; }
   .guide-grid, .chapter-grid, .category-grid, .tool-grid { grid-template-columns: 1fr; }

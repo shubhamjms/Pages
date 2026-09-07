@@ -7,6 +7,7 @@ import {
   LayoutGrid,
   Library,
   Menu,
+  Newspaper,
   UserRound,
   UsersRound,
   Wrench,
@@ -36,6 +37,7 @@ const icons = {
   LayoutGrid,
   Library,
   Menu,
+  Newspaper,
   UserRound,
   UsersRound,
   Wrench,
@@ -312,6 +314,39 @@ function renderLibrary(query: URLSearchParams): string {
       <section class="content-section" aria-labelledby="library-results-title">
         <div class="section-heading-row section-heading-row--compact"><div><p class="kicker">Filtered collection</p><h2 id="library-results-title">${articles.length} ${articles.length === 1 ? "result" : "results"}</h2></div><a class="quiet-link" href="#/library">Clear filters</a></div>
         ${articles.length ? `<div class="article-grid">${articles.map((article) => articleCard(article)).join("")}</div>` : `<div class="inline-empty"><h3>No notes match these filters.</h3><p>Reset the filters to return to the complete library.</p></div>`}
+      </section>
+    </div>`;
+}
+
+function renderArticles(): string {
+  const articles = contentIndex.linkedinArticles;
+  return `
+    <div class="view collection-view" id="view-articles">
+      ${pageHeader("Article archive", "Articles from LinkedIn", "A chronological index of writing on AI, GitHub Copilot, Dynamics 365, and practical development.", `${articles.length} published articles`)}
+      <section class="content-section linkedin-articles-section" aria-labelledby="linkedin-articles-title">
+        <div class="section-heading-row section-heading-row--compact">
+          <div><p class="kicker">Original publications</p><h2 id="linkedin-articles-title">All articles</h2></div>
+        </div>
+        <ol class="linkedin-article-list">
+          ${articles
+            .map(
+              (article, index) => `
+                <li class="linkedin-article-item">
+                  <a class="linkedin-article-cover" href="${article.linkedinUrl}" target="_blank" rel="noopener noreferrer" aria-label="Read ${escapeHtml(article.title)} on LinkedIn">
+                    <img src="${article.coverImage}" alt="${escapeHtml(article.title)} cover" loading="lazy">
+                  </a>
+                  <div class="linkedin-article-body">
+                    <div class="linkedin-article-meta">
+                      <span class="linkedin-article-number" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span>
+                      <time datetime="${article.published}">${escapeHtml(formatDate(article.published))}</time>
+                    </div>
+                    <h3><a href="${article.linkedinUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(article.title)}</a></h3>
+                    <a class="text-link" href="${article.linkedinUrl}" target="_blank" rel="noopener noreferrer" aria-label="Read ${escapeHtml(article.title)} on LinkedIn">Read on LinkedIn <i data-lucide="external-link"></i></a>
+                  </div>
+                </li>`,
+            )
+            .join("")}
+        </ol>
       </section>
     </div>`;
 }
@@ -618,6 +653,7 @@ function parseRoute(): RouteState {
 function resolveRoute(route: RouteState): RouteResolution {
   const [section, first, second, third] = route.segments;
   if (!section || section === "home") return { html: renderHome(), title: "The Builder's Fieldnotes" };
+  if (section === "articles" && !first) return { html: renderArticles(), title: "Articles · The Builder's Fieldnotes" };
   if (section === "library" && !first) return { html: renderLibrary(route.query), title: "Library · The Builder's Fieldnotes" };
   if (section === "topic" && first && !second) {
     const topic = contentIndex.topics.find((item) => item.slug === first);
@@ -979,6 +1015,7 @@ function shellMarkup(): string {
           <a id="app-header-brand" href="#/home" aria-label="The Builder's Fieldnotes home"><span class="brand-fox" aria-hidden="true">🦊</span><span>The Builder's Fieldnotes</span></a>
           <button class="icon-button menu-button" id="menu-toggle" type="button" aria-controls="site-navigation" aria-expanded="false" aria-label="Open navigation"><i data-lucide="menu"></i></button>
           <nav id="site-navigation" aria-label="Primary navigation">
+            <a href="#/articles" data-nav-prefix="#/articles"><i data-lucide="newspaper"></i><span>Articles</span></a>
             <a href="#/library" data-nav-prefix="#/library"><i data-lucide="library"></i><span>Library</span></a>
             <a href="#/learn" data-nav-prefix="#/learn"><i data-lucide="book-open"></i><span>Learning</span></a>
             <a href="#/tools" data-nav-prefix="#/tools"><i data-lucide="wrench"></i><span>Tools</span></a>

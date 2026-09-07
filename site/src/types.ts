@@ -31,6 +31,13 @@ export interface ArticleRecord extends ArticleSummary {
   relatedArticles: string[];
 }
 
+export interface LinkedInArticleSummary {
+  title: string;
+  published: string;
+  linkedinUrl: string;
+  coverImage: string;
+}
+
 export interface TopicRecord extends PageRecord {
   slug: string;
   route: string;
@@ -146,6 +153,7 @@ export interface ContentIndex {
   about: PageRecord;
   topics: TopicRecord[];
   articles: ArticleSummary[];
+  linkedinArticles: LinkedInArticleSummary[];
   guides: GuideSummary[];
   toolLibrary: PageRecord;
   toolCategories: ToolCategoryRecord[];
