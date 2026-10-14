@@ -128,7 +128,7 @@ function guideFeature(guide: GuideSummary): string {
 function toolFeature(tool: ToolSummary): string {
   return `
     <article class="tool-feature">
-      <span class="tool-mark" aria-hidden="true"><i data-lucide="wrench"></i></span>
+      ${toolCardMark(tool)}
       <div>
         <p class="metadata">${escapeHtml(displayLabel(tool.kind))} · ${escapeHtml(tool.status)}</p>
         <h3><a href="${tool.route}">${escapeHtml(tool.title)}</a></h3>
@@ -136,6 +136,10 @@ function toolFeature(tool: ToolSummary): string {
       </div>
       <a class="text-link" href="${tool.route}">Open tool note <i data-lucide="arrow-right"></i></a>
     </article>`;
+}
+
+function toolCardMark(tool: ToolSummary): string {
+  return `<span class="tool-mark${tool.titleImage ? " tool-mark--image" : ""}" aria-hidden="true">${tool.titleImage ? `<img src="${escapeHtml(tool.titleImage)}" alt="" width="48" height="48">` : '<i data-lucide="wrench"></i>'}</span>`;
 }
 
 function findArticle(slug: string): ArticleSummary | undefined {
@@ -270,11 +274,11 @@ function renderHome(): string {
     </div>`;
 }
 
-function pageHeader(kicker: string, title: string, summary: string, metadata = ""): string {
+function pageHeader(kicker: string, title: string, summary: string, metadata = "", brand?: { image: string; label: string; slug: string }): string {
   return `
     <header class="page-header">
       <p class="kicker">${escapeHtml(kicker)}</p>
-      <h1 tabindex="-1">${escapeHtml(title)}</h1>
+      <h1${brand ? ' class="page-header__branded-title"' : ""} tabindex="-1">${brand ? `<span class="page-header__brand page-header__brand--${brand.slug}"><img src="${brand.image}" alt="" width="64" height="64"></span><span>${escapeHtml(title)}</span>` : escapeHtml(title)}</h1>
       <p class="page-deck">${escapeHtml(summary)}</p>
       ${metadata ? `<p class="metadata page-metadata">${escapeHtml(metadata)}</p>` : ""}
     </header>`;
@@ -406,17 +410,29 @@ function renderGuide(guide: GuideSummary): string {
 function toolCard(tool: ToolSummary): string {
   return `
     <article class="tool-card">
-      <div class="tool-card__top"><span class="tool-mark" aria-hidden="true"><i data-lucide="wrench"></i></span><span class="status-label">${escapeHtml(tool.status)}</span></div>
+      <div class="tool-card__top">${toolCardMark(tool)}<span class="status-label">${escapeHtml(tool.status)}</span></div>
       <p class="metadata">${escapeHtml(displayLabel(tool.kind))} · ${escapeHtml(tool.platforms.slice(0, 2).map(displayLabel).join(" / "))}</p>
       <h3><a href="${tool.route}">${escapeHtml(tool.title)}</a></h3><p>${escapeHtml(tool.summary)}</p>
       <a class="text-link" href="${tool.route}">View tool note <i data-lucide="arrow-right"></i></a>
     </article>`;
 }
 
+function toolCategoryBrand(category: ToolCategoryRecord): { image: string; label: string; slug: string } | undefined {
+  return category.slug === "vs-code"
+    ? { image: "./brands/visual-studio-code.png", label: "Visual Studio Code", slug: "vs-code" }
+    : category.slug === "edge"
+      ? { image: "./brands/microsoft-edge.svg", label: "Microsoft Edge", slug: "edge" }
+      : undefined;
+}
+
 function categoryCard(category: ToolCategoryRecord): string {
+  const brand = toolCategoryBrand(category);
   return `
     <article class="category-card">
-      <p class="metadata">${category.toolCount} ${category.toolCount === 1 ? "tool" : "tools"} · Updated ${formatDate(category.updated)}</p>
+      <div class="category-card__top">
+        ${brand ? `<span class="category-card__brand category-card__brand--${category.slug}"><img src="${brand.image}" alt="${brand.label}" width="44" height="44"></span>` : ""}
+        <p class="metadata">${category.toolCount} ${category.toolCount === 1 ? "tool" : "tools"} · Updated ${formatDate(category.updated)}</p>
+      </div>
       <h2><a href="${category.route}">${escapeHtml(category.title)}</a></h2><p>${escapeHtml(category.summary)}</p>
       <dl class="category-counts"><div><dt>Stable</dt><dd>${category.stableCount}</dd></div><div><dt>Preview</dt><dd>${category.previewCount}</dd></div><div><dt>Archived</dt><dd>${category.archivedCount}</dd></div></dl>
       <a class="text-link" href="${category.route}">Browse category <i data-lucide="arrow-right"></i></a>
@@ -437,10 +453,11 @@ function renderTools(): string {
 
 function renderToolCategory(category: ToolCategoryRecord): string {
   const tools = [...category.tools].sort((left, right) => Number(category.featuredTools.includes(right.slug)) - Number(category.featuredTools.includes(left.slug)) || left.status.localeCompare(right.status) || left.title.localeCompare(right.title));
+  const brand = toolCategoryBrand(category);
   return `
     <div class="view collection-view" id="view-tool-${category.slug}">
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="#/tools">Tools</a><span aria-hidden="true">/</span><span aria-current="page">${escapeHtml(category.title)}</span></nav>
-      ${pageHeader("Tool category", category.title, category.summary, `${category.toolCount} ${category.toolCount === 1 ? "tool" : "tools"} · Updated ${formatDate(category.updated)}`)}
+      ${pageHeader("Tool category", category.title, category.summary, `${category.toolCount} ${category.toolCount === 1 ? "tool" : "tools"} · Updated ${formatDate(category.updated)}`, brand)}
       <section class="content-section"><div class="tool-grid">${tools.map(toolCard).join("")}</div></section>
     </div>`;
 }
@@ -516,7 +533,7 @@ function renderChapterReader(chapter: ChapterRecord): string {
 }
 
 function externalToolLinks(tool: ToolRecord): string {
-  const links = Object.entries(tool.links);
+  const links = Object.entries(tool.links).filter(([key]) => key !== "video" && !key.endsWith("-video"));
   if (!links.length) return "";
   return `<div class="reader-actions">${links.map(([key, value], index) => {
     const link = typeof value === "string" ? { label: displayLabel(key), url: value } : value;
@@ -540,19 +557,102 @@ function youtubeVideoId(value: string): string | undefined {
 }
 
 function toolVideo(tool: ToolRecord): string {
-  const video = tool.links.video;
-  if (!video) return "";
-  const link = typeof video === "string" ? { label: "Video overview", url: video } : video;
-  const videoId = youtubeVideoId(link.url);
-  if (!videoId) return "";
-  const title = `${tool.title} video overview`;
+  const videos = Object.entries(tool.links)
+    .filter(([key]) => key === "video" || key.endsWith("-video"))
+    .flatMap(([key, value]) => {
+      const link = typeof value === "string" ? { label: displayLabel(key), url: value } : value;
+      const videoId = youtubeVideoId(link.url);
+      return videoId ? [{ ...link, videoId, embedHost: key === "youtube-video" ? "https://www.youtube.com" : "https://www.youtube-nocookie.com" }] : [];
+    });
+  if (!videos.length) return "";
+  const multipleVideos = videos.length > 1;
   return `
     <section class="tool-video" aria-labelledby="tool-video-title">
-      <div class="tool-video__heading"><p class="kicker">Watch the extension</p><h2 id="tool-video-title">Video overview</h2></div>
-      <div class="tool-video__frame">
-        <iframe src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&amp;mute=1&amp;playsinline=1&amp;rel=0" title="${escapeHtml(title)}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      <div class="tool-video__heading"><p class="kicker">Watch the extension</p><h2 id="tool-video-title">${multipleVideos ? "Video walkthroughs" : "Video overview"}</h2></div>
+      <div class="tool-video__grid">
+        ${videos.map((video) => `
+          <article class="tool-video__item">
+            <div class="tool-video__frame">
+              <iframe src="${video.embedHost}/embed/${video.videoId}?playsinline=1&amp;rel=0&amp;origin=${encodeURIComponent(window.location.origin)}" title="${escapeHtml(video.label)}" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            </div>
+            <p>${escapeHtml(video.label)}</p>
+          </article>`).join("")}
       </div>
     </section>`;
+}
+
+function toolReleaseNotice(tool: ToolRecord): string {
+  if (!tool.version || !tool.latestReleaseSummary) return "";
+  return `
+    <aside class="tool-release-notice" aria-label="Latest release">
+      <span class="tool-release-notice__icon" aria-hidden="true">NEW</span>
+      <div><strong>Version ${escapeHtml(tool.version)} is available</strong><p>${escapeHtml(tool.latestReleaseSummary)}</p></div>
+      <button type="button" data-tool-tab-target="releases">Read release notes <i data-lucide="arrow-right"></i></button>
+    </aside>`;
+}
+
+function insertAfterOverviewHeading(html: string, markup: string): string {
+  const headingStart = html.indexOf('<h2 id="overview">');
+  if (headingStart === -1) return `${markup}${html}`;
+  const headingEnd = html.indexOf("</h2>", headingStart);
+  if (headingEnd === -1) return `${markup}${html}`;
+  const insertionPoint = headingEnd + "</h2>".length;
+  return `${html.slice(0, insertionPoint)}${markup}${html.slice(insertionPoint)}`;
+}
+
+function renderProductToolContent(tool: ToolRecord, facts: string): string {
+  const releaseMarker = '<h2 id="release-notes">';
+  const roadmapMarker = '<h2 id="roadmap">';
+  const releaseStart = tool.html.indexOf(releaseMarker);
+  const roadmapStart = tool.html.indexOf(roadmapMarker);
+  if (releaseStart === -1 || roadmapStart === -1 || roadmapStart <= releaseStart) {
+    return readerLayout(tool.route, tool.headings, tool.html, facts);
+  }
+
+  const releaseHeadingIndex = tool.headings.findIndex((heading) => heading.id === "release-notes");
+  const roadmapHeadingIndex = tool.headings.findIndex((heading) => heading.id === "roadmap");
+  const overviewHtml = insertAfterOverviewHeading(tool.html.slice(0, releaseStart), toolReleaseNotice(tool));
+  const releaseHtml = tool.html.slice(releaseStart, roadmapStart);
+  const roadmapHtml = tool.html.slice(roadmapStart);
+  const overviewHeadings = tool.headings.slice(0, releaseHeadingIndex);
+  const releaseHeadings = tool.headings.slice(releaseHeadingIndex, roadmapHeadingIndex);
+  const roadmapHeadings = tool.headings.slice(roadmapHeadingIndex);
+  const releaseFacts = `
+    <section class="reader-facts" aria-label="Latest release details">
+      <p class="kicker">Latest release</p>
+      <dl>${tool.version ? `<div><dt>Version</dt><dd>${escapeHtml(tool.version)}</dd></div>` : ""}<div><dt>Released</dt><dd>${formatDate(tool.updated)}</dd></div><div><dt>Channel</dt><dd>${escapeHtml(displayLabel(tool.status))}</dd></div></dl>
+    </section>`;
+  const roadmapFacts = `
+    <section class="reader-facts tool-roadmap-note" aria-label="Roadmap guidance">
+      <p class="kicker">Roadmap status</p>
+      <p class="metadata">Backlog ideas are directional and do not represent committed release dates.</p>
+    </section>`;
+
+  return `
+    <nav class="tool-product-tabs" role="tablist" aria-label="Extension information">
+      <button id="tool-tab-overview" type="button" role="tab" aria-selected="true" aria-controls="tool-panel-overview" data-tool-tab-target="overview">Overview</button>
+      <button id="tool-tab-releases" type="button" role="tab" aria-selected="false" aria-controls="tool-panel-releases" data-tool-tab-target="releases">Release notes</button>
+      <button id="tool-tab-roadmap" type="button" role="tab" aria-selected="false" aria-controls="tool-panel-roadmap" data-tool-tab-target="roadmap">Roadmap</button>
+    </nav>
+    <div id="tool-panel-overview" class="tool-product-panel" role="tabpanel" aria-labelledby="tool-tab-overview" data-tool-panel="overview">
+      ${readerLayout(tool.route, overviewHeadings, overviewHtml, facts)}
+    </div>
+    <div id="tool-panel-releases" class="tool-product-panel" role="tabpanel" aria-labelledby="tool-tab-releases" data-tool-panel="releases" hidden>
+      ${readerLayout(tool.route, releaseHeadings, releaseHtml, releaseFacts)}
+    </div>
+    <div id="tool-panel-roadmap" class="tool-product-panel" role="tabpanel" aria-labelledby="tool-tab-roadmap" data-tool-panel="roadmap" hidden>
+      ${readerLayout(tool.route, roadmapHeadings, roadmapHtml, roadmapFacts)}
+    </div>`;
+}
+
+function toolPlatformBrand(tool: ToolRecord): string {
+  if (tool.platforms.includes("vscode")) {
+    return '<p class="kicker tool-platform-brand"><img src="./brands/visual-studio-code.png" alt="" width="24" height="24"><span>Visual Studio Code extension</span></p>';
+  }
+  if (tool.platforms.includes("edge")) {
+    return '<p class="kicker tool-platform-brand"><img src="./brands/microsoft-edge.svg" alt="" width="24" height="24"><span>Microsoft Edge extension</span></p>';
+  }
+  return `<p class="kicker">${escapeHtml(tool.categoryTitle)}</p>`;
 }
 
 function renderToolReader(tool: ToolRecord): string {
@@ -565,14 +665,14 @@ function renderToolReader(tool: ToolRecord): string {
       <dl><div><dt>Status</dt><dd>${escapeHtml(displayLabel(tool.status))}</dd></div><div><dt>Kind</dt><dd>${escapeHtml(displayLabel(tool.kind))}</dd></div>${tool.version ? `<div><dt>Version</dt><dd>${escapeHtml(tool.version)}</dd></div>` : ""}<div><dt>Updated</dt><dd>${formatDate(tool.updated)}</dd></div></dl>
     </section>`;
   return `
-    <div class="view reader-view reader-view--tool" id="view-tool-${tool.categorySlug}-${tool.slug}">
+    <div class="view reader-view reader-view--tool${tool.presentation === "product" ? " reader-view--product" : ""}" id="view-tool-${tool.categorySlug}-${tool.slug}">
       ${breadcrumbMarkup([{ label: "Tools", route: "#/tools" }, { label: tool.categoryTitle, route: category?.route }, { label: tool.title }])}
       <header class="reader-header reader-header--tool${tool.titleImage ? " reader-header--tool-image" : ""}">
         <div class="tool-title-mark${tool.titleImage ? " tool-title-mark--image" : ""}" aria-hidden="true">${tool.titleImage ? `<img src="${escapeHtml(tool.titleImage)}" alt="" width="256" height="256">` : '<i data-lucide="wrench"></i>'}</div>
-        <div><p class="kicker">${escapeHtml(tool.categoryTitle)}</p><h1 tabindex="-1">${escapeHtml(tool.title)}</h1><p class="reader-deck">${escapeHtml(tool.summary)}</p><div class="tag-list" aria-label="Supported platforms">${tool.platforms.map((platform) => `<span>${escapeHtml(displayLabel(platform))}</span>`).join("")}</div>${externalToolLinks(tool)}</div>
+        <div>${toolPlatformBrand(tool)}<h1 tabindex="-1">${escapeHtml(tool.title)}</h1><p class="reader-deck">${escapeHtml(tool.summary)}</p><div class="tag-list" aria-label="Supported platforms">${tool.platforms.map((platform) => `<span>${escapeHtml(displayLabel(platform))}</span>`).join("")}</div>${externalToolLinks(tool)}</div>
       </header>
       ${toolVideo(tool)}
-      ${readerLayout(tool.route, tool.headings, tool.html, facts)}
+      ${tool.presentation === "product" ? renderProductToolContent(tool, facts) : readerLayout(tool.route, tool.headings, tool.html, facts)}
       ${(relatedTools.length || relatedArticles.length) ? `<section class="reader-related" aria-labelledby="related-tools-title"><div class="section-heading-row"><div><p class="kicker">Continue exploring</p><h2 id="related-tools-title">Related notes</h2></div></div>${relatedTools.length ? `<div class="tool-grid">${relatedTools.map(toolCard).join("")}</div>` : ""}${relatedArticles.length ? `<div class="article-grid reader-related__articles">${relatedArticles.map((item) => articleCard(item)).join("")}</div>` : ""}</section>` : ""}
     </div>`;
 }
@@ -927,6 +1027,46 @@ function setupHomeCarousel(): void {
   recenterFrame = requestAnimationFrame(() => stage.classList.remove("is-recentering"));
 }
 
+function setupToolProductTabs(anchor?: string): void {
+  const tabs = [...mainElement.querySelectorAll<HTMLButtonElement>('.tool-product-tabs [role="tab"]')];
+  const panels = [...mainElement.querySelectorAll<HTMLElement>("[data-tool-panel]")];
+  const controls = [...mainElement.querySelectorAll<HTMLButtonElement>("[data-tool-tab-target]")];
+  if (!tabs.length || !panels.length) return;
+
+  const selectTab = (name: string, moveFocus: boolean): void => {
+    const selectedTab = tabs.find((tab) => tab.dataset.toolTabTarget === name);
+    if (!selectedTab) return;
+    for (const tab of tabs) tab.setAttribute("aria-selected", String(tab === selectedTab));
+    for (const panel of panels) panel.hidden = panel.dataset.toolPanel !== name;
+    if (moveFocus) {
+      selectedTab.focus({ preventScroll: true });
+      mainElement.querySelector<HTMLElement>(".tool-product-tabs")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  for (const control of controls) {
+    control.addEventListener("click", () => {
+      const target = control.dataset.toolTabTarget;
+      if (target) selectTab(target, true);
+    });
+  }
+
+  tabs.forEach((tab, index) => {
+    tab.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      event.preventDefault();
+      const offset = event.key === "ArrowRight" ? 1 : -1;
+      const nextTab = tabs[(index + offset + tabs.length) % tabs.length];
+      if (nextTab.dataset.toolTabTarget) selectTab(nextTab.dataset.toolTabTarget, true);
+    });
+  });
+
+  const anchoredPanel = anchor
+    ? mainElement.querySelector<HTMLElement>(`#${CSS.escape(anchor)}`)?.closest<HTMLElement>("[data-tool-panel]")
+    : undefined;
+  selectTab(anchoredPanel?.dataset.toolPanel ?? "overview", false);
+}
+
 function finishRoute(route: RouteState): void {
   refreshIcons(mainElement);
   if (route.anchor) {
@@ -942,6 +1082,8 @@ async function renderRoute(): Promise<void> {
   const version = ++renderVersion;
   const route = parseRoute();
   const resolved = resolveRoute(route);
+  const contentLayout = mainElement.parentElement;
+  contentLayout?.classList.remove("app-content-layout--wide");
   mainElement.setAttribute("aria-busy", "true");
   mainElement.innerHTML = resolved.html;
   updateNavigation(route.path);
@@ -953,6 +1095,7 @@ async function renderRoute(): Promise<void> {
     try {
       let html: string;
       let hasMermaid: boolean;
+      let hasToolProductTabs = false;
       if (resolved.reader.kind === "article") {
         const record = await loadRecord<ArticleRecord>(resolved.reader.summary.recordFile);
         html = renderArticleReader(record);
@@ -965,10 +1108,15 @@ async function renderRoute(): Promise<void> {
         const record = await loadRecord<ToolRecord>(resolved.reader.summary.recordFile);
         html = renderToolReader(record);
         hasMermaid = record.hasMermaid;
+        hasToolProductTabs = record.presentation === "product";
       }
       if (version !== renderVersion) return;
       mainElement.innerHTML = html;
       mainElement.setAttribute("aria-busy", "false");
+      if (hasToolProductTabs) {
+        contentLayout?.classList.add("app-content-layout--wide");
+        setupToolProductTabs(route.anchor);
+      }
       finishRoute(route);
       if (hasMermaid) {
         try {

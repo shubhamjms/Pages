@@ -522,7 +522,7 @@ function normalizeToolLinks(value, sourcePath) {
 
 function assertToolSections(headings, sourcePath) {
   const sectionIds = new Set(headings.filter((heading) => heading.level === 2).map((heading) => slugifyHeading(heading.text)));
-  for (const section of ["Why it exists", "Useful for", "Usage", "Limitations"]) {
+  for (const section of ["Overview", "Why it exists", "Useful for", "Usage", "Release notes", "Roadmap"]) {
     const id = slugifyHeading(section);
     if (!sectionIds.has(id)) throw new Error(`${sourcePath}: required section "${section}" is missing.`);
   }
@@ -564,8 +564,17 @@ function buildTools(articleSlugs) {
 
       const rendered = renderDocument(document);
       assertToolSections(rendered.headings, document.sourcePath);
+      const presentation = document.data.presentation === undefined
+        ? undefined
+        : requireString(document.data.presentation, "presentation", document.sourcePath);
+      if (presentation !== undefined && !["reader", "product"].includes(presentation)) {
+        throw new Error(`${document.sourcePath}: unsupported presentation "${presentation}".`);
+      }
       const key = `${categorySlug}/${toolSlug}`;
       const recordFile = `tool--${categorySlug}--${toolSlug}`;
+      const titleImage = document.data.titleImage === undefined
+        ? undefined
+        : copyLocalImage(document.absolutePath, requireString(document.data.titleImage, "titleImage", document.sourcePath));
       const core = {
         categorySlug,
         slug: toolSlug,
@@ -581,14 +590,16 @@ function buildTools(articleSlugs) {
         updated: requireDate(document.data.updated, "updated", document.sourcePath),
         route: `#/tools/${categorySlug}/${toolSlug}`,
         recordFile,
+        ...(titleImage === undefined ? {} : { titleImage }),
       };
       tools.push(core);
       records.push({
         ...core,
         categoryTitle,
-        ...(document.data.titleImage === undefined
+        ...(presentation === undefined ? {} : { presentation }),
+        ...(document.data.latestReleaseSummary === undefined
           ? {}
-          : { titleImage: copyLocalImage(document.absolutePath, requireString(document.data.titleImage, "titleImage", document.sourcePath)) }),
+          : { latestReleaseSummary: requireString(document.data.latestReleaseSummary, "latestReleaseSummary", document.sourcePath) }),
         html: rendered.html,
         headings: rendered.headings,
         hasMermaid: rendered.hasMermaid,

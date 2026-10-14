@@ -107,6 +107,7 @@ export interface ToolSummary {
   updated: string;
   route: string;
   recordFile: string;
+  titleImage?: string;
 }
 
 export interface ToolCategoryRecord {
@@ -127,7 +128,8 @@ export interface ToolCategoryRecord {
 
 export interface ToolRecord extends ToolSummary {
   categoryTitle: string;
-  titleImage?: string;
+  presentation?: "reader" | "product";
+  latestReleaseSummary?: string;
   html: string;
   headings: HeadingRecord[];
   hasMermaid: boolean;
