@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Building smart Dynamics 365 plugins with GitHub Copilot Agent Mode."
+      content="{{ARTICLE_META_DESCRIPTION}}"
     />
     <meta name="theme-color" content="#f3efe7" />
-    <title>Building Smart D365 Plugins | CodeFox Community Hub</title>
+    <title>{{ARTICLE_PAGE_TITLE}}</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f07848'/%3E%3Ctext x='32' y='38' text-anchor='middle' font-family='monospace' font-size='18' font-weight='700' fill='%2332404f'%3EC/F%3C/text%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -129,6 +129,63 @@
         backdrop-filter: blur(18px);
       }
 
+<<<<<<< HEAD:site/templates/blogs/article.html
+      .blog-floating-navigation {
+        position: sticky;
+        top: 68px;
+        z-index: 25;
+        width: min(calc(100% - 40px), var(--page));
+        height: 56px;
+        padding-top: 12px;
+        margin-inline: auto;
+        pointer-events: none;
+      }
+
+      .blog-floating-navigation__controls {
+        width: max-content;
+        display: flex;
+        gap: 8px;
+        pointer-events: auto;
+      }
+
+      .blog-icon-button {
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        display: inline-grid;
+        place-items: center;
+        color: #71351f;
+        border: 1px solid rgba(240, 120, 72, 0.52);
+        border-radius: var(--radius);
+        background: linear-gradient(135deg, #fffdf9 0%, #ffe7da 58%, #f7a17a 100%);
+        box-shadow: 0 7px 18px rgba(165, 75, 38, 0.12);
+        cursor: pointer;
+        text-decoration: none;
+        backdrop-filter: blur(16px);
+        transition: color 160ms ease, border-color 160ms ease, background 180ms ease, box-shadow 160ms ease, transform 160ms ease;
+      }
+
+      .blog-icon-button:hover,
+      .blog-icon-button[aria-current="page"] {
+        color: #4f2416;
+        border-color: rgba(221, 91, 39, 0.74);
+        background: linear-gradient(135deg, #fffaf5 0%, #ffd5c0 54%, #f07848 100%);
+        box-shadow: 0 10px 24px rgba(165, 75, 38, 0.18);
+        transform: translateY(-1px);
+      }
+
+      .blog-icon-button svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.9;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+=======
+>>>>>>> aad5542600bc3a679afb0e00db752421fd3280a4:design/blog-article-preview.html
       .header-inner {
         width: min(calc(100% - 40px), var(--page));
         min-height: 68px;
@@ -250,11 +307,11 @@
         z-index: 1;
         width: min(calc(100% - 40px), var(--page));
         margin-inline: auto;
-        padding: 58px 0 54px;
+        padding: 40px 0 36px;
       }
 
       .breadcrumb {
-        margin-bottom: 36px;
+        margin-bottom: 24px;
         display: flex;
         flex-wrap: wrap;
         align-items: center;
@@ -282,22 +339,22 @@
       }
 
       .article-hero h1 {
-        max-width: 960px;
+        max-width: 900px;
         margin: 0;
-        font: 700 clamp(44px, 5.2vw, 68px) / 0.98 var(--display);
-        letter-spacing: -0.05em;
+        font: 700 clamp(38px, 4.4vw, 56px) / 1.02 var(--display);
+        letter-spacing: -0.04em;
       }
 
       .article-deck {
         max-width: 760px;
-        margin: 24px 0 0;
+        margin: 18px 0 0;
         color: var(--muted);
-        font-size: 18px;
-        line-height: 1.65;
+        font-size: 17px;
+        line-height: 1.55;
       }
 
       .article-byline {
-        margin-top: 32px;
+        margin-top: 24px;
         display: flex;
         flex-wrap: wrap;
         align-items: center;
@@ -511,6 +568,153 @@
       .article-body li::marker {
         color: var(--orange-dark);
         font-family: var(--mono);
+      }
+
+      .article-body blockquote {
+        margin: 42px 0;
+        padding: 24px 28px;
+        color: var(--ink);
+        border: 1px solid #e3bd4d;
+        border-left: 5px solid #dcae2f;
+        border-radius: var(--radius);
+        background: #fff0ad;
+      }
+
+      .article-body blockquote p {
+        margin: 0;
+      }
+
+      .article-body blockquote strong {
+        color: #765714;
+      }
+
+      .article-body pre {
+        margin: 38px 0;
+        padding: 24px;
+        overflow-x: auto;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--night-soft);
+        font: 400 13px/1.7 var(--mono);
+      }
+
+      .article-body code {
+        font-family: var(--mono);
+      }
+
+      .article-body p code,
+      .article-body li code {
+        padding: 0.12em 0.32em;
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        background: var(--night-soft);
+        font-size: 0.82em;
+      }
+
+      .article-body img {
+        width: 100%;
+        height: auto;
+        margin: 34px 0;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+      }
+
+      .article-body .table-scroll {
+        margin: 34px 0;
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--paper-bright);
+      }
+
+      .article-body table {
+        width: 100%;
+        min-width: 560px;
+        border-collapse: collapse;
+        font-family: var(--interface);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .article-body th,
+      .article-body td {
+        padding: 12px 14px;
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .article-body th {
+        background: var(--sky);
+        font-size: 11px;
+        text-transform: uppercase;
+      }
+
+      .article-body tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .article-body th:last-child,
+      .article-body td:last-child {
+        border-right: 0;
+      }
+
+      .video-embed {
+        margin: 42px 0;
+      }
+
+      .video-embed__frame {
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--night-soft);
+      }
+
+      .video-embed iframe {
+        width: 100%;
+        height: 100%;
+        display: block;
+        border: 0;
+      }
+
+      .video-embed__placeholder {
+        display: grid;
+        place-content: center;
+        justify-items: center;
+        gap: 10px;
+        color: var(--ink);
+        background: linear-gradient(135deg, var(--sky), var(--paper-bright) 56%, #ffd5c0);
+        text-align: center;
+      }
+
+      .video-embed__placeholder > span {
+        width: 58px;
+        height: 58px;
+        display: grid;
+        place-items: center;
+        color: white;
+        border-radius: 50%;
+        background: var(--orange);
+        font: 700 20px/1 var(--interface);
+      }
+
+      .video-embed__placeholder strong {
+        font-family: var(--interface);
+        font-size: 16px;
+      }
+
+      .video-embed__placeholder small {
+        color: var(--muted);
+        font: 500 10px/1.5 var(--mono);
+      }
+
+      .video-embed figcaption {
+        margin-top: 9px;
+        color: var(--muted);
+        font: 500 10px/1.5 var(--mono);
       }
 
       .pull-quote {
@@ -864,11 +1068,11 @@
         }
 
         .article-hero h1 {
-          font-size: clamp(42px, 11vw, 60px);
+          font-size: clamp(34px, 9vw, 46px);
         }
 
         .article-deck {
-          font-size: 18px;
+          font-size: 16px;
         }
 
         .pull-quote {
@@ -900,6 +1104,16 @@
           gap: 10px;
         }
 
+<<<<<<< HEAD:site/templates/blogs/article.html
+        .blog-floating-navigation {
+          top: 68px;
+          height: 52px;
+          padding-top: 8px;
+          width: calc(100% - 28px);
+        }
+
+=======
+>>>>>>> aad5542600bc3a679afb0e00db752421fd3280a4:design/blog-article-preview.html
         .brand-copy span {
           display: none;
         }
@@ -915,11 +1129,11 @@
         }
 
         .hero-inner {
-          padding: 46px 0 44px;
+          padding: 34px 0 30px;
         }
 
         .breadcrumb {
-          margin-bottom: 38px;
+          margin-bottom: 24px;
         }
 
         .article-byline {
@@ -1008,9 +1222,9 @@
 
     <header class="site-header">
       <div class="header-inner">
-        <a class="brand" href="blogs-preview.html" aria-label="CodeFox Community Hub home">
+        <a class="brand" href="blogs-preview.html" aria-label="{{BLOG_TITLE}} home">
           <span class="brand-mark" aria-hidden="true">C/F</span>
-          <span class="brand-copy"><strong>CodeFox</strong><span>Community Hub</span></span>
+          <span class="brand-copy"><strong>{{BLOG_BRAND_NAME}}</strong><span>{{BLOG_BRAND_SUFFIX}}</span></span>
         </a>
 
         <span class="article-label">CodeFox Community Hub / Article</span>
@@ -1032,30 +1246,27 @@
           <nav class="breadcrumb" aria-label="Breadcrumb">
             <a href="blogs-preview.html">Blogs</a>
             <span>/</span>
-            <a href="blogs-preview.html#topics">Dynamics 365</a>
+            <a href="blogs-preview.html#topics">{{ARTICLE_PRIMARY_CATEGORY}}</a>
             <span>/</span>
-            <span aria-current="page">Agent-assisted plugins</span>
+            <span aria-current="page">{{ARTICLE_BREADCRUMB}}</span>
           </nav>
-          <p class="eyebrow">Dynamics 365 / Engineering practice</p>
-          <h1>Building Smart D365 Plugins with GitHub Copilot Agent Mode</h1>
-          <p class="article-deck">
-            Use agent mode to accelerate the routine work around a plugin without giving
-            up the contracts, guardrails, and review points that make server-side code dependable.
-          </p>
+          <p class="eyebrow">{{ARTICLE_CATEGORY_LABEL}}</p>
+          <h1>{{ARTICLE_TITLE}}</h1>
+          <p class="article-deck">{{ARTICLE_SUMMARY}}</p>
           <div class="article-byline">
             <div class="author">
-              <span class="author-mark" aria-hidden="true">SJ</span>
+              <span class="author-mark" aria-hidden="true">{{AUTHOR_INITIALS}}</span>
               <span class="author-copy">
-                <strong>Shubhamm Jadhav</strong>
-                <span>AI Developer</span>
+                <strong>{{AUTHOR_NAME}}</strong>
+                <span>{{AUTHOR_ROLE}}</span>
               </span>
             </div>
             <div class="article-meta">
-              <time datetime="2025-11-24">24 Nov 2025</time>
+              <time datetime="{{ARTICLE_PUBLISHED_ISO}}">{{ARTICLE_PUBLISHED_DISPLAY}}</time>
               <span>/</span>
-              <span>8 min read</span>
+              <span>{{ARTICLE_READING_TIME}} min read</span>
               <span>/</span>
-              <span>CodeFox original</span>
+              <span>{{ARTICLE_SOURCE_LABEL}}</span>
             </div>
           </div>
         </div>
@@ -1065,22 +1276,17 @@
         <aside class="article-rail" aria-label="Article navigation">
           <figure class="rail-cover">
             <img
-              src="../site/public/article-covers/smart-d365-plugins.jpg"
-              alt="Building Smart D365 Plugins with GitHub Copilot Agent Mode cover"
+              src="{{ARTICLE_COVER}}"
+              alt="{{ARTICLE_TITLE}} cover"
             />
             <figcaption>Optional article cover</figcaption>
           </figure>
           <p class="rail-label">In this story</p>
-          <ol class="toc">
-            <li><a href="#contract">Start with the contract</a></li>
-            <li><a href="#context">Give useful context</a></li>
-            <li><a href="#workflow">Use a reviewable workflow</a></li>
-            <li><a href="#draft">Treat output as a draft</a></li>
-            <li><a href="#takeaways">Key takeaways</a></li>
-          </ol>
+          <ol class="toc">{{ARTICLE_TOC}}</ol>
         </aside>
 
         <article class="article-body" id="article-content">
+          <!-- BLOG_POST_CONTENT_START -->
           <p class="lead">
             A Dynamics 365 plugin is a compact piece of code with an unusually large
             responsibility. It runs inside a business process, works with privileged data,
@@ -1208,32 +1414,23 @@
             </ul>
           </section>
 
+          <!-- BLOG_POST_CONTENT_END -->
           <section class="author-panel" aria-labelledby="author-panel-title">
-            <span class="author-panel__mark" aria-hidden="true">SJ</span>
+            <span class="author-panel__mark" aria-hidden="true">{{AUTHOR_INITIALS}}</span>
             <div>
               <p class="eyebrow">About the contributor</p>
-              <h2 id="author-panel-title">Shubhamm Jadhav</h2>
-              <p>
-                AI developer writing about GitHub Copilot, Dynamics 365, agent workflows,
-                and the engineering practices that make automation dependable.
-              </p>
-              <a href="blogs-preview.html#contributors">View contributor details &rarr;</a>
+              <h2 id="author-panel-title">{{AUTHOR_NAME}}</h2>
+              <p>{{AUTHOR_BIO}}</p>
+              <a href="{{AUTHOR_PROFILE_URL}}" target="_blank" rel="noreferrer">View contributor profile &nearr;</a>
             </div>
           </section>
 
         </article>
 
-        <aside class="ad-rail" aria-label="Sponsored content">
-          <p class="ad-heading">Sponsored</p>
-          <div class="ad-slot" aria-label="Advertisement placeholder">
-            <strong>Advertisement</strong>
-            <span>210 x 220 placement</span>
-          </div>
-          <div class="ad-slot ad-slot--short" aria-label="Advertisement placeholder">
-            <strong>Partner message</strong>
-            <span>210 x 150 placement</span>
-          </div>
-          <p class="ad-policy">Ads should be relevant to builders and clearly separated from editorial content.</p>
+        <aside class="ad-rail"{{ADS_HIDDEN_ATTRIBUTE}} aria-label="Sponsored content">
+          <p class="ad-heading">{{ADS_LABEL}}</p>
+          {{ADS_SLOTS}}
+          <p class="ad-policy">{{ADS_POLICY}}</p>
         </aside>
       </div>
 
@@ -1242,9 +1439,9 @@
     <footer class="site-footer">
       <div class="footer-inner">
         <p>AI / Copilot / Dynamics 365 / Builder practice</p>
-        <a class="brand" href="blogs-preview.html" aria-label="CodeFox Community Hub home">
+        <a class="brand" href="blogs-preview.html" aria-label="{{BLOG_TITLE}} home">
           <span class="brand-mark" aria-hidden="true">C/F</span>
-          <span class="brand-copy"><strong>CodeFox</strong><span>Community Hub</span></span>
+          <span class="brand-copy"><strong>{{BLOG_BRAND_NAME}}</strong><span>{{BLOG_BRAND_SUFFIX}}</span></span>
         </a>
         <a class="header-link" href="../site/index.html"><span aria-hidden="true">&larr;</span> Fieldnotes</a>
       </div>

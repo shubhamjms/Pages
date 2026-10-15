@@ -7,9 +7,9 @@ import sanitizeHtml from "sanitize-html";
 import YAML from "yaml";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const workspaceRoot = path.resolve(projectRoot, "..");
 const contentRoot = path.join(projectRoot, "content");
-const designRoot = path.join(workspaceRoot, "design");
+const blogContentRoot = path.join(contentRoot, "blogs");
+const blogTemplateRoot = path.join(projectRoot, "templates", "blogs");
 const generatedRoot = path.join(projectRoot, "src", "generated");
 const publicContentRoot = path.join(projectRoot, "public", "content");
 const publicBlogRoot = path.join(projectRoot, "public", "codefox-blogs");
@@ -26,6 +26,32 @@ function requireString(value, field, sourcePath) {
   }
 
   return value.trim();
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function readYamlFile(absolutePath) {
+  const label = sourceLabel(absolutePath);
+  if (!fs.existsSync(absolutePath)) throw new Error(`${label}: required YAML file is missing.`);
+  const value = YAML.parse(fs.readFileSync(absolutePath, "utf8"));
+  if (!value || typeof value !== "object") throw new Error(`${label}: expected a YAML object or array.`);
+  return { value, sourcePath: label };
+}
+
+function formatBlogDate(value) {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${value}T00:00:00Z`));
 }
 
 function requireBoolean(value, field, sourcePath) {
@@ -135,6 +161,41 @@ function copyLocalImage(sourceFile, imagePath) {
   return `./content/${relativeImage.replaceAll("\\", "/")}`;
 }
 
+function normalizeVideoEmbedUrl(value, sourcePath) {
+  let parsed;
+  try {
+    parsed = new URL(value);
+  } catch {
+    throw new Error(`${sourcePath}: video embed URL "${value}" is invalid.`);
+  }
+  if (parsed.protocol !== "https:") throw new Error(`${sourcePath}: video embeds must use HTTPS.`);
+
+  const hostname = parsed.hostname.toLowerCase().replace(/^www\./, "");
+  let videoId;
+  if (hostname === "youtu.be") {
+    videoId = parsed.pathname.split("/").filter(Boolean)[0];
+  } else if (["youtube.com", "m.youtube.com", "youtube-nocookie.com"].includes(hostname)) {
+    if (parsed.pathname === "/watch") videoId = parsed.searchParams.get("v");
+    else {
+      const segments = parsed.pathname.split("/").filter(Boolean);
+      if (segments[0] === "embed") videoId = segments[1];
+    }
+  }
+  if (videoId) {
+    if (!/^[A-Za-z0-9_-]{6,20}$/.test(videoId)) throw new Error(`${sourcePath}: YouTube video ID is invalid.`);
+    return `https://www.youtube-nocookie.com/embed/${videoId}`;
+  }
+
+  if (hostname === "vimeo.com" || hostname === "player.vimeo.com") {
+    const segments = parsed.pathname.split("/").filter(Boolean);
+    const vimeoId = segments[0] === "video" ? segments[1] : segments[0];
+    if (!/^\d{6,12}$/.test(vimeoId ?? "")) throw new Error(`${sourcePath}: Vimeo video ID is invalid.`);
+    return `https://player.vimeo.com/video/${vimeoId}`;
+  }
+
+  throw new Error(`${sourcePath}: video embeds are limited to YouTube and Vimeo.`);
+}
+
 function renderDocument(document, rewriteLink = (href) => href) {
   const headings = collectHeadings(document.body, document.sourcePath);
   const headingQueue = [...headings];
@@ -175,18 +236,31 @@ function renderDocument(document, rewriteLink = (href) => href) {
     if (language === "mermaid") {
       return `<div class="mermaid-shell"><pre class="mermaid" aria-label="Diagram">${markdown.utils.escapeHtml(tokens[index].content)}</pre></div>`;
     }
+    if (language === "video-placeholder") {
+      const caption = tokens[index].content.trim() || "Responsive video embed appears here";
+      return `<figure class="video-embed"><div class="video-embed__frame video-embed__placeholder" role="img" aria-label="${markdown.utils.escapeHtml(caption)}"><span aria-hidden="true">▶</span><strong>${markdown.utils.escapeHtml(caption)}</strong><small>YouTube or Vimeo URL supplied by the contributor</small></div><figcaption>Optional video placement</figcaption></figure>`;
+    }
+    if (language === "video") {
+      const [rawUrl, ...captionLines] = tokens[index].content.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+      if (!rawUrl) throw new Error(`${document.sourcePath}: video fence must include a URL.`);
+      const embedUrl = normalizeVideoEmbedUrl(rawUrl, document.sourcePath);
+      const caption = captionLines.join(" ") || "Embedded video";
+      return `<figure class="video-embed"><div class="video-embed__frame"><iframe src="${embedUrl}" title="${markdown.utils.escapeHtml(caption)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div><figcaption>${markdown.utils.escapeHtml(caption)}</figcaption></figure>`;
+    }
     const rendered = defaultFence(tokens, index, options, environment, renderer);
     return rendered.replace("<pre>", `<pre aria-label="${language ? `${language} code sample` : "Code sample"}">`);
   };
 
   const html = sanitizeHtml(markdown.render(document.body), {
-    allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "figure", "figcaption"]),
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "figure", "figcaption", "iframe"]),
     allowedAttributes: {
       "*": ["id", "class", "role", "aria-label", "tabindex"],
       a: ["href", "title", "target", "rel"],
       img: ["src", "alt", "title", "width", "height", "loading"],
+      iframe: ["src", "title", "loading", "referrerpolicy", "allow", "allowfullscreen"],
     },
     allowedSchemes: ["http", "https", "mailto"],
+    allowedIframeHostnames: ["www.youtube-nocookie.com", "player.vimeo.com"],
   });
   return {
     html,
@@ -674,46 +748,419 @@ function writeIndex(value) {
   );
 }
 
-function writeStaticBlogPage(sourceName, outputParts, replacements) {
-  const sourcePath = path.join(designRoot, sourceName);
-  if (!fs.existsSync(sourcePath)) throw new Error(`${sourceLabel(sourcePath)}: required blog design source is missing.`);
+function requireBlogCover(value, field, sourcePath) {
+  const coverImage = requireString(value, field, sourcePath);
+  if (!coverImage.startsWith("./article-covers/")) {
+    throw new Error(`${sourcePath}: ${field} must point to ./article-covers/.`);
+  }
+  if (!fs.existsSync(path.join(projectRoot, "public", coverImage.slice(2)))) {
+    throw new Error(`${sourcePath}: ${field} "${coverImage}" does not exist in public/.`);
+  }
+  return coverImage;
+}
 
-  let html = fs.readFileSync(sourcePath, "utf8");
-  for (const [from, to] of replacements) {
-    if (!html.includes(from)) {
-      throw new Error(`${sourceLabel(sourcePath)}: expected deployment path "${from}" was not found.`);
-    }
-    html = html.replaceAll(from, to);
+function buildBlogContent() {
+  const postTemplatePath = path.join(blogContentRoot, "POST_TEMPLATE.md");
+  if (!fs.existsSync(postTemplatePath)) throw new Error(`${sourceLabel(postTemplatePath)}: required contributor post template is missing.`);
+  const postTemplateSource = fs.readFileSync(postTemplatePath, "utf8");
+  if (!postTemplateSource.includes('layout: "standard"') || !postTemplateSource.includes('contentType: "article"')) {
+    throw new Error(`${sourceLabel(postTemplatePath)}: template must use the standard article layout.`);
   }
 
+  const publicationSource = readYamlFile(path.join(blogContentRoot, "publication.yml"));
+  const publicationData = publicationSource.value;
+  const publication = {
+    title: requireString(publicationData.title, "title", publicationSource.sourcePath),
+    brandName: requireString(publicationData.brandName, "brandName", publicationSource.sourcePath),
+    brandSuffix: requireString(publicationData.brandSuffix, "brandSuffix", publicationSource.sourcePath),
+    pageTitle: requireString(publicationData.pageTitle, "pageTitle", publicationSource.sourcePath),
+    metaDescription: requireString(publicationData.metaDescription, "metaDescription", publicationSource.sourcePath),
+    eyebrow: requireString(publicationData.eyebrow, "eyebrow", publicationSource.sourcePath),
+    headline: requireString(publicationData.headline, "headline", publicationSource.sourcePath),
+    headlineAccent: requireString(publicationData.headlineAccent, "headlineAccent", publicationSource.sourcePath),
+    summary: requireString(publicationData.summary, "summary", publicationSource.sourcePath),
+    featuredPost: requireString(publicationData.featuredPost, "featuredPost", publicationSource.sourcePath),
+    ownerEmail: requireString(publicationData.ownerEmail, "ownerEmail", publicationSource.sourcePath),
+    authorInterestOpen: requireBoolean(publicationData.authorInterestOpen, "authorInterestOpen", publicationSource.sourcePath),
+  };
+  assertSlug(publication.featuredPost, publicationSource.sourcePath);
+
+  const categorySource = readYamlFile(path.join(blogContentRoot, "categories.yml"));
+  if (!Array.isArray(categorySource.value)) throw new Error(`${categorySource.sourcePath}: expected a YAML array.`);
+  const categorySlugs = new Set();
+  const categories = categorySource.value
+    .map((entry, index) => {
+      const itemPath = `${categorySource.sourcePath}: entry ${index + 1}`;
+      if (!entry || typeof entry !== "object") throw new Error(`${itemPath} must be an object.`);
+      const slug = requireString(entry.slug, "slug", itemPath);
+      assertSlug(slug, itemPath);
+      if (categorySlugs.has(slug)) throw new Error(`${itemPath}: category slug "${slug}" is duplicated.`);
+      categorySlugs.add(slug);
+      const status = requireString(entry.status, "status", itemPath);
+      if (!["active", "planned"].includes(status)) throw new Error(`${itemPath}: unsupported status "${status}".`);
+      return {
+        slug,
+        title: requireString(entry.title, "title", itemPath),
+        order: requirePositiveInteger(entry.order, "order", itemPath),
+        status,
+      };
+    })
+    .sort((left, right) => left.order - right.order || left.title.localeCompare(right.title));
+
+  const adSource = readYamlFile(path.join(blogContentRoot, "ads.yml"));
+  const adData = adSource.value;
+  const adsEnabled = requireBoolean(adData.enabled, "enabled", adSource.sourcePath);
+  if (!Array.isArray(adData.slots) || (adsEnabled && adData.slots.length === 0)) {
+    throw new Error(`${adSource.sourcePath}: slots must be a non-empty array when ads are enabled.`);
+  }
+  const adSlotIds = new Set();
+  const ads = {
+    enabled: adsEnabled,
+    label: requireString(adData.label, "label", adSource.sourcePath),
+    policy: requireString(adData.policy, "policy", adSource.sourcePath),
+    slots: adData.slots.map((entry, index) => {
+      const itemPath = `${adSource.sourcePath}: slots[${index}]`;
+      if (!entry || typeof entry !== "object") throw new Error(`${itemPath} must be an object.`);
+      const id = requireString(entry.id, "id", itemPath);
+      assertSlug(id, itemPath);
+      if (adSlotIds.has(id)) throw new Error(`${itemPath}: ad slot id "${id}" is duplicated.`);
+      adSlotIds.add(id);
+      const variant = requireString(entry.variant, "variant", itemPath);
+      if (!["standard", "short"].includes(variant)) throw new Error(`${itemPath}: unsupported variant "${variant}".`);
+      return {
+        id,
+        title: requireString(entry.title, "title", itemPath),
+        size: requireString(entry.size, "size", itemPath),
+        variant,
+      };
+    }),
+  };
+
+  const authorRoot = path.join(blogContentRoot, "authors");
+  const registrySource = readYamlFile(path.join(authorRoot, "registry.yml"));
+  const registryData = registrySource.value;
+  const schemaVersion = requirePositiveInteger(registryData.schemaVersion, "schemaVersion", registrySource.sourcePath);
+  if (schemaVersion !== 1) throw new Error(`${registrySource.sourcePath}: unsupported schemaVersion "${schemaVersion}".`);
+  const ownerAuthorId = requireString(registryData.ownerAuthorId, "ownerAuthorId", registrySource.sourcePath);
+  if (!/^cf-author-\d{4}$/.test(ownerAuthorId)) {
+    throw new Error(`${registrySource.sourcePath}: ownerAuthorId must use cf-author-NNNN format.`);
+  }
+  const externalAuthorStart = requirePositiveInteger(registryData.externalAuthorStart, "externalAuthorStart", registrySource.sourcePath);
+  const nextAuthorNumber = requirePositiveInteger(registryData.nextAuthorNumber, "nextAuthorNumber", registrySource.sourcePath);
+  if (!Array.isArray(registryData.authors) || registryData.authors.length === 0) {
+    throw new Error(`${registrySource.sourcePath}: authors must be a non-empty array.`);
+  }
+
+  const registeredIds = new Set();
+  const registryAuthors = registryData.authors.map((entry, index) => {
+    const itemPath = `${registrySource.sourcePath}: authors[${index}]`;
+    if (!entry || typeof entry !== "object") throw new Error(`${itemPath} must be an object.`);
+    const id = requireString(entry.id, "id", itemPath);
+    if (!/^cf-author-\d{4}$/.test(id)) throw new Error(`${itemPath}: id must use cf-author-NNNN format.`);
+    if (registeredIds.has(id)) throw new Error(`${itemPath}: author id "${id}" is duplicated.`);
+    registeredIds.add(id);
+    const status = requireString(entry.status, "status", itemPath);
+    if (!["active", "inactive"].includes(status)) throw new Error(`${itemPath}: unsupported status "${status}".`);
+    const ownershipReference = requireString(entry.ownershipReference, "ownershipReference", itemPath);
+    const expectedReference = `CF-AUTH-${id.slice("cf-author-".length)}`;
+    if (ownershipReference !== expectedReference) {
+      throw new Error(`${itemPath}: ownershipReference must be "${expectedReference}".`);
+    }
+    return {
+      id,
+      status,
+      assignedAt: requireDate(entry.assignedAt, "assignedAt", itemPath),
+      ownershipReference,
+      number: Number(id.slice("cf-author-".length)),
+    };
+  });
+  const ownerRecord = registryAuthors.find((author) => author.id === ownerAuthorId);
+  if (!ownerRecord) throw new Error(`${registrySource.sourcePath}: ownerAuthorId "${ownerAuthorId}" is not registered.`);
+  if (ownerRecord.number >= externalAuthorStart) {
+    throw new Error(`${registrySource.sourcePath}: the owner author number must be below externalAuthorStart.`);
+  }
+  for (const author of registryAuthors) {
+    if (author.id !== ownerAuthorId && author.number < externalAuthorStart) {
+      throw new Error(`${registrySource.sourcePath}: external author "${author.id}" must start at ${externalAuthorStart}.`);
+    }
+  }
+  if (nextAuthorNumber < externalAuthorStart) {
+    throw new Error(`${registrySource.sourcePath}: nextAuthorNumber must be at least ${externalAuthorStart}.`);
+  }
+  const highestAuthorNumber = Math.max(...registryAuthors.map((author) => author.number));
+  if (nextAuthorNumber <= highestAuthorNumber) {
+    throw new Error(`${registrySource.sourcePath}: nextAuthorNumber must be greater than ${highestAuthorNumber}.`);
+  }
+
+  const profileRoot = path.join(authorRoot, "profiles");
+  const profileIds = fs
+    .readdirSync(profileRoot, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && /\.ya?ml$/i.test(entry.name))
+    .map((entry) => path.basename(entry.name, path.extname(entry.name)));
+  for (const authorId of profileIds) {
+    if (!registeredIds.has(authorId)) throw new Error(`content/blogs/authors/profiles/${authorId}.yml: profile is not registered.`);
+  }
+  for (const authorId of registeredIds) {
+    if (!profileIds.includes(authorId)) throw new Error(`${registrySource.sourcePath}: registered author "${authorId}" has no profile.`);
+  }
+
+  const authors = new Map();
+  for (const registeredAuthor of registryAuthors) {
+    const authorId = registeredAuthor.id;
+    assertSlug(authorId, `content/blogs/authors/profiles/${authorId}.yml`);
+    const authorSource = readYamlFile(path.join(profileRoot, `${authorId}.yml`));
+    const authorData = authorSource.value;
+    for (const field of Object.keys(authorData)) {
+      if (field.toLowerCase().includes("email")) {
+        throw new Error(`${authorSource.sourcePath}: private email fields are not allowed in public author profiles.`);
+      }
+    }
+    const id = requireString(authorData.id, "id", authorSource.sourcePath);
+    assertSlug(id, authorSource.sourcePath);
+    if (authorId !== id) {
+      throw new Error(`${authorSource.sourcePath}: filename must match author id "${id}".`);
+    }
+    if (authors.has(id)) throw new Error(`${authorSource.sourcePath}: author id "${id}" is duplicated.`);
+    authors.set(id, {
+      id,
+      name: requireString(authorData.name, "name", authorSource.sourcePath),
+      initials: requireString(authorData.initials, "initials", authorSource.sourcePath),
+      role: requireString(authorData.role, "role", authorSource.sourcePath),
+      bio: requireString(authorData.bio, "bio", authorSource.sourcePath),
+      profileUrl: requireString(authorData.profileUrl, "profileUrl", authorSource.sourcePath),
+      status: registeredAuthor.status,
+      assignedAt: registeredAuthor.assignedAt,
+      ownershipReference: registeredAuthor.ownershipReference,
+    });
+  }
+  if (authors.size === 0) throw new Error("content/blogs/authors: at least one author is required.");
+
+  const posts = [];
+  const postSlugs = new Set();
+  const postRoot = path.join(blogContentRoot, "posts");
+  const postAuthorIds = listDirectories(postRoot);
+  for (const authorId of postAuthorIds) {
+    if (!registeredIds.has(authorId)) throw new Error(`content/blogs/posts/${authorId}: post owner is not registered.`);
+  }
+  for (const author of authors.values()) {
+    const authorPostRoot = path.join(postRoot, author.id);
+    for (const slug of listDirectories(authorPostRoot)) {
+      const postPath = `content/blogs/posts/${author.id}/${slug}`;
+      assertSlug(slug, postPath);
+      if (postSlugs.has(slug)) throw new Error(`${postPath}: post slug "${slug}" is duplicated across authors.`);
+      postSlugs.add(slug);
+
+      const document = readMarkdown(`blogs/posts/${author.id}/${slug}/index.md`);
+      if (Object.hasOwn(document.data, "author")) {
+        throw new Error(`${document.sourcePath}: author must be derived from the parent author folder.`);
+      }
+      for (const field of Object.keys(document.data)) {
+        if (field.toLowerCase().includes("email")) {
+          throw new Error(`${document.sourcePath}: private email fields are not allowed in published post frontmatter.`);
+        }
+      }
+      const draft = requireBoolean(document.data.draft, "draft", document.sourcePath);
+      if (draft) continue;
+
+      const postCategorySlugs = optionalStringArray(document.data.categories, "categories", document.sourcePath);
+      if (postCategorySlugs.length === 0) throw new Error(`${document.sourcePath}: categories must not be empty.`);
+      for (const categorySlug of postCategorySlugs) {
+        if (!categorySlugs.has(categorySlug)) throw new Error(`${document.sourcePath}: category "${categorySlug}" does not exist.`);
+      }
+
+      const rendered = renderDocument(document);
+      const layout = requireString(document.data.layout, "layout", document.sourcePath);
+      if (layout !== "standard") throw new Error(`${document.sourcePath}: unsupported layout "${layout}".`);
+      const contentType = requireString(document.data.contentType, "contentType", document.sourcePath);
+      if (contentType !== "article") throw new Error(`${document.sourcePath}: unsupported contentType "${contentType}".`);
+      posts.push({
+        slug,
+        layout,
+        contentType,
+        title: requireString(document.data.title, "title", document.sourcePath),
+        summary: requireString(document.data.summary, "summary", document.sourcePath),
+        breadcrumb: requireString(document.data.breadcrumb, "breadcrumb", document.sourcePath),
+        eyebrow: requireString(document.data.eyebrow, "eyebrow", document.sourcePath),
+        author,
+        categories: postCategorySlugs,
+        categoryRecords: postCategorySlugs.map((categorySlug) => categories.find((category) => category.slug === categorySlug)),
+        published: requireDate(document.data.published, "published", document.sourcePath),
+        updated: requireDate(document.data.updated, "updated", document.sourcePath),
+        coverImage: requireBlogCover(document.data.coverImage, "coverImage", document.sourcePath),
+        featured: requireBoolean(document.data.featured, "featured", document.sourcePath),
+        tags: optionalStringArray(document.data.tags, "tags", document.sourcePath),
+        html: rendered.html
+          .replace("<p>", '<p class="lead">')
+          .replaceAll('src="./content/', 'src="../../content/'),
+        headings: rendered.headings,
+        readingTime: rendered.readingTime,
+      });
+    }
+  }
+  posts.sort((left, right) => right.published.localeCompare(left.published));
+  if (posts.length === 0) throw new Error("content/blogs/posts: at least one published author post is required.");
+
+  const featured = posts.find((post) => post.slug === publication.featuredPost);
+  if (!featured) throw new Error(`${publicationSource.sourcePath}: featuredPost "${publication.featuredPost}" is not published.`);
+
+  const exampleDocument = readMarkdown("blogs/ARTICLE_EXAMPLE.md");
+  const exampleLayout = requireString(exampleDocument.data.layout, "layout", exampleDocument.sourcePath);
+  const exampleContentType = requireString(exampleDocument.data.contentType, "contentType", exampleDocument.sourcePath);
+  if (exampleLayout !== "standard" || exampleContentType !== "article") {
+    throw new Error(`${exampleDocument.sourcePath}: contributor example must use the standard article layout.`);
+  }
+  const renderedExample = renderDocument(exampleDocument);
+  const articleExample = {
+    slug: "article-template",
+    layout: exampleLayout,
+    contentType: exampleContentType,
+    title: requireString(exampleDocument.data.title, "title", exampleDocument.sourcePath),
+    summary: requireString(exampleDocument.data.summary, "summary", exampleDocument.sourcePath),
+    breadcrumb: requireString(exampleDocument.data.breadcrumb, "breadcrumb", exampleDocument.sourcePath),
+    eyebrow: requireString(exampleDocument.data.eyebrow, "eyebrow", exampleDocument.sourcePath),
+    author: {
+      initials: requireString(exampleDocument.data.authorInitials, "authorInitials", exampleDocument.sourcePath),
+      name: requireString(exampleDocument.data.authorName, "authorName", exampleDocument.sourcePath),
+      role: requireString(exampleDocument.data.authorRole, "authorRole", exampleDocument.sourcePath),
+      bio: requireString(exampleDocument.data.authorBio, "authorBio", exampleDocument.sourcePath),
+      profileUrl: "../#contributors",
+    },
+    categoryRecords: [{
+      title: requireString(exampleDocument.data.primaryCategory, "primaryCategory", exampleDocument.sourcePath),
+    }],
+    published: requireDate(exampleDocument.data.published, "published", exampleDocument.sourcePath),
+    coverImage: requireBlogCover(exampleDocument.data.coverImage, "coverImage", exampleDocument.sourcePath),
+    html: renderedExample.html
+      .replace("<p>", '<p class="lead">')
+      .replaceAll('src="./content/', 'src="../../content/'),
+    headings: renderedExample.headings,
+    readingTime: renderedExample.readingTime,
+    sourceLabel: "Example structure",
+  };
+
+  return { publication, categories, authors, posts, featured, ads, articleExample };
+}
+
+function renderBlogTemplate(templateName, tokens) {
+  const templatePath = path.join(blogTemplateRoot, templateName);
+  if (!fs.existsSync(templatePath)) throw new Error(`${sourceLabel(templatePath)}: required blog template is missing.`);
+  let html = fs.readFileSync(templatePath, "utf8");
+  for (const [name, value] of Object.entries(tokens)) {
+    html = html.replaceAll(`{{${name}}}`, String(value));
+  }
+  const unresolved = html.match(/\{\{[A-Z0-9_]+\}\}/g);
+  if (unresolved) throw new Error(`${sourceLabel(templatePath)}: unresolved template tokens: ${[...new Set(unresolved)].join(", ")}.`);
+  return html;
+}
+
+function writeBlogPage(outputParts, html) {
   for (const previewPath of ["../site/", "blogs-preview.html", "blog-article-preview.html"]) {
-    if (html.includes(previewPath)) {
-      throw new Error(`${sourceLabel(sourcePath)}: unresolved preview path "${previewPath}" remains.`);
-    }
+    if (html.includes(previewPath)) throw new Error(`Generated blog page contains unresolved template path "${previewPath}".`);
   }
-
   const outputPath = path.join(publicBlogRoot, ...outputParts);
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, html);
 }
 
-function generateBlogSite() {
+function generateBlogSite(blog) {
   fs.rmSync(publicBlogRoot, { recursive: true, force: true });
+  const { publication, categories, posts, featured, ads, articleExample } = blog;
+  const featuredCategory = featured.categoryRecords[0];
+  const categoryCounts = new Map(categories.map((category) => [
+    category.slug,
+    posts.filter((post) => post.categories.includes(category.slug)).length,
+  ]));
+  const topicLinks = [
+    `<a href="#latest" aria-current="true"><span>All stories</span><strong>${String(posts.length).padStart(2, "0")}</strong></a>`,
+    ...categories.map((category) => {
+      const count = categoryCounts.get(category.slug) ?? 0;
+      if (category.status === "planned" && count === 0) {
+        return `<span class="topic-coming-soon"><span>${escapeHtml(category.title)}</span><strong>Coming soon</strong></span>`;
+      }
+      return `<a href="#latest"><span>${escapeHtml(category.title)}</span><strong>${String(count).padStart(2, "0")}</strong></a>`;
+    }),
+  ].join("");
+  const categoryOptions = categories
+    .map((category) => `<option value="${escapeHtml(category.slug)}">${escapeHtml(category.title)}</option>`)
+    .join("");
+  const adSlots = ads.slots
+    .map((slot) => `<div class="ad-slot${slot.variant === "short" ? " ad-slot--short" : ""}" data-ad-slot="${escapeHtml(slot.id)}" aria-label="${escapeHtml(slot.title)} placeholder"><strong>${escapeHtml(slot.title)}</strong><span>${escapeHtml(slot.size)}</span></div>`)
+    .join("");
 
-  writeStaticBlogPage("blogs-preview.html", ["index.html"], [
-    ['href="blogs-preview.html"', 'href="./"'],
-    ['href="blog-article-preview.html"', 'href="./building-smart-d365-plugins/"'],
-    ['href="../site/index.html"', 'href="../"'],
-    ['src="../site/public/article-covers/', 'src="../article-covers/'],
-  ]);
+  let homeHtml = renderBlogTemplate("home.html", {
+    BLOG_META_DESCRIPTION: escapeHtml(publication.metaDescription),
+    BLOG_PAGE_TITLE: escapeHtml(publication.pageTitle),
+    BLOG_TITLE: escapeHtml(publication.title),
+    BLOG_BRAND_NAME: escapeHtml(publication.brandName),
+    BLOG_BRAND_SUFFIX: escapeHtml(publication.brandSuffix),
+    BLOG_EYEBROW: escapeHtml(publication.eyebrow),
+    BLOG_HEADLINE: escapeHtml(publication.headline),
+    BLOG_HEADLINE_ACCENT: escapeHtml(publication.headlineAccent),
+    BLOG_SUMMARY: escapeHtml(publication.summary),
+    BLOG_POST_COUNT_PADDED: String(posts.length).padStart(2, "0"),
+    BLOG_POST_COUNT_LABEL: `${posts.length} published ${posts.length === 1 ? "story" : "stories"}`,
+    AUTHOR_INTEREST_STATUS: publication.authorInterestOpen ? "Open" : "Closed",
+    BLOG_TOPIC_LINKS: topicLinks,
+    BLOG_CATEGORY_OPTIONS: categoryOptions,
+    OWNER_EMAIL: escapeHtml(publication.ownerEmail),
+    FEATURED_ROUTE: `./${featured.slug}/`,
+    FEATURED_HOME_COVER: `.${featured.coverImage}`,
+    FEATURED_TITLE: escapeHtml(featured.title),
+    FEATURED_SUMMARY: escapeHtml(featured.summary),
+    FEATURED_CATEGORY: escapeHtml(featuredCategory.title),
+    FEATURED_PUBLISHED_ISO: featured.published,
+    FEATURED_PUBLISHED_DISPLAY: formatBlogDate(featured.published),
+    FEATURED_AUTHOR: escapeHtml(featured.author.name),
+  });
+  homeHtml = homeHtml
+    .replaceAll('href="blogs-preview.html"', 'href="./"')
+    .replaceAll('href="../site/index.html"', 'href="../"');
+  writeBlogPage(["index.html"], homeHtml);
 
-  writeStaticBlogPage("blog-article-preview.html", ["building-smart-d365-plugins", "index.html"], [
-    ['href="blogs-preview.html#topics"', 'href="../#topics"'],
-    ['href="blogs-preview.html#contributors"', 'href="../#contributors"'],
-    ['href="blogs-preview.html"', 'href="../"'],
-    ['href="../site/index.html"', 'href="../../"'],
-    ['src="../site/public/article-covers/', 'src="../../article-covers/'],
-  ]);
+  for (const post of [...posts, articleExample]) {
+    const primaryCategory = post.categoryRecords[0];
+    const toc = post.headings
+      .filter((heading) => heading.level === 2)
+      .map((heading) => `<li><a href="#${escapeHtml(heading.id)}">${escapeHtml(heading.text)}</a></li>`)
+      .join("");
+    let articleHtml = renderBlogTemplate("article.html", {
+      BLOG_TITLE: escapeHtml(publication.title),
+      BLOG_BRAND_NAME: escapeHtml(publication.brandName),
+      BLOG_BRAND_SUFFIX: escapeHtml(publication.brandSuffix),
+      ARTICLE_META_DESCRIPTION: escapeHtml(post.summary),
+      ARTICLE_PAGE_TITLE: escapeHtml(`${post.title} | ${publication.title}`),
+      ARTICLE_PRIMARY_CATEGORY: escapeHtml(primaryCategory.title),
+      ARTICLE_BREADCRUMB: escapeHtml(post.breadcrumb),
+      ARTICLE_CATEGORY_LABEL: escapeHtml(post.eyebrow),
+      ARTICLE_TITLE: escapeHtml(post.title),
+      ARTICLE_SUMMARY: escapeHtml(post.summary),
+      ARTICLE_PUBLISHED_ISO: post.published,
+      ARTICLE_PUBLISHED_DISPLAY: formatBlogDate(post.published),
+      ARTICLE_READING_TIME: post.readingTime,
+      ARTICLE_SOURCE_LABEL: escapeHtml(post.sourceLabel ?? "CodeFox original"),
+      ARTICLE_COVER: `../.${post.coverImage}`,
+      ARTICLE_TOC: toc,
+      ADS_HIDDEN_ATTRIBUTE: ads.enabled ? "" : " hidden",
+      ADS_LABEL: escapeHtml(ads.label),
+      ADS_SLOTS: adSlots,
+      ADS_POLICY: escapeHtml(ads.policy),
+      AUTHOR_INITIALS: escapeHtml(post.author.initials),
+      AUTHOR_NAME: escapeHtml(post.author.name),
+      AUTHOR_ROLE: escapeHtml(post.author.role),
+      AUTHOR_BIO: escapeHtml(post.author.bio),
+      AUTHOR_PROFILE_URL: escapeHtml(post.author.profileUrl),
+    });
+    articleHtml = articleHtml.replace(
+      /<!-- BLOG_POST_CONTENT_START -->[\s\S]*?<!-- BLOG_POST_CONTENT_END -->/,
+      `<!-- BLOG_POST_CONTENT_START -->\n${post.html}\n          <!-- BLOG_POST_CONTENT_END -->`,
+    );
+    articleHtml = articleHtml
+      .replaceAll('href="blogs-preview.html#topics"', 'href="../#topics"')
+      .replaceAll('href="blogs-preview.html#contributors"', 'href="../#contributors"')
+      .replaceAll('href="blogs-preview.html"', 'href="../"')
+      .replaceAll('href="../site/index.html"', 'href="../../"');
+    writeBlogPage([post.slug, "index.html"], articleHtml);
+  }
 }
 
 export function generateContent() {
@@ -721,7 +1168,8 @@ export function generateContent() {
   fs.rmSync(publicContentRoot, { recursive: true, force: true });
   fs.mkdirSync(generatedRoot, { recursive: true });
   fs.mkdirSync(recordsRoot, { recursive: true });
-  generateBlogSite();
+  const blog = buildBlogContent();
+  generateBlogSite(blog);
 
   const homeSource = readPage("home.md");
   const aboutSource = readPage("about.md");
@@ -755,7 +1203,7 @@ export function generateContent() {
     toolCategories: toolLibrary.categories,
   });
   const toolCount = toolLibrary.categories.reduce((total, category) => total + category.toolCount, 0);
-  console.log(`Generated ${articles.length} fieldnotes, ${linkedinArticles.length} LinkedIn articles, ${guides.length} guides, ${toolCount} tools, and 2 static blog pages.`);
+  console.log(`Generated ${articles.length} fieldnotes, ${linkedinArticles.length} LinkedIn articles, ${guides.length} guides, ${toolCount} tools, and ${blog.posts.length + 2} static blog pages.`);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

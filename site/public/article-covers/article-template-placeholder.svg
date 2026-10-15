@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title description">
+  <title id="title">Article cover placeholder</title>
+  <desc id="description">A CodeFox placeholder illustrating the standard article cover area.</desc>
+  <defs>
+    <linearGradient id="cover" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f07848"/>
+      <stop offset="0.55" stop-color="#ffd5c0"/>
+      <stop offset="1" stop-color="#b9e6a8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#cover)"/>
+  <rect x="72" y="72" width="1056" height="531" rx="18" fill="#fffdf9" fill-opacity="0.82"/>
+  <text x="120" y="205" fill="#f07848" font-family="Arial, sans-serif" font-size="28" font-weight="700">CODEFOX ARTICLE</text>
+  <text x="120" y="330" fill="#32404f" font-family="Georgia, serif" font-size="76" font-weight="700">Your cover image</text>
+  <text x="120" y="410" fill="#707986" font-family="Arial, sans-serif" font-size="34">1200 × 675 recommended</text>
+</svg>

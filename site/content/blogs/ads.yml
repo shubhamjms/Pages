@@ -1,0 +1,13 @@
+enabled: true
+label: "Sponsored"
+policy: "Ads should be relevant to builders and clearly separated from editorial content."
+slots:
+  - id: "sidebar-primary"
+    title: "Advertisement"
+    size: "210 x 220 placement"
+    variant: "standard"
+
+  - id: "sidebar-partner"
+    title: "Partner message"
+    size: "210 x 150 placement"
+    variant: "short"

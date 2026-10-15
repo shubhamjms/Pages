@@ -98,7 +98,7 @@ p { text-wrap: pretty; }
 .home-carousel-header .kicker { margin-bottom: 0.35rem; }
 .home-carousel-header h1 { margin-bottom: 0; font-family: var(--editorial); font-size: 2.6rem; font-weight: 600; line-height: 1.1; }
 .home-carousel { --carousel-gap: 2rem; --carousel-card-width: 320px; --carousel-card-height: 410px; width: 100%; }
-.home-carousel-stage { min-height: calc(var(--carousel-card-height) + 40px); padding: 20px calc((100% - var(--carousel-card-width)) / 2); display: flex; align-items: center; gap: var(--carousel-gap); overflow-x: auto; overflow-y: hidden; overscroll-behavior-inline: contain; cursor: grab; perspective: 1200px; scrollbar-width: none; touch-action: pan-x pan-y; }
+.home-carousel-stage { min-height: calc(var(--carousel-card-height) + 88px); padding: 44px calc((100% - var(--carousel-card-width)) / 2); display: flex; align-items: center; gap: var(--carousel-gap); overflow-x: auto; overflow-y: hidden; overscroll-behavior-inline: contain; cursor: grab; perspective: 1200px; scrollbar-width: none; touch-action: pan-x pan-y; }
 .home-carousel-stage::-webkit-scrollbar { display: none; width: 0; height: 0; }
 .home-carousel-stage.is-dragging { cursor: grabbing; user-select: none; }
 .home-carousel-stage:focus-visible { border-radius: 6px; outline: 3px solid var(--sky); outline-offset: 3px; }
@@ -1632,7 +1632,7 @@ p { text-wrap: pretty; }
   .home-carousel-header { margin-bottom: 1.25rem; }
   .home-carousel-header h1 { font-size: 2rem; }
   .home-carousel { --carousel-gap: 0.75rem; --carousel-card-width: 240px; --carousel-card-height: 430px; }
-  .home-carousel-stage { min-height: calc(var(--carousel-card-height) + 40px); }
+  .home-carousel-stage { min-height: calc(var(--carousel-card-height) + 88px); }
   .home-carousel-card__link { padding: 1.25rem; }
   .home-carousel-card__body h2 { font-size: 1.45rem; }
   .home-carousel-card__body p { font-size: 0.92rem; -webkit-line-clamp: 5; }
