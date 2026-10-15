@@ -116,11 +116,10 @@
 
       .blog-floating-navigation {
         position: sticky;
-        top: 68px;
+        top: 80px;
         z-index: 25;
         width: min(calc(100% - 40px), var(--page));
-        height: 56px;
-        padding-top: 12px;
+        height: 0;
         margin-inline: auto;
         pointer-events: none;
       }
@@ -256,9 +255,11 @@
         display: inline-flex;
         align-items: center;
         gap: 9px;
-        color: var(--ink);
-        border: 1px solid var(--line);
+        color: #155b78;
+        border: 1px solid rgba(31, 117, 153, 0.42);
         border-radius: var(--radius);
+        background: linear-gradient(135deg, #f7fcfe 0%, #dff2f8 56%, #bfe3f1 100%);
+        box-shadow: 0 7px 18px rgba(31, 117, 153, 0.12);
         text-decoration: none;
         font-size: 12px;
         font-weight: 600;
@@ -266,9 +267,10 @@
       }
 
       .return-link:hover {
-        color: var(--ink);
-        border-color: var(--orange);
-        background: var(--orange-gradient);
+        color: #104b63;
+        border-color: rgba(20, 139, 184, 0.68);
+        background: linear-gradient(135deg, #f1fbfe 0%, #ccecf6 52%, #82cbe4 100%);
+        box-shadow: 0 10px 24px rgba(31, 117, 153, 0.18);
       }
 
       main {
@@ -299,7 +301,7 @@
         width: min(calc(100% - 40px), var(--page));
         min-height: 0;
         margin-inline: auto;
-        padding: 48px 0;
+        padding: 72px 0 48px;
         display: grid;
         grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.72fr);
         align-items: center;
@@ -1346,9 +1348,9 @@
         }
 
         .blog-floating-navigation {
-          top: 68px;
-          height: 52px;
-          padding-top: 8px;
+          top: 76px;
+          height: 0;
+          padding-top: 0;
           width: calc(100% - 28px);
         }
 
@@ -1373,7 +1375,7 @@
 
         .hero-inner {
           min-height: 0;
-          padding: 54px 0 50px;
+          padding: 72px 0 50px;
           gap: 52px;
         }
 
@@ -1520,6 +1522,17 @@
       </div>
     </header>
 
+    <nav class="blog-floating-navigation" aria-label="Page navigation">
+      <div class="blog-floating-navigation__controls">
+        <a class="blog-icon-button" href="blogs-preview.html" aria-label="Go to Blogs home" aria-current="page">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-9 9 9"></path><path d="M5 10v10h14V10"></path><path d="M9 20v-6h6v6"></path></svg>
+        </a>
+        <button class="blog-icon-button" type="button" aria-label="Go back" data-blog-back>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
+        </button>
+      </div>
+    </nav>
+
     <main id="main-content">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-inner">
@@ -1617,17 +1630,17 @@
 
           <div class="contribution-options">
             <a class="contribution-option" href="#community-interest">
-              <span>01 / Future contributor</span>
+              <span>Future contributor</span>
               <strong>Join the author community</strong>
               <small>Register your interest in writing and help shape the future contributor platform.</small>
             </a>
             <a class="contribution-option" href="#article-submission">
-              <span>02 / Submit now</span>
+              <span>Submit now</span>
               <strong>Send an article for review</strong>
               <small>Prepare an editorial submission email with your draft link or attachment instructions.</small>
             </a>
             <a class="contribution-option" href="./article-template/">
-              <span>03 / Page example</span>
+              <span>Page example</span>
               <strong>View the article template</strong>
               <small>See a realistic example page showing every field, rich content area, media placement, and shared ad container.</small>
             </a>
@@ -1688,10 +1701,6 @@
                   <label class="interest-field">
                     <span>Email - your primary ID *</span>
                     <input type="email" name="email" autocomplete="email" required />
-                  </label>
-                  <label class="interest-field">
-                    <span>Existing author key</span>
-                    <input type="text" name="authorKey" pattern="cf-author-[0-9]{4}" placeholder="cf-author-1000" />
                   </label>
                   <label class="interest-field">
                     <span>Author role or expertise *</span>
@@ -1815,7 +1824,7 @@
     </footer>
 
     <script>
-      document.querySelector("[data-blog-back]").addEventListener("click", () => window.history.back());
+      document.querySelector("[data-blog-back]")?.addEventListener("click", () => window.history.back());
 
       const emailTarget = "{{OWNER_EMAIL}}";
       const formConfigs = [
@@ -1836,12 +1845,11 @@
         {
           formId: "article-submission-form",
           statusId: "article-submission-status",
-          subject: (value) => `CodeFox article submission${value("authorKey") ? ` [${value("authorKey")}]` : ""} - ${value("title")}`,
+          subject: (value) => `CodeFox article submission - ${value("title")}`,
           intro: "I would like to submit an article for CodeFox editorial review.",
           fields: [
             ["Author name", "name"],
             ["Primary email ID", "email"],
-            ["Existing author key", "authorKey", "Not assigned"],
             ["Author role or expertise", "authorRole"],
             ["Public author biography", "authorBio"],
             ["Public profile or portfolio", "profile", "Not provided"],
