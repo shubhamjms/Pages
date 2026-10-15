@@ -1,0 +1,105 @@
+{
+  "guideSlug": "copilot-studio",
+  "partKey": "deep-dive",
+  "slug": "limitations",
+  "order": 10,
+  "title": "Limitations & Boundaries",
+  "summary": "Recognize platform constraints and design explicit boundaries around them.",
+  "type": "reference",
+  "level": "intermediate",
+  "updated": "2026-08-26",
+  "readingTime": 6,
+  "route": "#/learn/copilot-studio/limitations",
+  "recordFile": "chapter--copilot-studio--limitations",
+  "guideTitle": "Copilot Studio Guide",
+  "partTitle": "Deep Dive",
+  "position": 11,
+  "chapterCount": 19,
+  "html": "<p>Every platform has limits. Knowing Copilot Studio’s <strong>quotas, character caps, throttles, and\nfeature boundaries</strong> up front saves you from designing an agent that can’t ship. This section\ncollects the limits that matter most for beginners and builders.</p>\n<blockquote>\n<p>Limits change over time and can differ by <strong>license</strong>, <strong>region</strong>, and <strong>cloud</strong> (commercial vs.\nGCC/GCC High/DoD). Always confirm the current numbers on the linked Microsoft Learn pages before\ncommitting to a design.</p>\n</blockquote>\n<hr />\n<h2 id=\"1-authoring-limits-characters-counts\">1. Authoring limits (characters &amp; counts)</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Item</th>\n<th>Limit</th>\n<th>Notes</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Description</strong></td>\n<td><strong>1,024</strong> characters</td>\n<td>Drives discovery + routing.</td>\n</tr>\n<tr>\n<td><strong>Instructions</strong></td>\n<td><strong>8,000</strong> characters</td>\n<td>The system prompt; shorter+structured beats long.</td>\n</tr>\n<tr>\n<td><strong>Agent name</strong></td>\n<td>~<strong>30</strong> characters (short)</td>\n<td>Keep it human-friendly.</td>\n</tr>\n<tr>\n<td><strong>Node name</strong></td>\n<td><strong>500</strong> characters</td>\n<td>You can’t rename Trigger / Go to step nodes.</td>\n</tr>\n<tr>\n<td><strong>Trigger phrases</strong></td>\n<td><strong>5–10</strong> recommended per topic</td>\n<td>More isn’t always better; avoid overlap across topics.</td>\n</tr>\n<tr>\n<td><strong>Starter / suggested prompts</strong></td>\n<td><strong>10</strong> max</td>\n<td>Teams / Microsoft 365 only.</td>\n</tr>\n<tr>\n<td><strong>Multiple entities in one question</strong></td>\n<td><strong>5</strong> max</td>\n<td>“One of multiple entities”; only the first match is captured.</td>\n</tr>\n<tr>\n<td><strong>Topics per agent</strong></td>\n<td>Large but finite</td>\n<td>Keep topics small and focused.</td>\n</tr>\n<tr>\n<td><strong>Icon image</strong></td>\n<td><strong>PNG ≤ 72 KB, ≤ 192×192</strong></td>\n<td>A distinctive icon aids recognition.</td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p>Type is <strong>fixed on first assignment</strong> for a variable — you can’t store a String into a Number\nvariable later without an error.</p>\n</blockquote>\n<hr />\n<h2 id=\"2-knowledge-generative-answers-limits\">2. Knowledge (generative answers) limits</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Area</th>\n<th>Limitation</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>File upload size</strong></td>\n<td>Each uploaded file has a max size cap (varies by source type). Very large files are truncated or rejected.</td>\n</tr>\n<tr>\n<td><strong>Number of sources</strong></td>\n<td>You can add many, but more sources can dilute relevance and slow responses.</td>\n</tr>\n<tr>\n<td><strong>Public website indexing</strong></td>\n<td>Only crawlable, public pages; auth-gated or JS-heavy content may not be read. Limited number of URLs per source.</td>\n</tr>\n<tr>\n<td><strong>SharePoint / OneDrive</strong></td>\n<td>Respects the <strong>signed-in user’s</strong> permissions; works best with text-based docs.</td>\n</tr>\n<tr>\n<td><strong>Freshness</strong></td>\n<td>Indexed content isn’t real-time; updates take time to reflect.</td>\n</tr>\n<tr>\n<td><strong>Unsupported content</strong></td>\n<td>Images inside docs, scanned PDFs (no OCR), audio/video, and complex tables may not be understood.</td>\n</tr>\n<tr>\n<td><strong>Citations</strong></td>\n<td>Generative answers cite sources, but citation accuracy depends on source quality.</td>\n</tr>\n<tr>\n<td><strong>Languages</strong></td>\n<td>Quality varies by language; best results in well-supported languages.</td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p>Knowledge answers are <strong>grounded but not guaranteed</strong> — the model can still miss, misread, or\nover-summarize. Always test with real questions.</p>\n</blockquote>\n<hr />\n<h2 id=\"3-generative-ai-orchestration-limits\">3. Generative AI &amp; orchestration limits</h2>\n<ul>\n<li><strong>No guaranteed determinism.</strong> The same input can produce slightly different wording each turn.</li>\n<li><strong>Hallucination risk.</strong> Without strong instructions + grounding, the model can invent facts.</li>\n<li><strong>Planning depth.</strong> Generative orchestration can chain tools/topics, but extremely long multi-step\nplans may time out or lose track. Keep tasks bounded.</li>\n<li><strong>Context window.</strong> Very long conversations or huge inputs can exceed the model’s context and drop\nearlier details.</li>\n<li><strong>Model availability.</strong> Newer/Deep/Experimental models may be <strong>region-limited</strong>, <strong>preview</strong>, or\n<strong>cross-geo</strong> (data may leave your region) — not all are valid for production.</li>\n<li><strong>Latency vs. capability trade-off.</strong> Deep reasoning models are slower and costlier; General models\nare fast but shallower.</li>\n<li><strong>Tool/connector reliability.</strong> The agent depends on the underlying connector/flow; if that fails\nor throttles, the step fails.</li>\n</ul>\n<hr />\n<h2 id=\"4-channel-publishing-limits\">4. Channel &amp; publishing limits</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Channel</th>\n<th>Key limitations</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Microsoft Teams / M365 Copilot</strong></td>\n<td>Adaptive Cards limited to schema <strong>1.5</strong>; some rich content renders differently.</td>\n</tr>\n<tr>\n<td><strong>Web Chat / custom website</strong></td>\n<td>Supports Adaptive Cards <strong>1.6</strong> (no <code>Action.Execute</code>).</td>\n</tr>\n<tr>\n<td><strong>Telephony / voice</strong></td>\n<td>Requires voice configuration; some nodes/content (images, cards) don’t apply; DTMF and SSML have their own rules.</td>\n</tr>\n<tr>\n<td><strong>Quick replies</strong></td>\n<td>Not supported on every channel; some channels cap how many show.</td>\n</tr>\n<tr>\n<td><strong>Publishing required</strong></td>\n<td>Changes to description, instructions, model, topics, and knowledge need a <strong>Publish</strong> to reach users (except secret environment variables, read at runtime).</td>\n</tr>\n<tr>\n<td><strong>Channel parity</strong></td>\n<td>A feature that works in the Test pane may behave differently once published to a specific channel.</td>\n</tr>\n</tbody>\n</table></div><hr />\n<h2 id=\"5-capacity-quotas-throttling\">5. Capacity, quotas &amp; throttling</h2>\n<ul>\n<li><strong>Message/capacity packs.</strong> Usage is metered (messages / Copilot Studio capacity). Heavy traffic\nconsumes quota and may require additional licensing.</li>\n<li><strong>Rate limits / throttling.</strong> APIs, connectors, and generative calls are subject to per-tenant and\nper-connector throttles; bursts can be slowed or queued.</li>\n<li><strong>HTTP request node.</strong> Subject to timeouts and payload-size limits; long-running external calls can\nfail. Use Power Automate for complex/long operations.</li>\n<li><strong>Power Automate flows.</strong> Inherit Power Platform flow limits (run duration, throughput, connector\nlimits).</li>\n<li><strong>Concurrent sessions.</strong> Very high concurrency may hit service limits depending on plan.</li>\n</ul>\n<hr />\n<h2 id=\"6-security-governance-compliance-limits\">6. Security, governance &amp; compliance limits</h2>\n<ul>\n<li><strong>Environment scope.</strong> Variables, solutions, and DLP policies are <strong>per environment</strong>; what works\nin dev may be blocked in prod by <strong>Data Loss Prevention (DLP)</strong> policies.</li>\n<li><strong>Authentication.</strong> Some knowledge/tools require user authentication; anonymous channels can’t\naccess them.</li>\n<li><strong>Admin controls.</strong> Tenant admins can disable agent creation, restrict connectors, and gate model\naccess — you may not see features your license technically includes.</li>\n<li><strong>Sovereign clouds (GCC/GCC High/DoD).</strong> Reduced feature set; some models, natural-language create,\nand cross-geo features are unavailable.</li>\n<li><strong>Sensitive data.</strong> Mark variables as <strong>sensitive</strong> to keep them out of transcripts/logs — but this\nis opt-in, not automatic.</li>\n<li><strong>Responsible AI.</strong> Generative features include content filters that may block certain prompts or\nresponses.</li>\n</ul>\n<hr />\n<h2 id=\"7-application-lifecycle-management-alm-limits\">7. Application Lifecycle Management (ALM) limits</h2>\n<ul>\n<li><strong>Environment variables</strong> are read-only in Copilot Studio (set by admins in Power Apps).</li>\n<li><strong>Solution-awareness</strong> matters: build agents inside a <strong>solution</strong> for clean dev→test→prod movement.</li>\n<li><strong>Some references don’t travel</strong> cleanly across environments (connections, secrets, environment-\nspecific URLs) and need reconfiguration after import.</li>\n</ul>\n<hr />\n<h2 id=\"8-things-copilot-studio-is-not-great-at-by-design\">8. Things Copilot Studio is <em>not</em> great at (by design)</h2>\n<ul>\n<li><strong>Heavy custom UI.</strong> It’s conversational; it isn’t a full app builder (use Power Apps for rich UI).</li>\n<li><strong>Deterministic, rules-only workflows at scale.</strong> Pure logic pipelines may fit <strong>Power Automate</strong>\nbetter.</li>\n<li><strong>Long-form document generation / complex math.</strong> The model can help but isn’t a guaranteed engine.</li>\n<li><strong>Real-time data without a tool.</strong> It only knows live data if you connect a tool/flow/HTTP call.</li>\n<li><strong>Offline use.</strong> It’s a cloud service; no offline mode.</li>\n</ul>\n<hr />\n<h2 id=\"9-practical-design-tips-to-stay-within-limits\">9. Practical design tips to stay within limits</h2>\n<ul>\n<li>Keep <strong>instructions structured and concise</strong> — well under 8,000 characters.</li>\n<li>Keep <strong>topics small</strong>; reuse logic via redirects.</li>\n<li><strong>Curate knowledge</strong> — fewer, higher-quality sources beat many noisy ones.</li>\n<li><strong>Always test on the target channel</strong>, not just the Test pane.</li>\n<li>Use <strong>GA/Default models</strong> for production; reserve Deep models for tasks that truly need them.</li>\n<li>Plan for <strong>failure paths</strong> (tool timeouts, “no valid entity”, escalation to a human).</li>\n<li>Confirm <strong>licensing/quota</strong> for expected traffic before go-live.</li>\n</ul>\n<hr />\n<h3 id=\"key-takeaways\">Key takeaways</h3>\n<ul>\n<li>Hard caps to remember: <strong>Description 1,024</strong>, <strong>Instructions 8,000</strong>, <strong>5</strong> entities/question,\n<strong>10</strong> starter prompts, <strong>Adaptive Cards 1.5 (Teams) / 1.6 (Web Chat)</strong>.</li>\n<li>Generative answers are <strong>grounded but not guaranteed</strong> — design for hallucination and failure.</li>\n<li><strong>License, region, cloud, and admin policy</strong> all change what you can actually use.</li>\n<li>Copilot Studio is <strong>conversational-first</strong> — pair it with Power Apps / Power Automate for the rest.</li>\n</ul>\n<hr />\n<h2 id=\"official-microsoft-documentation-references\">Official Microsoft documentation (references)</h2>\n<p>Limits change frequently — verify current numbers here:</p>\n<ul>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/requirements-quotas\" target=\"_blank\" rel=\"noreferrer\">Quotas and limits in Copilot Studio</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio\" target=\"_blank\" rel=\"noreferrer\">Key concepts — knowledge sources</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-language-support\" target=\"_blank\" rel=\"noreferrer\">Supported languages</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-send-message\" target=\"_blank\" rel=\"noreferrer\">Adaptive Cards in agents</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/admin-data-loss-prevention\" target=\"_blank\" rel=\"noreferrer\">Data Loss Prevention (DLP) for agents</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-lifecycle-management\" target=\"_blank\" rel=\"noreferrer\">Application lifecycle management (ALM)</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/responsible-ai-overview\" target=\"_blank\" rel=\"noreferrer\">Responsible AI FAQ</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/requirements-licensing-subscriptions\" target=\"_blank\" rel=\"noreferrer\">Licensing and message capacity</a></li>\n</ul>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "1. Authoring limits (characters & counts)",
+      "id": "1-authoring-limits-characters-counts"
+    },
+    {
+      "level": 2,
+      "text": "2. Knowledge (generative answers) limits",
+      "id": "2-knowledge-generative-answers-limits"
+    },
+    {
+      "level": 2,
+      "text": "3. Generative AI & orchestration limits",
+      "id": "3-generative-ai-orchestration-limits"
+    },
+    {
+      "level": 2,
+      "text": "4. Channel & publishing limits",
+      "id": "4-channel-publishing-limits"
+    },
+    {
+      "level": 2,
+      "text": "5. Capacity, quotas & throttling",
+      "id": "5-capacity-quotas-throttling"
+    },
+    {
+      "level": 2,
+      "text": "6. Security, governance & compliance limits",
+      "id": "6-security-governance-compliance-limits"
+    },
+    {
+      "level": 2,
+      "text": "7. Application Lifecycle Management (ALM) limits",
+      "id": "7-application-lifecycle-management-alm-limits"
+    },
+    {
+      "level": 2,
+      "text": "8. Things Copilot Studio is *not* great at (by design)",
+      "id": "8-things-copilot-studio-is-not-great-at-by-design"
+    },
+    {
+      "level": 2,
+      "text": "9. Practical design tips to stay within limits",
+      "id": "9-practical-design-tips-to-stay-within-limits"
+    },
+    {
+      "level": 3,
+      "text": "Key takeaways",
+      "id": "key-takeaways"
+    },
+    {
+      "level": 2,
+      "text": "Official Microsoft documentation (references)",
+      "id": "official-microsoft-documentation-references"
+    }
+  ],
+  "hasMermaid": false,
+  "previous": {
+    "guideSlug": "copilot-studio",
+    "partKey": "deep-dive",
+    "slug": "models-and-instructions",
+    "order": 9,
+    "title": "Models, Description & Instructions",
+    "summary": "Shape agent behavior with model choices, descriptions, and precise instructions.",
+    "type": "chapter",
+    "level": "intermediate",
+    "updated": "2026-08-26",
+    "readingTime": 10,
+    "route": "#/learn/copilot-studio/models-and-instructions",
+    "recordFile": "chapter--copilot-studio--models-and-instructions"
+  },
+  "next": {
+    "guideSlug": "copilot-studio",
+    "partKey": "deep-dive",
+    "slug": "grounding",
+    "order": 11,
+    "title": "Grounding: Answering from Your Data",
+    "summary": "Ground an agent in trusted organizational knowledge and inspect its answers.",
+    "type": "chapter",
+    "level": "intermediate",
+    "updated": "2026-08-26",
+    "readingTime": 6,
+    "route": "#/learn/copilot-studio/grounding",
+    "recordFile": "chapter--copilot-studio--grounding"
+  }
+}

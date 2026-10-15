@@ -1,0 +1,140 @@
+{
+  "guideSlug": "copilot-studio",
+  "partKey": "hands-on-labs",
+  "slug": "lab1",
+  "order": 6,
+  "title": "Lab 1: Coffee Shop Ordering Assistant",
+  "summary": "Build a guided ordering assistant using entities, variables, and branching.",
+  "type": "lab",
+  "level": "beginner",
+  "updated": "2026-08-26",
+  "readingTime": 5,
+  "route": "#/learn/copilot-studio/lab1",
+  "recordFile": "chapter--copilot-studio--lab1",
+  "guideTitle": "Copilot Studio Guide",
+  "partTitle": "Hands-On Labs",
+  "position": 7,
+  "chapterCount": 19,
+  "html": "<h2 id=\"core-concepts-covered\">Core concepts covered</h2>\n<ul>\n<li><strong>Variables</strong></li>\n<li><strong>Message Nodes</strong></li>\n<li><strong>Prebuilt &amp; Custom Entities</strong></li>\n<li><strong>Suggested Flow</strong></li>\n</ul>\n<blockquote>\n<p><strong>Goal:</strong> Build a single topic that greets the customer, collects their <strong>name</strong>, <strong>coffee type</strong>,\n<strong>size</strong>, and <strong>pickup time</strong>, then <strong>confirms the order</strong> back to them. By the end you’ll have\nused message nodes, several variables, a prebuilt entity, and two custom entities.</p>\n</blockquote>\n<p><strong>Time:</strong> ~30–45 minutes · <strong>Level:</strong> Beginner · <strong>Prereq:</strong> You can open an agent in Copilot Studio.</p>\n<hr />\n<h2 id=\"what-youll-build-the-finished-conversation\">What you’ll build (the finished conversation)</h2>\n<pre aria-label=\"Code sample\"><code>Agent:  ☕ Welcome to Copilot Coffee! Let's get your order started.\nAgent:  First, what's your name?\nUser:   Sam\nAgent:  Thanks, Sam! Which coffee would you like?  [Espresso] [Latte] [Cappuccino] [Americano]\nUser:   long black\nAgent:  Great choice. What size?  [Small] [Medium] [Large]\nUser:   Medium\nAgent:  When would you like to pick it up?\nUser:   today at 4pm\nAgent:  ✅ All set, Sam! One Medium Americano, ready at 6/14/2026 4:00 PM. See you soon!\n</code></pre>\n<hr />\n<h2 id=\"suggested-flow-build-this-node-tree\">Suggested Flow (build this node tree)</h2>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    T[Trigger: 'I want to order coffee'] --&gt; W[Message: Welcome]\n    W --&gt; Q1[Question: name  -&gt; Person name  -&gt; Topic.CustomerName]\n    Q1 --&gt; Q2[Question: coffee  -&gt; Custom entity Coffee Type  -&gt; Topic.Coffee]\n    Q2 --&gt; Q3[Question: size  -&gt; Custom entity Coffee Size  -&gt; Topic.Size]\n    Q3 --&gt; Q4[Question: pickup  -&gt; Date and time  -&gt; Topic.PickupTime]\n    Q4 --&gt; C[Message: Order confirmation with all variables]\n</pre></div><div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Step</th>\n<th>Node type</th>\n<th>Identify (entity)</th>\n<th>Saves to variable</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n<td>Trigger</td>\n<td>—</td>\n<td>—</td>\n</tr>\n<tr>\n<td>2</td>\n<td>Send a message</td>\n<td>—</td>\n<td>—</td>\n</tr>\n<tr>\n<td>3</td>\n<td>Ask a question</td>\n<td><strong>Person name</strong> (prebuilt)</td>\n<td><code>Topic.CustomerName</code></td>\n</tr>\n<tr>\n<td>4</td>\n<td>Ask a question</td>\n<td><strong>Coffee Type</strong> (custom, closed list)</td>\n<td><code>Topic.Coffee</code></td>\n</tr>\n<tr>\n<td>5</td>\n<td>Ask a question</td>\n<td><strong>Coffee Size</strong> (custom, closed list)</td>\n<td><code>Topic.Size</code></td>\n</tr>\n<tr>\n<td>6</td>\n<td>Ask a question</td>\n<td><strong>Date and time</strong> (prebuilt)</td>\n<td><code>Topic.PickupTime</code></td>\n</tr>\n<tr>\n<td>7</td>\n<td>Send a message</td>\n<td>—</td>\n<td>—</td>\n</tr>\n</tbody>\n</table></div><hr />\n<h2 id=\"step-0-create-the-custom-entities-first\">Step 0 — Create the custom entities first</h2>\n<p>It’s easiest to define entities before you reference them in the topic.</p>\n<h3 id=\"entity-a-coffee-type-closed-list\">Entity A — “Coffee Type” (closed list)</h3>\n<ol>\n<li>\n<p>In your agent, open <strong>Settings</strong> (top bar) → <strong>Entities</strong>.</p>\n</li>\n<li>\n<p>Select <strong>+ New entity</strong> → <strong>Closed list</strong>.</p>\n</li>\n<li>\n<p><strong>Name:</strong> <code>Coffee Type</code>.</p>\n</li>\n<li>\n<p>Add these <strong>items</strong> and <strong>synonyms</strong>:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Item</th>\n<th>Synonyms</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Espresso</td>\n<td>shot, short black</td>\n</tr>\n<tr>\n<td>Latte</td>\n<td>caffe latte, milky coffee</td>\n</tr>\n<tr>\n<td>Cappuccino</td>\n<td>cap, cappa</td>\n</tr>\n<tr>\n<td>Americano</td>\n<td>long black</td>\n</tr>\n</tbody>\n</table></div></li>\n<li>\n<p><strong>Save</strong>.</p>\n</li>\n</ol>\n<h3 id=\"entity-b-coffee-size-closed-list\">Entity B — “Coffee Size” (closed list)</h3>\n<ol>\n<li>\n<p><strong>+ New entity</strong> → <strong>Closed list</strong>. <strong>Name:</strong> <code>Coffee Size</code>.</p>\n</li>\n<li>\n<p>Items / synonyms:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Item</th>\n<th>Synonyms</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Small</td>\n<td>tall, regular</td>\n</tr>\n<tr>\n<td>Medium</td>\n<td>grande</td>\n</tr>\n<tr>\n<td>Large</td>\n<td>venti, big</td>\n</tr>\n</tbody>\n</table></div></li>\n<li>\n<p><strong>Save</strong>.</p>\n</li>\n</ol>\n<blockquote>\n<p>✅ <strong>Checkpoint:</strong> Under <strong>Settings → Entities</strong> you should now see <code>Coffee Type</code> and <code>Coffee Size</code>\nlisted alongside the prebuilt entities.</p>\n</blockquote>\n<hr />\n<h2 id=\"step-1-create-the-topic\">Step 1 — Create the topic</h2>\n<ol>\n<li>Go to <strong>Topics</strong> → <strong>+ Add a topic</strong> → <strong>From blank</strong>.</li>\n<li>Select the <strong>Trigger</strong> node → <strong>Properties</strong> → add trigger phrases:<pre aria-label=\"Code sample\"><code>I want to order coffee\norder a coffee\nbuy coffee\nget me a drink\ncan I order\ncoffee please\n</code></pre>\n</li>\n<li>Open <strong>Details</strong> (top bar) and name the topic <strong>Order Coffee</strong>. <strong>Save</strong>.</li>\n</ol>\n<hr />\n<h2 id=\"step-2-welcome-message-message-node\">Step 2 — Welcome message (Message node)</h2>\n<ol>\n<li>Under the Trigger, select <strong>+</strong> → <strong>Send a message</strong>.</li>\n<li>Enter:<pre aria-label=\"Code sample\"><code>☕ Welcome to Copilot Coffee! Let's get your order started.\n</code></pre>\n</li>\n<li><em>(Optional, learn variations):</em> on a new line add a second greeting so the agent varies it:<pre aria-label=\"Code sample\"><code>Hi there! Ready to build your perfect cup?\n</code></pre>\n</li>\n</ol>\n<hr />\n<h2 id=\"step-3-ask-for-the-name-prebuilt-entity-variable\">Step 3 — Ask for the name (prebuilt entity → variable)</h2>\n<ol>\n<li>Select <strong>+</strong> → <strong>Ask a question</strong>.</li>\n<li><strong>Message:</strong> <code>First, what's your name?</code></li>\n<li><strong>Identify:</strong> choose <strong>Person name</strong>.</li>\n<li><strong>Save response as:</strong> click the variable name, rename it to <code>CustomerName</code>.</li>\n</ol>\n<blockquote>\n<p>🧠 This is <strong>slot filling</strong>: the recognized name lands in <code>Topic.CustomerName</code>.</p>\n</blockquote>\n<hr />\n<h2 id=\"step-4-ask-for-the-coffee-custom-entity-buttons\">Step 4 — Ask for the coffee (custom entity + buttons)</h2>\n<ol>\n<li><strong>+</strong> → <strong>Ask a question</strong>.</li>\n<li><strong>Message:</strong> <code>Thanks, {CustomerName}! Which coffee would you like?</code>\n<ul>\n<li>Use the <strong><code>{x}</code></strong> icon to insert <code>CustomerName</code> instead of typing it.</li>\n</ul>\n</li>\n<li><strong>Identify:</strong> select your custom entity <strong>Coffee Type</strong>.</li>\n<li>Turn on <strong>Select options for user</strong> so the four coffees appear as <strong>buttons</strong>.</li>\n<li><strong>Save response as:</strong> rename to <code>Coffee</code>.</li>\n</ol>\n<blockquote>\n<p>Test idea: typing <strong>“long black”</strong> should still resolve to <strong>Americano</strong> thanks to the synonym.</p>\n</blockquote>\n<hr />\n<h2 id=\"step-5-ask-for-the-size-custom-entity-buttons\">Step 5 — Ask for the size (custom entity + buttons)</h2>\n<ol>\n<li><strong>+</strong> → <strong>Ask a question</strong>.</li>\n<li><strong>Message:</strong> <code>Great choice. What size?</code></li>\n<li><strong>Identify:</strong> select <strong>Coffee Size</strong>.</li>\n<li>Enable <strong>Select options for user</strong> (Small / Medium / Large buttons).</li>\n<li><strong>Save response as:</strong> rename to <code>Size</code>.</li>\n</ol>\n<hr />\n<h2 id=\"step-6-ask-for-pickup-time-prebuilt-datetime-entity\">Step 6 — Ask for pickup time (prebuilt DateTime entity)</h2>\n<ol>\n<li><strong>+</strong> → <strong>Ask a question</strong>.</li>\n<li><strong>Message:</strong> <code>When would you like to pick it up?</code></li>\n<li><strong>Identify:</strong> choose <strong>Date and time</strong>.</li>\n<li><strong>Save response as:</strong> rename to <code>PickupTime</code>.</li>\n</ol>\n<blockquote>\n<p>The agent understands natural phrases like <em>“today at 4pm”</em> or <em>“tomorrow morning”</em> and stores a\n<strong>DateTime</strong> value.</p>\n</blockquote>\n<hr />\n<h2 id=\"step-7-confirmation-message-variables-in-a-message-node\">Step 7 — Confirmation message (variables in a Message node)</h2>\n<ol>\n<li><strong>+</strong> → <strong>Send a message</strong>.</li>\n<li>Enter (insert each variable with the <strong><code>{x}</code></strong> icon):<pre aria-label=\"Code sample\"><code>✅ All set, {CustomerName}! One {Size} {Coffee}, ready at {PickupTime}. See you soon!\n</code></pre>\n</li>\n<li><strong>Save</strong> the topic.</li>\n</ol>\n<hr />\n<h2 id=\"step-8-test-it\">Step 8 — Test it</h2>\n<ol>\n<li>Open the <strong>Test</strong> pane (top-right).</li>\n<li>Turn on <strong>Track between topics</strong> and open the <strong>Variables</strong> tab so you can watch values fill in.</li>\n<li>Type a trigger phrase: <code>I want to order coffee</code>.</li>\n<li>Walk through the prompts. Try:\n<ul>\n<li>Typing <strong>“long black”</strong> for the coffee (expect <strong>Americano</strong>).</li>\n<li>Typing <strong>“grande”</strong> for the size (expect <strong>Medium</strong>).</li>\n<li>Typing <strong>“today at 4pm”</strong> for pickup.</li>\n</ul>\n</li>\n<li>Confirm the final message shows all four values correctly.</li>\n</ol>\n<blockquote>\n<p>✅ <strong>Checkpoint:</strong> In the <strong>Variables</strong> tab you should see <code>CustomerName</code>, <code>Coffee</code>, <code>Size</code>, and\n<code>PickupTime</code> populated as you answer each question.</p>\n</blockquote>\n<hr />\n<h2 id=\"stretch-goals-optional\">Stretch goals (optional)</h2>\n<ol>\n<li><strong>Confirm &amp; loop:</strong> Add a <strong>Boolean</strong> question <em>“Is that correct?”</em> After it, add a <strong>Condition</strong> —\nif <code>false</code>, <strong>Redirect</strong> back to the start of the topic to re-order.</li>\n<li><strong>Buttons everywhere:</strong> Make the name optional by adding a “Skip” quick reply.</li>\n<li><strong>Personality:</strong> Add message <strong>variations</strong> to every message node so the agent feels less robotic.</li>\n<li><strong>Default size:</strong> Use a <strong>Set a variable value</strong> node to default <code>Size</code> to <code>Medium</code> if left blank\n(<code>If(IsBlank(Topic.Size), \"Medium\", Topic.Size)</code>).</li>\n</ol>\n<hr />\n<h2 id=\"what-you-learned\">What you learned</h2>\n<ul>\n<li>Created and used <strong>variables</strong> (<code>CustomerName</code>, <code>Coffee</code>, <code>Size</code>, <code>PickupTime</code>).</li>\n<li>Used <strong>Message nodes</strong> for output, including <strong>inserting variables</strong> and <strong>variations</strong>.</li>\n<li>Used a <strong>prebuilt entity</strong> (Person name, Date and time) to extract information.</li>\n<li>Built and used <strong>custom closed-list entities</strong> with <strong>synonyms</strong> and <strong>buttons</strong>.</li>\n<li>Followed a <strong>suggested flow</strong> of Trigger → Message → Questions → Confirmation.</li>\n</ul>\n<hr />\n<h2 id=\"troubleshooting\">Troubleshooting</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Problem</th>\n<th>Fix</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>The topic doesn’t trigger</td>\n<td>Add more/varied <strong>trigger phrases</strong>; make sure you <strong>Saved</strong>.</td>\n</tr>\n<tr>\n<td>“long black” isn’t recognized</td>\n<td>Check the <strong>synonym</strong> spelling under the <code>Coffee Type</code> entity.</td>\n</tr>\n<tr>\n<td>Variable shows blank in the message</td>\n<td>Re-insert it with <strong><code>{x}</code></strong>; confirm the names match exactly.</td>\n</tr>\n<tr>\n<td>Buttons don’t appear</td>\n<td>Ensure <strong>Select options for user</strong> is enabled in the Question node.</td>\n</tr>\n<tr>\n<td>Date stored oddly</td>\n<td>Use the <strong>Date and time</strong> entity, not <em>User’s entire response</em>.</td>\n</tr>\n</tbody>\n</table></div><hr />\n<h2 id=\"official-microsoft-documentation-references\">Official Microsoft documentation (references)</h2>\n<p>This lab applies concepts from the following Microsoft Learn pages:</p>\n<ul>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-create-edit-topics\" target=\"_blank\" rel=\"noreferrer\">Create and edit topics</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-send-message\" target=\"_blank\" rel=\"noreferrer\">Send a message (Message node)</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-ask-a-question\" target=\"_blank\" rel=\"noreferrer\">Ask a question (Question node)</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-entities-slot-filling\" target=\"_blank\" rel=\"noreferrer\">Use entities and slot filling in agents</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-variables\" target=\"_blank\" rel=\"noreferrer\">Work with variables</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-test-bot\" target=\"_blank\" rel=\"noreferrer\">Test your agent</a></li>\n</ul>\n<p>Next: <a href=\"#/learn/copilot-studio/lab2\">07-lab2.md</a></p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "Core concepts covered",
+      "id": "core-concepts-covered"
+    },
+    {
+      "level": 2,
+      "text": "What you'll build (the finished conversation)",
+      "id": "what-youll-build-the-finished-conversation"
+    },
+    {
+      "level": 2,
+      "text": "Suggested Flow (build this node tree)",
+      "id": "suggested-flow-build-this-node-tree"
+    },
+    {
+      "level": 2,
+      "text": "Step 0 — Create the custom entities first",
+      "id": "step-0-create-the-custom-entities-first"
+    },
+    {
+      "level": 3,
+      "text": "Entity A — \"Coffee Type\" (closed list)",
+      "id": "entity-a-coffee-type-closed-list"
+    },
+    {
+      "level": 3,
+      "text": "Entity B — \"Coffee Size\" (closed list)",
+      "id": "entity-b-coffee-size-closed-list"
+    },
+    {
+      "level": 2,
+      "text": "Step 1 — Create the topic",
+      "id": "step-1-create-the-topic"
+    },
+    {
+      "level": 2,
+      "text": "Step 2 — Welcome message (Message node)",
+      "id": "step-2-welcome-message-message-node"
+    },
+    {
+      "level": 2,
+      "text": "Step 3 — Ask for the name (prebuilt entity → variable)",
+      "id": "step-3-ask-for-the-name-prebuilt-entity-variable"
+    },
+    {
+      "level": 2,
+      "text": "Step 4 — Ask for the coffee (custom entity + buttons)",
+      "id": "step-4-ask-for-the-coffee-custom-entity-buttons"
+    },
+    {
+      "level": 2,
+      "text": "Step 5 — Ask for the size (custom entity + buttons)",
+      "id": "step-5-ask-for-the-size-custom-entity-buttons"
+    },
+    {
+      "level": 2,
+      "text": "Step 6 — Ask for pickup time (prebuilt DateTime entity)",
+      "id": "step-6-ask-for-pickup-time-prebuilt-datetime-entity"
+    },
+    {
+      "level": 2,
+      "text": "Step 7 — Confirmation message (variables in a Message node)",
+      "id": "step-7-confirmation-message-variables-in-a-message-node"
+    },
+    {
+      "level": 2,
+      "text": "Step 8 — Test it",
+      "id": "step-8-test-it"
+    },
+    {
+      "level": 2,
+      "text": "Stretch goals (optional)",
+      "id": "stretch-goals-optional"
+    },
+    {
+      "level": 2,
+      "text": "What you learned",
+      "id": "what-you-learned"
+    },
+    {
+      "level": 2,
+      "text": "Troubleshooting",
+      "id": "troubleshooting"
+    },
+    {
+      "level": 2,
+      "text": "Official Microsoft documentation (references)",
+      "id": "official-microsoft-documentation-references"
+    }
+  ],
+  "hasMermaid": true,
+  "previous": {
+    "guideSlug": "copilot-studio",
+    "partKey": "building-blocks",
+    "slug": "entities-and-slot-filling",
+    "order": 5,
+    "title": "Entities & Slot Filling",
+    "summary": "Recognize structured information and gather missing values naturally.",
+    "type": "chapter",
+    "level": "beginner",
+    "updated": "2026-08-26",
+    "readingTime": 5,
+    "route": "#/learn/copilot-studio/entities-and-slot-filling",
+    "recordFile": "chapter--copilot-studio--entities-and-slot-filling"
+  },
+  "next": {
+    "guideSlug": "copilot-studio",
+    "partKey": "hands-on-labs",
+    "slug": "lab2",
+    "order": 7,
+    "title": "Lab 2: Multi-Topic Customer Support Agent",
+    "summary": "Build a support agent that routes requests across coordinated topics.",
+    "type": "lab",
+    "level": "intermediate",
+    "updated": "2026-08-26",
+    "readingTime": 6,
+    "route": "#/learn/copilot-studio/lab2",
+    "recordFile": "chapter--copilot-studio--lab2"
+  }
+}

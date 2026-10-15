@@ -1,0 +1,43 @@
+{
+  "slug": "grounding-a-useful-answer",
+  "title": "Grounding a useful answer",
+  "summary": "Choose sources and retrieval patterns that make an answer both relevant and inspectable.",
+  "type": "guide",
+  "topic": "ai-copilot",
+  "published": "2026-08-19",
+  "updated": "2026-08-19",
+  "readingTime": 1,
+  "tags": [
+    "grounding",
+    "knowledge"
+  ],
+  "route": "#/read/grounding-a-useful-answer",
+  "recordFile": "article--grounding-a-useful-answer",
+  "html": "<p>Grounding is not merely attaching documents to an agent. It is the work of deciding what counts as trustworthy context and how a reader can recognize it in the result.</p>\n<h2 id=\"start-with-the-question-boundary\">Start with the question boundary</h2>\n<p>Write down the questions a source should answer and the questions it should not. A narrower boundary improves retrieval and makes gaps easier to see.</p>\n<h2 id=\"prefer-inspectable-sources\">Prefer inspectable sources</h2>\n<p>Use sources with an owner, a known update rhythm, and stable language. Remove duplicate or obsolete material before trying to compensate with prompt instructions.</p>\n<h2 id=\"test-retrieval-before-prose\">Test retrieval before prose</h2>\n<p>Inspect which passages are returned for representative questions. If the evidence is wrong, a more elegant answer only hides the defect.</p>\n<blockquote>\n<p>Retrieval quality is a content and information-architecture problem before it is a prompting problem.</p>\n</blockquote>\n<h2 id=\"show-the-path-back\">Show the path back</h2>\n<p>Return citations or source labels that a reader can follow. Good grounding shortens the distance between a claim and the evidence that supports it.</p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "Start with the question boundary",
+      "id": "start-with-the-question-boundary"
+    },
+    {
+      "level": 2,
+      "text": "Prefer inspectable sources",
+      "id": "prefer-inspectable-sources"
+    },
+    {
+      "level": 2,
+      "text": "Test retrieval before prose",
+      "id": "test-retrieval-before-prose"
+    },
+    {
+      "level": 2,
+      "text": "Show the path back",
+      "id": "show-the-path-back"
+    }
+  ],
+  "hasMermaid": false,
+  "relatedArticles": [
+    "the-work-begins-after-the-answer"
+  ]
+}

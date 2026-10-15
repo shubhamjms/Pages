@@ -1,0 +1,38 @@
+{
+  "slug": "evidence-before-automation",
+  "title": "Evidence before automation",
+  "summary": "Establish observable outcomes before asking a system to act without supervision.",
+  "type": "build",
+  "topic": "ai-copilot",
+  "published": "2026-08-08",
+  "updated": "2026-08-08",
+  "readingTime": 1,
+  "tags": [
+    "testing",
+    "automation"
+  ],
+  "route": "#/read/evidence-before-automation",
+  "recordFile": "article--evidence-before-automation",
+  "html": "<p>Automation should follow observability. If a builder cannot tell whether a manual or supervised run succeeded, autonomous execution only makes the uncertainty faster.</p>\n<h2 id=\"define-the-evidence-first\">Define the evidence first</h2>\n<p>For every action, identify the record, status, message, or test that proves the intended outcome occurred.</p>\n<h2 id=\"exercise-failure-deliberately\">Exercise failure deliberately</h2>\n<p>Test missing inputs, denied permissions, unavailable dependencies, and partial completion. These states deserve designed messages rather than generic exceptions.</p>\n<h2 id=\"increase-autonomy-gradually\">Increase autonomy gradually</h2>\n<p>Begin with suggestions, move to confirmed actions, and automate only after the evidence is stable and reviewable.</p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "Define the evidence first",
+      "id": "define-the-evidence-first"
+    },
+    {
+      "level": 2,
+      "text": "Exercise failure deliberately",
+      "id": "exercise-failure-deliberately"
+    },
+    {
+      "level": 2,
+      "text": "Increase autonomy gradually",
+      "id": "increase-autonomy-gradually"
+    }
+  ],
+  "hasMermaid": false,
+  "relatedArticles": [
+    "agents-need-boundaries"
+  ]
+}

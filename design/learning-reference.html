@@ -1,0 +1,1754 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Reusable learning collection design reference for The Builder's Fieldnotes."
+    />
+    <title>Learning Reference | The Builder's Fieldnotes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --mist: #eef1ef;
+        --glass-white: #ffffff;
+        --ink: #17201b;
+        --muted-ink: #66706a;
+        --accent: #1f7599;
+        --accent-wash: #ddf3fc;
+        --rule: rgb(23 32 27 / 14%);
+        --rule-strong: rgb(23 32 27 / 28%);
+        --shadow: 0 18px 48px rgb(23 32 27 / 9%);
+        --font-editorial: "Source Serif 4", Georgia, serif;
+        --font-interface: "Space Grotesk", "Segoe UI", sans-serif;
+        --font-mono: "IBM Plex Mono", Consolas, monospace;
+        --page-width: 1196px;
+        --reading-width: 700px;
+        --rail-width: 64px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        color: var(--ink);
+        background:
+          linear-gradient(rgb(255 255 255 / 16%) 1px, transparent 1px),
+          linear-gradient(90deg, rgb(255 255 255 / 16%) 1px, transparent 1px),
+          linear-gradient(180deg, var(--mist), #e8f2f3 52%, var(--mist));
+        background-size: 28px 28px, 28px 28px, 100% 100%;
+        background-attachment: fixed;
+      }
+
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      :focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 3px;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        min-height: 72px;
+        border-bottom: 1px solid rgb(255 255 255 / 78%);
+        background: linear-gradient(145deg, rgb(255 255 255 / 82%), rgb(255 255 255 / 62%));
+        box-shadow: inset 0 1px 0 rgb(255 255 255 / 82%), 0 6px 24px rgb(23 32 27 / 7%);
+        backdrop-filter: blur(24px) saturate(120%);
+      }
+
+      .header-inner,
+      .shell,
+      .footer-inner {
+        width: min(calc(100% - 40px), var(--page-width));
+        margin-inline: auto;
+      }
+
+      .header-inner {
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--ink);
+        font: 600 16px/20px var(--font-interface);
+        text-decoration: none;
+      }
+
+      .brand-mark {
+        font-size: 28px;
+        line-height: 1;
+      }
+
+      .document-kind,
+      .eyebrow,
+      .meta,
+      .card-kicker,
+      .part-number,
+      .chapter-number,
+      .type-label,
+      .footer-inner,
+      code,
+      pre {
+        font-family: var(--font-mono);
+        font-weight: 400;
+      }
+
+      .document-kind,
+      .eyebrow,
+      .meta,
+      .card-kicker,
+      .part-number,
+      .chapter-number,
+      .type-label {
+        font-size: 10px;
+        line-height: 16px;
+      }
+
+      .document-kind,
+      .meta {
+        color: var(--muted-ink);
+      }
+
+      .shell {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        padding-block: 16px 84px;
+      }
+
+      .floating-navigation {
+        position: sticky;
+        top: 88px;
+        z-index: 20;
+        display: flex;
+        gap: 8px;
+        width: fit-content;
+        margin-bottom: 20px;
+      }
+
+      .icon-button {
+        width: 44px;
+        height: 44px;
+        display: inline-grid;
+        place-items: center;
+        border: 1px solid rgb(255 255 255 / 78%);
+        border-radius: 6px;
+        color: var(--ink);
+        background: rgb(255 255 255 / 72%);
+        box-shadow: inset 0 1px 0 rgb(255 255 255 / 90%), 0 8px 22px rgb(23 32 27 / 9%);
+        backdrop-filter: blur(18px);
+        cursor: pointer;
+        font: 600 21px/1 var(--font-interface);
+      }
+
+      .icon-button:hover {
+        color: var(--accent);
+        border-color: rgb(31 117 153 / 38%);
+      }
+
+      .content-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 28px;
+        align-items: start;
+      }
+
+      .preview-main {
+        position: relative;
+        isolation: isolate;
+        min-width: 0;
+        overflow: clip;
+      }
+
+      .fox-field {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+        user-select: none;
+      }
+
+      .crystal-fox {
+        position: absolute;
+        display: block;
+        font-size: var(--fox-size);
+        line-height: 1;
+        opacity: var(--fox-opacity);
+        filter: grayscale(1) sepia(0.25) hue-rotate(145deg) saturate(2.2) brightness(1.12);
+        text-shadow: -1px -1px 0 rgb(255 255 255 / 92%), 1px 1px 0 rgb(31 117 153 / 20%);
+      }
+
+      .crystal-fox::after {
+        content: "\01F98A";
+        position: absolute;
+        inset: 0;
+        opacity: 0.48;
+        clip-path: polygon(43% 0, 57% 0, 49% 100%, 36% 100%);
+        transform: translate(3px, -2px);
+      }
+
+      .crystal-fox--top {
+        --fox-size: 300px;
+        --fox-opacity: 0.115;
+        top: 124px;
+        right: -28px;
+      }
+
+      .crystal-fox--middle {
+        --fox-size: 220px;
+        --fox-opacity: 0.1;
+        top: 51%;
+        left: -46px;
+      }
+
+      .crystal-fox--lower {
+        --fox-size: 250px;
+        --fox-opacity: 0.1;
+        top: 84%;
+        right: -54px;
+      }
+
+      .preview-main > :not(.fox-field) {
+        position: relative;
+        z-index: 1;
+      }
+
+      .reference-intro {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+        gap: 48px;
+        padding: 36px 0 48px;
+      }
+
+      .eyebrow {
+        margin: 0 0 12px;
+        color: var(--accent);
+        text-transform: uppercase;
+      }
+
+      .reference-title,
+      .view-title,
+      .guide-title,
+      .chapter-title,
+      .guide-card-title,
+      .chapter-card-title,
+      .reader-prose h2,
+      .reader-prose h3 {
+        margin: 0;
+        font-family: var(--font-editorial);
+        font-weight: 600;
+        letter-spacing: 0;
+      }
+
+      .reference-title {
+        max-width: 790px;
+        font-size: 56px;
+        line-height: 60px;
+      }
+
+      .reference-summary {
+        max-width: 720px;
+        margin: 18px 0 0;
+        color: var(--muted-ink);
+        font: 400 21px/32px var(--font-editorial);
+      }
+
+      .reference-count {
+        width: 168px;
+        padding: 20px 0 2px 22px;
+        border-left: 2px solid var(--accent);
+      }
+
+      .reference-count strong {
+        display: block;
+        margin-bottom: 6px;
+        font: 600 34px/38px var(--font-editorial);
+      }
+
+      .reference-count span {
+        color: var(--muted-ink);
+        font: 400 10px/16px var(--font-mono);
+      }
+
+      .view-switcher {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 4px;
+        padding: 4px;
+        margin-bottom: 26px;
+        border: 1px solid rgb(255 255 255 / 80%);
+        border-radius: 6px;
+        background: rgb(255 255 255 / 58%);
+        box-shadow: inset 0 1px 0 rgb(255 255 255 / 90%), 0 10px 32px rgb(23 32 27 / 7%);
+        backdrop-filter: blur(20px);
+      }
+
+      .view-tab {
+        min-height: 44px;
+        padding: 10px 14px;
+        border: 0;
+        border-radius: 4px;
+        color: var(--muted-ink);
+        background: transparent;
+        cursor: pointer;
+        font: 600 13px/18px var(--font-interface);
+      }
+
+      .view-tab:hover {
+        color: var(--ink);
+        background: rgb(255 255 255 / 54%);
+      }
+
+      .view-tab[aria-selected="true"] {
+        color: white;
+        background: var(--accent);
+        box-shadow: 0 4px 12px rgb(31 117 153 / 22%);
+      }
+
+      .view-panel {
+        min-height: 680px;
+        padding: 48px;
+        border-block: 1px solid rgb(255 255 255 / 86%);
+        background: rgb(255 255 255 / 68%);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(18px);
+        animation: panel-in 220ms ease both;
+      }
+
+      @keyframes panel-in {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .view-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+        gap: 32px;
+        padding-bottom: 34px;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .view-title,
+      .guide-title {
+        max-width: 790px;
+        font-size: 48px;
+        line-height: 52px;
+      }
+
+      .view-summary,
+      .guide-summary {
+        max-width: 700px;
+        margin: 14px 0 0;
+        color: var(--muted-ink);
+        font: 400 19px/30px var(--font-editorial);
+      }
+
+      .view-stat {
+        min-width: 154px;
+        padding-left: 20px;
+        border-left: 2px solid var(--accent);
+      }
+
+      .view-stat strong {
+        display: block;
+        margin-bottom: 4px;
+        font: 600 28px/32px var(--font-editorial);
+      }
+
+      .view-stat span {
+        color: var(--muted-ink);
+        font: 400 10px/16px var(--font-mono);
+      }
+
+      .section-heading-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 24px;
+        margin: 38px 0 18px;
+      }
+
+      .section-heading {
+        margin: 0;
+        font: 600 22px/28px var(--font-interface);
+        letter-spacing: 0;
+      }
+
+      .text-link {
+        color: var(--accent);
+        font: 600 13px/18px var(--font-interface);
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+
+      .guide-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+      }
+
+      .guide-card {
+        position: relative;
+        min-height: 292px;
+        display: grid;
+        grid-template-rows: auto auto 1fr auto;
+        gap: 16px;
+        padding: 28px;
+        overflow: hidden;
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        color: var(--ink);
+        background: rgb(255 255 255 / 90%);
+        box-shadow: 0 10px 28px rgb(23 32 27 / 7%);
+        text-decoration: none;
+        transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+      }
+
+      .guide-card::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 4px;
+        background: var(--accent);
+      }
+
+      .guide-card::after {
+        content: attr(data-index);
+        position: absolute;
+        top: 12px;
+        right: 20px;
+        color: rgb(31 117 153 / 9%);
+        font: 600 104px/1 var(--font-editorial);
+        pointer-events: none;
+      }
+
+      .guide-card:hover {
+        border-color: rgb(31 117 153 / 42%);
+        box-shadow: 0 16px 34px rgb(23 32 27 / 11%);
+        transform: translateY(-3px);
+      }
+
+      .card-kicker {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        color: var(--accent);
+        text-transform: uppercase;
+      }
+
+      .guide-card-title {
+        position: relative;
+        z-index: 1;
+        max-width: 410px;
+        font-size: 31px;
+        line-height: 35px;
+      }
+
+      .guide-card-summary {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        color: var(--muted-ink);
+        font: 400 17px/27px var(--font-editorial);
+      }
+
+      .card-footer {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 18px;
+        padding-top: 16px;
+        border-top: 1px solid var(--rule);
+      }
+
+      .card-arrow {
+        color: var(--accent);
+        font: 600 22px/1 var(--font-interface);
+      }
+
+      .home-masthead {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(220px, 0.5fr);
+        border-block: 1px solid var(--rule-strong);
+      }
+
+      .home-lead,
+      .home-note {
+        min-height: 250px;
+        padding: 34px;
+      }
+
+      .home-lead {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+
+      .home-lead h3 {
+        max-width: 640px;
+        margin: 0;
+        font: 600 43px/47px var(--font-editorial);
+        letter-spacing: 0;
+      }
+
+      .home-note {
+        display: grid;
+        place-items: center;
+        border-left: 1px solid var(--rule);
+        background: var(--accent-wash);
+        color: var(--accent);
+        text-align: center;
+        font: 400 11px/24px var(--font-mono);
+      }
+
+      .home-note span {
+        display: block;
+      }
+
+      .home-reading-strip {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--rule);
+        color: var(--muted-ink);
+        font: 400 11px/18px var(--font-mono);
+      }
+
+      .guide-hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 34px;
+        align-items: end;
+        padding-bottom: 34px;
+        border-bottom: 1px solid var(--rule-strong);
+      }
+
+      .breadcrumbs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin: 0 0 18px;
+        color: var(--accent);
+        font: 400 10px/16px var(--font-mono);
+        text-transform: uppercase;
+      }
+
+      .breadcrumbs a {
+        text-underline-offset: 3px;
+      }
+
+      .guide-actions {
+        min-width: 190px;
+        display: grid;
+        justify-items: stretch;
+        gap: 12px;
+      }
+
+      .primary-action,
+      .secondary-action {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        padding: 11px 18px;
+        border-radius: 4px;
+        cursor: pointer;
+        font: 600 13px/18px var(--font-interface);
+        text-decoration: none;
+      }
+
+      .primary-action {
+        border: 1px solid var(--accent);
+        color: white;
+        background: var(--accent);
+      }
+
+      .primary-action:hover {
+        background: #185f7d;
+      }
+
+      .secondary-action {
+        border: 1px solid var(--rule-strong);
+        color: var(--ink);
+        background: rgb(255 255 255 / 78%);
+      }
+
+      .secondary-action:hover {
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+
+      .guide-progress {
+        color: var(--muted-ink);
+        text-align: center;
+        font: 400 10px/16px var(--font-mono);
+      }
+
+      .part-section {
+        padding: 40px 0 6px;
+        border-bottom: 1px solid var(--rule-strong);
+        scroll-margin-top: 92px;
+      }
+
+      .part-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 28px;
+        align-items: end;
+        margin-bottom: 20px;
+      }
+
+      .part-number {
+        margin: 0 0 7px;
+        color: var(--accent);
+        text-transform: uppercase;
+      }
+
+      .part-title {
+        margin: 0;
+        font: 600 24px/30px var(--font-interface);
+        letter-spacing: 0;
+      }
+
+      .part-summary {
+        max-width: 620px;
+        margin: 7px 0 0;
+        color: var(--muted-ink);
+        font: 400 16px/25px var(--font-editorial);
+      }
+
+      .chapter-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        padding-bottom: 34px;
+      }
+
+      .chapter-card {
+        min-height: 176px;
+        display: grid;
+        grid-template-rows: auto auto 1fr auto;
+        gap: 10px;
+        padding: 20px;
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        background: rgb(255 255 255 / 88%);
+        text-decoration: none;
+        transition: border-color 150ms ease, transform 150ms ease;
+      }
+
+      .chapter-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+      }
+
+      .chapter-number {
+        color: var(--accent);
+      }
+
+      .chapter-card-title {
+        font-size: 20px;
+        line-height: 24px;
+      }
+
+      .chapter-card-summary {
+        margin: 0;
+        color: var(--muted-ink);
+        font: 400 14px/21px var(--font-editorial);
+      }
+
+      .chapter-card-footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding-top: 10px;
+        border-top: 1px solid var(--rule);
+      }
+
+      .type-label {
+        color: var(--muted-ink);
+        text-transform: uppercase;
+      }
+
+      .reader-panel {
+        padding-inline: 0;
+        background: var(--glass-white);
+      }
+
+      .reader-header {
+        width: min(calc(100% - 80px), 900px);
+        margin-inline: auto;
+        padding: 48px 0 34px;
+        border-bottom: 1px solid var(--rule-strong);
+      }
+
+      .chapter-title {
+        max-width: 820px;
+        font-size: 52px;
+        line-height: 56px;
+      }
+
+      .chapter-intro {
+        max-width: 740px;
+        margin: 17px 0 0;
+        color: var(--muted-ink);
+        font: 400 21px/32px var(--font-editorial);
+      }
+
+      .reader-meta-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-top: 24px;
+      }
+
+      .on-this-page {
+        width: min(calc(100% - 80px), 900px);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 16px;
+        margin: 20px auto 0;
+        padding: 14px 0;
+        border-block: 1px solid var(--rule);
+        color: var(--muted-ink);
+        font: 500 12px/18px var(--font-interface);
+      }
+
+      .on-this-page strong {
+        color: var(--ink);
+      }
+
+      .on-this-page a {
+        color: var(--accent);
+        text-underline-offset: 3px;
+      }
+
+      .reader-prose {
+        width: min(calc(100% - 48px), var(--reading-width));
+        margin-inline: auto;
+        padding: 44px 0 58px;
+        font: 400 19px/32px var(--font-editorial);
+      }
+
+      .reader-prose > :first-child {
+        margin-top: 0;
+      }
+
+      .reader-prose p,
+      .reader-prose ul {
+        margin: 0 0 24px;
+      }
+
+      .reader-prose h2 {
+        scroll-margin-top: 92px;
+        margin: 48px 0 18px;
+        font-size: 34px;
+        line-height: 40px;
+      }
+
+      .reader-prose h3 {
+        margin: 36px 0 14px;
+        font-size: 24px;
+        line-height: 30px;
+      }
+
+      .callout {
+        margin: 32px 0;
+        padding: 20px 24px;
+        border-left: 4px solid var(--accent);
+        background: var(--accent-wash);
+      }
+
+      .callout strong {
+        display: block;
+        margin-bottom: 6px;
+        font: 600 14px/20px var(--font-interface);
+      }
+
+      .callout p {
+        margin: 0;
+      }
+
+      .concept-map {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 30px;
+        align-items: center;
+        margin: 34px -70px;
+        padding: 30px;
+        border-block: 1px solid var(--rule-strong);
+        background: var(--mist);
+      }
+
+      .concept-node {
+        position: relative;
+        min-height: 116px;
+        display: grid;
+        align-content: center;
+        gap: 7px;
+        padding: 18px;
+        border: 1px solid var(--rule-strong);
+        border-radius: 4px;
+        background: white;
+        text-align: center;
+      }
+
+      .concept-node:not(:last-child)::after {
+        content: "\2192";
+        position: absolute;
+        top: 50%;
+        right: -24px;
+        color: var(--accent);
+        transform: translateY(-50%);
+        font: 600 18px/1 var(--font-interface);
+      }
+
+      .concept-node strong {
+        font: 600 15px/20px var(--font-interface);
+      }
+
+      .concept-node span {
+        color: var(--muted-ink);
+        font: 400 10px/16px var(--font-mono);
+      }
+
+      .table-scroll {
+        max-width: 100%;
+        margin: 30px 0;
+        overflow-x: auto;
+        border-block: 1px solid var(--rule-strong);
+        overscroll-behavior-inline: contain;
+      }
+
+      table {
+        width: 100%;
+        min-width: 610px;
+        border-collapse: collapse;
+        text-align: left;
+      }
+
+      th,
+      td {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--rule);
+        vertical-align: top;
+      }
+
+      th {
+        color: var(--muted-ink);
+        background: var(--mist);
+        font: 400 10px/16px var(--font-mono);
+      }
+
+      td {
+        font: 400 15px/23px var(--font-editorial);
+      }
+
+      pre {
+        max-width: 100%;
+        margin: 30px 0;
+        padding: 22px;
+        overflow-x: auto;
+        border-radius: 4px;
+        color: #f5f8f6;
+        background: var(--ink);
+        font-size: 13px;
+        line-height: 21px;
+        overscroll-behavior-inline: contain;
+      }
+
+      .reader-navigation {
+        width: min(calc(100% - 80px), 900px);
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+        margin-inline: auto;
+        padding: 28px 0 50px;
+        border-top: 1px solid var(--rule-strong);
+      }
+
+      .reader-navigation a {
+        display: grid;
+        gap: 5px;
+        text-decoration: none;
+      }
+
+      .reader-navigation a:last-child {
+        text-align: right;
+      }
+
+      .reader-navigation span {
+        color: var(--muted-ink);
+        font: 400 10px/16px var(--font-mono);
+        text-transform: uppercase;
+      }
+
+      .reader-navigation strong {
+        color: var(--accent);
+        font: 600 15px/21px var(--font-interface);
+      }
+
+      .social-rail {
+        display: none;
+      }
+
+      footer {
+        border-top: 1px solid var(--rule);
+        background: rgb(255 255 255 / 42%);
+      }
+
+      .footer-inner {
+        min-height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        color: var(--muted-ink);
+        font-size: 10px;
+        line-height: 16px;
+      }
+
+      @supports not (backdrop-filter: blur(1rem)) {
+        .site-header,
+        .icon-button,
+        .view-switcher,
+        .view-panel,
+        .social-rail {
+          background: rgb(255 255 255 / 96%);
+        }
+      }
+
+      @media (min-width: 60rem) {
+        .content-layout {
+          grid-template-columns: minmax(0, 1fr) var(--rail-width);
+        }
+
+        .social-rail {
+          position: sticky;
+          top: 88px;
+          height: calc(100dvh - 112px);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 14px 0;
+          border: 1px solid rgb(255 255 255 / 80%);
+          border-radius: 6px;
+          background: rgb(255 255 255 / 62%);
+          box-shadow: inset 0 1px 0 rgb(255 255 255 / 88%), 0 12px 32px rgb(23 32 27 / 7%);
+          backdrop-filter: blur(20px);
+        }
+
+        .social-link {
+          width: 40px;
+          height: 40px;
+          display: grid;
+          place-items: center;
+          border-bottom: 1px solid var(--rule);
+          color: var(--accent);
+          font: 600 12px/1 var(--font-interface);
+          text-decoration: none;
+        }
+
+        .author-stack {
+          display: flex;
+          flex: 1;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 12px;
+          padding-top: 24px;
+        }
+
+        .author-name,
+        .author-role {
+          writing-mode: vertical-rl;
+          text-orientation: upright;
+          letter-spacing: 0;
+          font: 400 9px/13px var(--font-mono);
+        }
+
+        .author-role {
+          color: var(--muted-ink);
+        }
+
+        .eagle-mark {
+          font-size: 26px;
+          line-height: 1;
+        }
+      }
+
+      @media (max-width: 75rem) {
+        .view-panel {
+          padding-inline: 36px;
+        }
+
+        .chapter-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 48rem) {
+        .header-inner,
+        .shell,
+        .footer-inner {
+          width: min(calc(100% - 32px), var(--page-width));
+        }
+
+        .document-kind {
+          display: none;
+        }
+
+        .reference-intro,
+        .view-header,
+        .guide-hero {
+          grid-template-columns: 1fr;
+          align-items: start;
+          gap: 24px;
+        }
+
+        .reference-intro {
+          padding-block: 28px 36px;
+        }
+
+        .reference-title {
+          font-size: 40px;
+          line-height: 44px;
+        }
+
+        .reference-summary {
+          font-size: 19px;
+          line-height: 29px;
+        }
+
+        .reference-count,
+        .view-stat {
+          width: 100%;
+          padding: 12px 0 0;
+          border-top: 2px solid var(--accent);
+          border-left: 0;
+        }
+
+        .view-switcher {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .view-panel {
+          min-height: 560px;
+          padding: 34px 24px;
+        }
+
+        .view-title,
+        .guide-title {
+          font-size: 38px;
+          line-height: 42px;
+        }
+
+        .guide-grid,
+        .chapter-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .guide-card {
+          min-height: 0;
+        }
+
+        .home-masthead {
+          grid-template-columns: 1fr;
+        }
+
+        .home-lead,
+        .home-note {
+          min-height: 0;
+          padding: 28px 24px;
+        }
+
+        .home-lead h3 {
+          font-size: 34px;
+          line-height: 38px;
+        }
+
+        .home-note {
+          border-top: 1px solid var(--rule);
+          border-left: 0;
+        }
+
+        .part-header {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .guide-actions {
+          width: 100%;
+        }
+
+        .reader-header,
+        .on-this-page,
+        .reader-navigation {
+          width: min(calc(100% - 48px), 900px);
+        }
+
+        .reader-header {
+          padding-top: 34px;
+        }
+
+        .chapter-title {
+          font-size: 38px;
+          line-height: 42px;
+        }
+
+        .chapter-intro {
+          font-size: 19px;
+          line-height: 29px;
+        }
+
+        .reader-meta-row {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .reader-meta-row .secondary-action {
+          width: 100%;
+        }
+
+        .reader-prose {
+          width: min(calc(100% - 48px), var(--reading-width));
+          font-size: 18px;
+          line-height: 30px;
+        }
+
+        .reader-prose h2 {
+          font-size: 28px;
+          line-height: 34px;
+        }
+
+        .reader-prose h3 {
+          font-size: 22px;
+          line-height: 28px;
+        }
+
+        .concept-map {
+          grid-template-columns: 1fr;
+          gap: 28px;
+          margin-inline: 0;
+        }
+
+        .concept-node:not(:last-child)::after {
+          top: auto;
+          right: 50%;
+          bottom: -23px;
+          transform: translateX(50%) rotate(90deg);
+        }
+
+        .reader-navigation {
+          grid-template-columns: 1fr;
+        }
+
+        .reader-navigation a:last-child {
+          text-align: left;
+        }
+
+        .crystal-fox--top {
+          --fox-size: 208px;
+          --fox-opacity: 0.095;
+          top: 116px;
+          right: -74px;
+        }
+
+        .crystal-fox--middle {
+          --fox-size: 148px;
+          --fox-opacity: 0.08;
+          left: -62px;
+        }
+
+        .crystal-fox--lower {
+          --fox-size: 168px;
+          --fox-opacity: 0.085;
+          right: -68px;
+        }
+
+        .footer-inner {
+          min-height: 76px;
+          align-items: flex-start;
+          flex-direction: column;
+          justify-content: center;
+          gap: 4px;
+        }
+      }
+
+      @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+        .fox-field {
+          display: none;
+        }
+
+        .site-header,
+        .icon-button,
+        .view-switcher,
+        .view-panel,
+        .social-rail {
+          background: white;
+          backdrop-filter: none;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
+      @media print {
+        .fox-field,
+        .floating-navigation,
+        .view-switcher,
+        .social-rail {
+          display: none !important;
+        }
+
+        .view-panel[hidden] {
+          display: block !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="#home-feature" data-open-view="home-feature" aria-label="The Builder's Fieldnotes home preview">
+          <span class="brand-mark" aria-hidden="true">&#129418;</span>
+          <span>The Builder's Fieldnotes</span>
+        </a>
+        <span class="document-kind">LEARNING SYSTEM / REFERENCE</span>
+      </div>
+    </header>
+
+    <div class="shell">
+      <nav class="floating-navigation" aria-label="Preview navigation">
+        <button class="icon-button" id="preview-back" type="button" title="Go back" aria-label="Go back">&larr;</button>
+        <button class="icon-button" type="button" title="Go to home" aria-label="Go to home" data-open-view="home-feature">&#8962;</button>
+      </nav>
+
+      <div class="content-layout">
+        <main class="preview-main" id="top">
+          <div class="fox-field" aria-hidden="true">
+            <span class="crystal-fox crystal-fox--top">&#129418;</span>
+            <span class="crystal-fox crystal-fox--middle">&#129418;</span>
+            <span class="crystal-fox crystal-fox--lower">&#129418;</span>
+          </div>
+
+          <section class="reference-intro" aria-labelledby="reference-title">
+            <div>
+              <p class="eyebrow">Reusable learning / August 2026</p>
+              <h1 class="reference-title" id="reference-title">One system, many learning paths.</h1>
+              <p class="reference-summary">
+                Markdown collections become quiet editorial guides, with a shared library, chapter index, and focused Reader.
+              </p>
+            </div>
+            <div class="reference-count" aria-label="Reference collection count">
+              <strong>02</strong>
+              <span>GUIDE FIXTURES / ONE MODEL</span>
+            </div>
+          </section>
+
+          <nav class="view-switcher" role="tablist" aria-label="Learning reference views">
+            <button class="view-tab" id="tab-home-feature" type="button" role="tab" aria-selected="false" aria-controls="view-home-feature" data-view-tab="home-feature">Home feature</button>
+            <button class="view-tab" id="tab-library" type="button" role="tab" aria-selected="true" aria-controls="view-library" data-view-tab="library">Library</button>
+            <button class="view-tab" id="tab-guide" type="button" role="tab" aria-selected="false" aria-controls="view-guide" data-view-tab="guide">Guide index</button>
+            <button class="view-tab" id="tab-chapter" type="button" role="tab" aria-selected="false" aria-controls="view-chapter" data-view-tab="chapter">Chapter</button>
+          </nav>
+
+          <section class="view-panel" id="view-home-feature" role="tabpanel" aria-labelledby="tab-home-feature" tabindex="0" hidden>
+            <div class="home-masthead">
+              <article class="home-lead">
+                <p class="eyebrow">Issue 08 / AI + Copilot</p>
+                <h3>The work begins after the answer.</h3>
+                <p class="meta">14 MIN READ / AUG 24, 2026</p>
+              </article>
+              <aside class="home-note" aria-label="Field note sequence">
+                <div>
+                  <span>ANSWER</span>
+                  <span aria-hidden="true">&darr;</span>
+                  <span>ACTION</span>
+                  <span aria-hidden="true">&darr;</span>
+                  <span>EVIDENCE</span>
+                </div>
+              </aside>
+            </div>
+            <div class="home-reading-strip">
+              <span>THIS WEEK'S READING / 05 FIELDNOTES</span>
+              <span>ARCHIVE / DESK NOTES</span>
+            </div>
+
+            <div class="section-heading-row">
+              <h2 class="section-heading">Learning paths</h2>
+              <a class="text-link" href="#library" data-open-view="library">View all learning</a>
+            </div>
+
+            <div class="guide-grid">
+              <a class="guide-card" href="#guide" data-index="01" data-guide-target="copilot">
+                <p class="card-kicker">Guide / 19 chapters / 6 parts</p>
+                <h3 class="guide-card-title">Copilot Studio Guide</h3>
+                <p class="guide-card-summary">Build useful and secure agents from fundamentals to grounding, MCP, and advanced instruction patterns.</p>
+                <div class="card-footer">
+                  <span class="meta">BEGINNER TO ADVANCED / 4 H 35 MIN</span>
+                  <span class="card-arrow" aria-hidden="true">&rarr;</span>
+                </div>
+              </a>
+              <a class="guide-card" href="#guide" data-index="02" data-guide-target="dataverse">
+                <p class="card-kicker">Guide / 8 chapters / 3 parts</p>
+                <h3 class="guide-card-title">Dataverse Extension Guide</h3>
+                <p class="guide-card-summary">Move from project setup to metadata, plug-ins, security, packaging, and a deliberate release.</p>
+                <div class="card-footer">
+                  <span class="meta">INTERMEDIATE / 2 H 05 MIN</span>
+                  <span class="card-arrow" aria-hidden="true">&rarr;</span>
+                </div>
+              </a>
+            </div>
+          </section>
+
+          <section class="view-panel" id="view-library" role="tabpanel" aria-labelledby="tab-library" tabindex="0">
+            <header class="view-header">
+              <div>
+                <p class="eyebrow">Learning / 2 guides</p>
+                <h2 class="view-title">Learning library</h2>
+                <p class="view-summary">Focused paths for building, testing, and shipping useful work.</p>
+              </div>
+              <div class="view-stat">
+                <strong>27</strong>
+                <span>PUBLISHED CHAPTERS</span>
+              </div>
+            </header>
+
+            <div class="section-heading-row">
+              <h3 class="section-heading">All guides</h3>
+              <span class="meta">FEATURED FIRST / TITLE</span>
+            </div>
+
+            <div class="guide-grid">
+              <a class="guide-card" href="#guide" data-index="01" data-guide-target="copilot">
+                <p class="card-kicker">AI agents / Featured</p>
+                <h3 class="guide-card-title">Copilot Studio Guide</h3>
+                <p class="guide-card-summary">Build useful and secure agents from fundamentals to grounding, MCP, and advanced instruction patterns.</p>
+                <div class="card-footer">
+                  <span class="meta">19 CHAPTERS / 6 PARTS<br />BEGINNER TO ADVANCED / 4 H 35 MIN</span>
+                  <span class="card-arrow" aria-hidden="true">&rarr;</span>
+                </div>
+              </a>
+
+              <a class="guide-card" href="#guide" data-index="02" data-guide-target="dataverse">
+                <p class="card-kicker">Platform extensions</p>
+                <h3 class="guide-card-title">Dataverse Extension Guide</h3>
+                <p class="guide-card-summary">Move from project setup to metadata, plug-ins, security, packaging, and a deliberate release.</p>
+                <div class="card-footer">
+                  <span class="meta">8 CHAPTERS / 3 PARTS<br />INTERMEDIATE / 2 H 05 MIN</span>
+                  <span class="card-arrow" aria-hidden="true">&rarr;</span>
+                </div>
+              </a>
+            </div>
+          </section>
+
+          <section class="view-panel" id="view-guide" role="tabpanel" aria-labelledby="tab-guide" tabindex="0" hidden>
+            <div data-guide-preview="copilot">
+              <header class="guide-hero">
+                <div>
+                  <nav class="breadcrumbs" aria-label="Copilot guide breadcrumb"><a href="#library" data-open-view="library">Learning</a><span>/</span><span>AI agents</span></nav>
+                  <p class="eyebrow">19 chapters / 6 parts</p>
+                  <h2 class="guide-title">Copilot Studio Guide</h2>
+                  <p class="guide-summary">Build useful and secure agents from fundamentals to advanced patterns.</p>
+                  <p class="meta">BEGINNER TO ADVANCED / 4 H 35 MIN / UPDATED AUG 2026</p>
+                </div>
+                <div class="guide-actions">
+                  <a class="primary-action" href="#chapter" data-chapter-target="copilot">Start guide <span aria-hidden="true">&rarr;</span></a>
+                  <span class="guide-progress">0 OF 19 READ</span>
+                </div>
+              </header>
+
+              <section class="part-section" id="copilot-part-fundamentals">
+                <header class="part-header">
+                  <div><p class="part-number">Part 01 / Fundamentals</p><h3 class="part-title">Understand the platform</h3><p class="part-summary">Orient yourself, create a first agent, and learn the concepts that connect the rest of the guide.</p></div>
+                  <span class="meta">3 CHAPTERS / 38 MIN</span>
+                </header>
+                <div class="chapter-grid">
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">00</span><h4 class="chapter-card-title">What is Copilot?</h4><p class="chapter-card-summary">Understand Copilot and the role of Copilot Studio.</p><div class="chapter-card-footer"><span class="type-label">Chapter</span><span class="meta">12 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">01</span><h4 class="chapter-card-title">Create an agent</h4><p class="chapter-card-summary">Build and test a focused first conversational agent.</p><div class="chapter-card-footer"><span class="type-label">Lab</span><span class="meta">16 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">02</span><h4 class="chapter-card-title">Core concepts</h4><p class="chapter-card-summary">Connect topics, triggers, knowledge, actions, and orchestration.</p><div class="chapter-card-footer"><span class="type-label">Chapter</span><span class="meta">10 MIN</span></div></a>
+                </div>
+              </section>
+
+              <section class="part-section" id="copilot-part-building-blocks">
+                <header class="part-header">
+                  <div><p class="part-number">Part 02 / Building blocks</p><h3 class="part-title">Shape the conversation</h3><p class="part-summary">Work with values, questions, message nodes, entities, and the data collected from a user.</p></div>
+                  <span class="meta">3 CHAPTERS / 44 MIN</span>
+                </header>
+                <div class="chapter-grid">
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">03</span><h4 class="chapter-card-title">Variables and data types</h4><p class="chapter-card-summary">Store, transform, and reuse values across a conversation.</p><div class="chapter-card-footer"><span class="type-label">Chapter</span><span class="meta">15 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">04</span><h4 class="chapter-card-title">Message and question nodes</h4><p class="chapter-card-summary">Design prompts that move the conversation forward.</p><div class="chapter-card-footer"><span class="type-label">Chapter</span><span class="meta">14 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">05</span><h4 class="chapter-card-title">Entities and slot filling</h4><p class="chapter-card-summary">Recognize useful values and fill missing information deliberately.</p><div class="chapter-card-footer"><span class="type-label">Reference</span><span class="meta">15 MIN</span></div></a>
+                </div>
+              </section>
+
+              <section class="part-section" id="copilot-part-labs">
+                <header class="part-header">
+                  <div><p class="part-number">Part 03 / Hands-on labs</p><h3 class="part-title">Practice with progression</h3><p class="part-summary">Apply the building blocks through guided labs and increasingly realistic scenarios.</p></div>
+                  <span class="meta">3 CHAPTERS / 62 MIN</span>
+                </header>
+                <div class="chapter-grid">
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">06</span><h4 class="chapter-card-title">Lab 1</h4><p class="chapter-card-summary">Build a compact agent with a clear outcome.</p><div class="chapter-card-footer"><span class="type-label">Lab</span><span class="meta">18 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">07</span><h4 class="chapter-card-title">Lab 2</h4><p class="chapter-card-summary">Add data, branching, and a useful action.</p><div class="chapter-card-footer"><span class="type-label">Lab</span><span class="meta">20 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">08</span><h4 class="chapter-card-title">Basic to advanced scenarios</h4><p class="chapter-card-summary">Compare patterns as requirements grow in complexity.</p><div class="chapter-card-footer"><span class="type-label">Lab</span><span class="meta">24 MIN</span></div></a>
+                </div>
+              </section>
+
+              <section class="part-section" id="copilot-part-deep-dive">
+                <header class="part-header">
+                  <div><p class="part-number">Part 04 / Deep dive</p><h3 class="part-title">Control answers and evidence</h3><p class="part-summary">Examine models, limits, grounding, and knowledge integration before increasing autonomy.</p></div>
+                  <span class="meta">4 CHAPTERS / 64 MIN</span>
+                </header>
+                <div class="chapter-grid">
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">09</span><h4 class="chapter-card-title">Models and instructions</h4><p class="chapter-card-summary">Choose behavior and write instructions with explicit boundaries.</p><div class="chapter-card-footer"><span class="type-label">Chapter</span><span class="meta">16 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">10</span><h4 class="chapter-card-title">Limitations</h4><p class="chapter-card-summary">Recognize platform and model constraints before they become defects.</p><div class="chapter-card-footer"><span class="type-label">Reference</span><span class="meta">12 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">11</span><h4 class="chapter-card-title">Grounding</h4><p class="chapter-card-summary">Tie generated answers to trusted sources and useful context.</p><div class="chapter-card-footer"><span class="type-label">Chapter</span><span class="meta">17 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">12</span><h4 class="chapter-card-title">Knowledge integration</h4><p class="chapter-card-summary">Connect sources and preserve a readable evidence path.</p><div class="chapter-card-footer"><span class="type-label">Chapter</span><span class="meta">19 MIN</span></div></a>
+                </div>
+              </section>
+
+              <section class="part-section" id="copilot-part-advanced">
+                <header class="part-header">
+                  <div><p class="part-number">Part 05 / Advanced features</p><h3 class="part-title">Extend the interaction</h3><p class="part-summary">Use structured interfaces, reusable prompts, and connected tools where they improve the outcome.</p></div>
+                  <span class="meta">3 CHAPTERS / 48 MIN</span>
+                </header>
+                <div class="chapter-grid">
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">13</span><h4 class="chapter-card-title">Adaptive cards and forms</h4><p class="chapter-card-summary">Collect and present structured information inside the conversation.</p><div class="chapter-card-footer"><span class="type-label">Chapter</span><span class="meta">18 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">14</span><h4 class="chapter-card-title">AI prompts</h4><p class="chapter-card-summary">Create reusable prompts with clear inputs and testable outputs.</p><div class="chapter-card-footer"><span class="type-label">Chapter</span><span class="meta">15 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">15</span><h4 class="chapter-card-title">MCP</h4><p class="chapter-card-summary">Connect tools through a standard protocol and explicit capabilities.</p><div class="chapter-card-footer"><span class="type-label">Reference</span><span class="meta">15 MIN</span></div></a>
+                </div>
+              </section>
+
+              <section class="part-section" id="copilot-part-security">
+                <header class="part-header">
+                  <div><p class="part-number">Part 06 / Security and patterns</p><h3 class="part-title">Ship with deliberate boundaries</h3><p class="part-summary">Close with security, grounded retrieval, and maintainable skills and instruction sets.</p></div>
+                  <span class="meta">3 CHAPTERS / 39 MIN</span>
+                </header>
+                <div class="chapter-grid">
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">16</span><h4 class="chapter-card-title">Security guidelines</h4><p class="chapter-card-summary">Apply least privilege, data boundaries, and reviewable controls.</p><div class="chapter-card-footer"><span class="type-label">Reference</span><span class="meta">14 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">17</span><h4 class="chapter-card-title">Grounding prompts and queries</h4><p class="chapter-card-summary">Improve retrieval with clear prompts and disciplined queries.</p><div class="chapter-card-footer"><span class="type-label">Chapter</span><span class="meta">13 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="copilot"><span class="chapter-number">18</span><h4 class="chapter-card-title">Skills and instruction sets</h4><p class="chapter-card-summary">Package repeatable capabilities without hiding critical behavior.</p><div class="chapter-card-footer"><span class="type-label">Reference</span><span class="meta">12 MIN</span></div></a>
+                </div>
+              </section>
+            </div>
+
+            <div data-guide-preview="dataverse" hidden>
+              <header class="guide-hero">
+                <div>
+                  <nav class="breadcrumbs" aria-label="Dataverse guide breadcrumb"><a href="#library" data-open-view="library">Learning</a><span>/</span><span>Platform extensions</span></nav>
+                  <p class="eyebrow">8 chapters / 3 parts</p>
+                  <h2 class="guide-title">Dataverse Extension Guide</h2>
+                  <p class="guide-summary">Move from project setup to metadata, plug-ins, security, packaging, and a deliberate release.</p>
+                  <p class="meta">INTERMEDIATE / 2 H 05 MIN / UPDATED AUG 2026</p>
+                </div>
+                <div class="guide-actions">
+                  <a class="primary-action" href="#chapter" data-chapter-target="dataverse">Start guide <span aria-hidden="true">&rarr;</span></a>
+                  <span class="guide-progress">0 OF 8 READ</span>
+                </div>
+              </header>
+
+              <section class="part-section" id="dataverse-part-foundations">
+                <header class="part-header"><div><p class="part-number">Part 01 / Foundations</p><h3 class="part-title">Prepare the extension</h3><p class="part-summary">Understand the extension surface and establish a project that can be built repeatedly.</p></div><span class="meta">2 CHAPTERS / 25 MIN</span></header>
+                <div class="chapter-grid">
+                  <a class="chapter-card" href="#chapter" data-chapter-target="dataverse"><span class="chapter-number">00</span><h4 class="chapter-card-title">Extension landscape</h4><p class="chapter-card-summary">Choose the smallest supported extension point for the job.</p><div class="chapter-card-footer"><span class="type-label">Chapter</span><span class="meta">11 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="dataverse"><span class="chapter-number">01</span><h4 class="chapter-card-title">Project setup</h4><p class="chapter-card-summary">Create a repeatable local build and connection workflow.</p><div class="chapter-card-footer"><span class="type-label">Lab</span><span class="meta">14 MIN</span></div></a>
+                </div>
+              </section>
+
+              <section class="part-section" id="dataverse-part-build">
+                <header class="part-header"><div><p class="part-number">Part 02 / Build</p><h3 class="part-title">Work with platform contracts</h3><p class="part-summary">Read metadata, expose deliberate APIs, and register server-side behavior.</p></div><span class="meta">3 CHAPTERS / 48 MIN</span></header>
+                <div class="chapter-grid">
+                  <a class="chapter-card" href="#chapter" data-chapter-target="dataverse"><span class="chapter-number">02</span><h4 class="chapter-card-title">Table metadata</h4><p class="chapter-card-summary">Inspect tables and columns without relying on display names.</p><div class="chapter-card-footer"><span class="type-label">Reference</span><span class="meta">13 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="dataverse"><span class="chapter-number">03</span><h4 class="chapter-card-title">Custom APIs</h4><p class="chapter-card-summary">Define explicit request and response contracts for reusable actions.</p><div class="chapter-card-footer"><span class="type-label">Chapter</span><span class="meta">17 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="dataverse"><span class="chapter-number">04</span><h4 class="chapter-card-title">Plug-in steps</h4><p class="chapter-card-summary">Register execution stages and images with clear intent.</p><div class="chapter-card-footer"><span class="type-label">Lab</span><span class="meta">18 MIN</span></div></a>
+                </div>
+              </section>
+
+              <section class="part-section" id="dataverse-part-ship">
+                <header class="part-header"><div><p class="part-number">Part 03 / Ship</p><h3 class="part-title">Integrate, secure, and release</h3><p class="part-summary">Connect the extension to the app experience and move it through environments safely.</p></div><span class="meta">3 CHAPTERS / 52 MIN</span></header>
+                <div class="chapter-grid">
+                  <a class="chapter-card" href="#chapter" data-chapter-target="dataverse"><span class="chapter-number">05</span><h4 class="chapter-card-title">App module integration</h4><p class="chapter-card-summary">Expose the right tables and resources in a focused app.</p><div class="chapter-card-footer"><span class="type-label">Chapter</span><span class="meta">15 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="dataverse"><span class="chapter-number">06</span><h4 class="chapter-card-title">Security roles</h4><p class="chapter-card-summary">Grant the least access needed for each extension behavior.</p><div class="chapter-card-footer"><span class="type-label">Reference</span><span class="meta">17 MIN</span></div></a>
+                  <a class="chapter-card" href="#chapter" data-chapter-target="dataverse"><span class="chapter-number">07</span><h4 class="chapter-card-title">Package and deploy</h4><p class="chapter-card-summary">Create a versioned package and verify the target environment.</p><div class="chapter-card-footer"><span class="type-label">Lab</span><span class="meta">20 MIN</span></div></a>
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <section class="view-panel reader-panel" id="view-chapter" role="tabpanel" aria-labelledby="tab-chapter" tabindex="0" hidden>
+            <article data-chapter-preview="copilot">
+              <header class="reader-header">
+                <nav class="breadcrumbs" aria-label="Chapter breadcrumb"><a href="#library" data-open-view="library">Learning</a><span>/</span><a href="#guide" data-guide-target="copilot">Copilot Studio</a><span>/</span><a href="#guide" data-guide-target="copilot">Part 1</a></nav>
+                <p class="eyebrow">00 / Chapter 1 of 19</p>
+                <h2 class="chapter-title">What is Copilot?</h2>
+                <p class="chapter-intro">Understand where a copilot helps, what Copilot Studio adds, and how a useful agent connects language to action.</p>
+                <div class="reader-meta-row">
+                  <p class="meta">12 MIN / BEGINNER / FUNDAMENTALS</p>
+                  <button class="secondary-action completion-button" type="button" aria-pressed="false" data-completion-key="copilot-what-is-copilot">Mark complete</button>
+                </div>
+              </header>
+              <nav class="on-this-page" aria-label="On this page"><strong>On this page</strong><a href="#copilot-purpose">Purpose</a><a href="#copilot-flow">Working flow</a><a href="#copilot-boundary">Boundaries</a></nav>
+              <div class="reader-prose">
+                <p>A copilot is useful when it helps someone move from a question to a grounded decision or action. The language model supplies flexible understanding; the surrounding system supplies context, permissions, tools, and evidence.</p>
+                <h2 id="copilot-purpose">Begin with a useful purpose</h2>
+                <p>Start with one job the reader can recognize. Name the information the agent needs, the action it may take, and the evidence it should return. A narrow purpose is easier to test than a broad promise.</p>
+                <aside class="callout"><strong>Field note</strong><p>A fluent answer is not the finish line. The useful unit is an answer connected to context, action, and visible evidence.</p></aside>
+                <h2 id="copilot-flow">A working flow</h2>
+                <p>The platform joins conversational input to governed data and capabilities. Each transition should remain inspectable.</p>
+                <figure class="concept-map" aria-label="Copilot request flow">
+                  <div class="concept-node"><strong>Question</strong><span>INTENT + CONTEXT</span></div>
+                  <div class="concept-node"><strong>Orchestration</strong><span>KNOWLEDGE + TOOLS</span></div>
+                  <div class="concept-node"><strong>Outcome</strong><span>ANSWER + EVIDENCE</span></div>
+                </figure>
+                <h3>Choose the smallest capability</h3>
+                <p>Use knowledge for grounded explanation, an action for a controlled change, and a topic when the conversation requires a deliberate sequence.</p>
+                <div class="table-scroll" tabindex="0" role="region" aria-label="Copilot capability comparison table">
+                  <table>
+                    <thead><tr><th>Capability</th><th>Use it for</th><th>Evidence to keep</th></tr></thead>
+                    <tbody><tr><td>Knowledge</td><td>Grounded explanation</td><td>Source citation</td></tr><tr><td>Action</td><td>Controlled operation</td><td>Result and status</td></tr><tr><td>Topic</td><td>Structured dialogue</td><td>Collected values</td></tr></tbody>
+                  </table>
+                </div>
+                <h2 id="copilot-boundary">Keep the boundary explicit</h2>
+                <p>Instructions should say what the agent can do, what it must not infer, and when a person needs to review the result.</p>
+                <pre aria-label="Example agent instruction"><code>Goal: Help a maker find a grounded next step.
+Use: Approved product knowledge and named actions.
+Never: Invent records, permissions, or completion status.
+Return: Answer, source, action result, and next review point.</code></pre>
+              </div>
+              <nav class="reader-navigation" aria-label="Chapter navigation"><a href="#guide" data-guide-target="copilot"><span>Previous</span><strong>Guide overview</strong></a><a href="#chapter" data-chapter-target="copilot"><span>Next / 01</span><strong>Create an agent &rarr;</strong></a></nav>
+            </article>
+
+            <article data-chapter-preview="dataverse" hidden>
+              <header class="reader-header">
+                <nav class="breadcrumbs" aria-label="Chapter breadcrumb"><a href="#library" data-open-view="library">Learning</a><span>/</span><a href="#guide" data-guide-target="dataverse">Dataverse extensions</a><span>/</span><a href="#guide" data-guide-target="dataverse">Part 1</a></nav>
+                <p class="eyebrow">00 / Chapter 1 of 8</p>
+                <h2 class="chapter-title">Extension landscape</h2>
+                <p class="chapter-intro">Choose the smallest supported Dataverse extension point that satisfies the requirement and remains operable.</p>
+                <div class="reader-meta-row">
+                  <p class="meta">11 MIN / INTERMEDIATE / FOUNDATIONS</p>
+                  <button class="secondary-action completion-button" type="button" aria-pressed="false" data-completion-key="dataverse-extension-landscape">Mark complete</button>
+                </div>
+              </header>
+              <nav class="on-this-page" aria-label="On this page"><strong>On this page</strong><a href="#dataverse-contract">Contract</a><a href="#dataverse-options">Options</a><a href="#dataverse-check">Release check</a></nav>
+              <div class="reader-prose">
+                <p>An extension should make a platform capability clearer, safer, or more efficient. Begin with the supported contract, then decide whether the behavior belongs in metadata, a custom API, a plug-in, or the app surface.</p>
+                <h2 id="dataverse-contract">Start from the contract</h2>
+                <p>Write down the triggering event, required inputs, expected output, security context, and failure behavior before choosing an implementation point.</p>
+                <aside class="callout"><strong>Field note</strong><p>The most powerful extension is not automatically the best one. Prefer the least invasive supported mechanism that keeps ownership visible.</p></aside>
+                <h2 id="dataverse-options">Compare the options</h2>
+                <div class="table-scroll" tabindex="0" role="region" aria-label="Dataverse extension option comparison table">
+                  <table><thead><tr><th>Extension point</th><th>Best fit</th><th>Primary boundary</th></tr></thead><tbody><tr><td>Custom API</td><td>Explicit reusable operation</td><td>Request and response contract</td></tr><tr><td>Plug-in</td><td>Server-side event behavior</td><td>Pipeline stage and security context</td></tr><tr><td>App module</td><td>Focused user experience</td><td>Navigation and table access</td></tr></tbody></table>
+                </div>
+                <h2 id="dataverse-check">Keep the release reviewable</h2>
+                <p>Package only the required components, version the output, and verify permissions in the target environment before enabling dependent workflows.</p>
+                <pre aria-label="Example extension decision record"><code>trigger: explicit operation
+inputs: accountId, requestedState
+security: caller context
+output: status, changedFields
+failure: typed platform error</code></pre>
+              </div>
+              <nav class="reader-navigation" aria-label="Chapter navigation"><a href="#guide" data-guide-target="dataverse"><span>Previous</span><strong>Guide overview</strong></a><a href="#chapter" data-chapter-target="dataverse"><span>Next / 01</span><strong>Project setup &rarr;</strong></a></nav>
+            </article>
+          </section>
+        </main>
+
+        <aside class="social-rail" aria-label="Social links and author">
+          <a class="social-link" href="https://www.linkedin.com/" target="_blank" rel="noreferrer" aria-label="LinkedIn profile">in<sup>1</sup></a>
+          <a class="social-link" href="https://www.linkedin.com/groups/" target="_blank" rel="noreferrer" aria-label="LinkedIn group">in<sup>2</sup></a>
+          <div class="author-stack">
+            <span class="author-name">SHUBHAM J</span>
+            <span class="author-role">AI DEV</span>
+            <span class="eagle-mark" aria-hidden="true">&#129413;</span>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-inner">
+        <span>THE BUILDER'S FIELDNOTES / LEARNING REFERENCE</span>
+        <span>MARKDOWN IN / READING PATHS OUT</span>
+      </div>
+    </footer>
+
+    <script>
+      const validViews = new Set(["home-feature", "library", "guide", "chapter"]);
+      const viewTabs = [...document.querySelectorAll("[data-view-tab]")];
+      const viewPanels = [...document.querySelectorAll("[role='tabpanel']")];
+      let activeGuide = "copilot";
+
+      function showGuide(guide) {
+        activeGuide = guide === "dataverse" ? "dataverse" : "copilot";
+        document.querySelectorAll("[data-guide-preview]").forEach((preview) => {
+          preview.hidden = preview.dataset.guidePreview !== activeGuide;
+        });
+        document.querySelectorAll("[data-chapter-preview]").forEach((preview) => {
+          preview.hidden = preview.dataset.chapterPreview !== activeGuide;
+        });
+      }
+
+      function activateView(view, updateHash = true) {
+        const nextView = validViews.has(view) ? view : "library";
+        viewTabs.forEach((tab) => {
+          const selected = tab.dataset.viewTab === nextView;
+          tab.setAttribute("aria-selected", String(selected));
+          tab.tabIndex = selected ? 0 : -1;
+        });
+        viewPanels.forEach((panel) => {
+          panel.hidden = panel.id !== `view-${nextView}`;
+        });
+        if (updateHash && window.location.hash !== `#${nextView}`) {
+          window.location.hash = nextView;
+        }
+        document.title = `${viewTabs.find((tab) => tab.dataset.viewTab === nextView).textContent.trim()} | Learning Reference`;
+      }
+
+      viewTabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => activateView(tab.dataset.viewTab));
+        tab.addEventListener("keydown", (event) => {
+          if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+          event.preventDefault();
+          const direction = event.key === "ArrowRight" ? 1 : -1;
+          const nextIndex = (index + direction + viewTabs.length) % viewTabs.length;
+          viewTabs[nextIndex].focus();
+          activateView(viewTabs[nextIndex].dataset.viewTab);
+        });
+      });
+
+      document.querySelectorAll("[data-open-view]").forEach((control) => {
+        control.addEventListener("click", (event) => {
+          event.preventDefault();
+          activateView(control.dataset.openView);
+        });
+      });
+
+      document.querySelectorAll("[data-guide-target]").forEach((control) => {
+        control.addEventListener("click", (event) => {
+          event.preventDefault();
+          showGuide(control.dataset.guideTarget);
+          activateView("guide");
+        });
+      });
+
+      document.querySelectorAll("[data-chapter-target]").forEach((control) => {
+        control.addEventListener("click", (event) => {
+          event.preventDefault();
+          showGuide(control.dataset.chapterTarget);
+          activateView("chapter");
+        });
+      });
+
+      document.querySelectorAll(".completion-button").forEach((button) => {
+        const storageKey = `fieldnotes-learning:${button.dataset.completionKey}`;
+        try {
+          button.setAttribute("aria-pressed", String(localStorage.getItem(storageKey) === "complete"));
+        } catch {
+          button.setAttribute("aria-pressed", "false");
+        }
+
+        const updateLabel = () => {
+          button.textContent = button.getAttribute("aria-pressed") === "true" ? "Mark incomplete" : "Mark complete";
+        };
+        updateLabel();
+
+        button.addEventListener("click", () => {
+          const completed = button.getAttribute("aria-pressed") !== "true";
+          button.setAttribute("aria-pressed", String(completed));
+          updateLabel();
+          try {
+            if (completed) localStorage.setItem(storageKey, "complete");
+            else localStorage.removeItem(storageKey);
+          } catch {
+            // The reference remains usable when storage is unavailable.
+          }
+        });
+      });
+
+      document.getElementById("preview-back").addEventListener("click", () => {
+        if (window.history.length > 1) window.history.back();
+        else activateView("library");
+      });
+
+      window.addEventListener("hashchange", () => {
+        activateView(window.location.hash.slice(1), false);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      showGuide(activeGuide);
+      activateView(window.location.hash.slice(1) || "library", false);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+title: "Edge Extensions"
+summary: "Browser extensions built for focused Dynamics 365 work in Microsoft Edge."
+order: 2
+featured: true
+draft: false
+featuredTools:
+  - "eagleeye"

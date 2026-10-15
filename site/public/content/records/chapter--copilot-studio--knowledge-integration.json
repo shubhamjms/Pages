@@ -1,0 +1,170 @@
+{
+  "guideSlug": "copilot-studio",
+  "partKey": "deep-dive",
+  "slug": "knowledge-integration",
+  "order": 12,
+  "title": "Knowledge Integration",
+  "summary": "Connect and govern the data sources an agent uses for knowledge.",
+  "type": "chapter",
+  "level": "intermediate",
+  "updated": "2026-08-26",
+  "readingTime": 12,
+  "route": "#/learn/copilot-studio/knowledge-integration",
+  "recordFile": "chapter--copilot-studio--knowledge-integration",
+  "guideTitle": "Copilot Studio Guide",
+  "partTitle": "Deep Dive",
+  "position": 13,
+  "chapterCount": 19,
+  "html": "<p><strong>Knowledge integration</strong> is how you connect Copilot Studio to <em>your</em> content — documents, websites,\nbusiness records, and external systems — so the agent answers from trusted sources instead of guessing.\nThis section goes deep on <strong>what you can connect, how to connect it, how retrieval works, and how to\nmake it reliable and secure.</strong></p>\n<blockquote>\n<p>Closely related: <a href=\"#/learn/copilot-studio/grounding\">11-grounding.md</a> covers <em>all</em> grounding methods (knowledge, tools,\ninstructions, Power Fx). This section focuses specifically on the <strong>knowledge</strong> piece.</p>\n</blockquote>\n<hr />\n<h2 id=\"1-what-knowledge-means-here\">1. What “knowledge” means here</h2>\n<p>Knowledge sources let an agent answer with <strong>generative AI grounded in your data</strong>. When a user asks\nsomething, the agent <strong>retrieves the most relevant chunks</strong> from your sources and uses them to compose\nan answer — usually <strong>with citations</strong>. This pattern is <strong>RAG</strong> (Retrieval-Augmented Generation).</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart LR\n    Q[User question] --&gt; S[Search indexed knowledge]\n    S --&gt; C[Top relevant chunks]\n    C --&gt; M[Model reads chunks]\n    M --&gt; A[Grounded answer + citation]\n</pre></div><blockquote>\n<p>The agent does <strong>not</strong> send your whole document to the model — it retrieves only the relevant pieces.</p>\n</blockquote>\n<hr />\n<h2 id=\"2-knowledge-source-types-integration-points\">2. Knowledge source types (integration points)</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Integration</th>\n<th>Connects to</th>\n<th>Best for</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Public website</strong></td>\n<td>Crawlable public URLs</td>\n<td>Marketing, FAQ, support pages</td>\n</tr>\n<tr>\n<td><strong>SharePoint / OneDrive</strong></td>\n<td>Your tenant’s documents</td>\n<td>Policies, handbooks, internal docs</td>\n</tr>\n<tr>\n<td><strong>File upload</strong></td>\n<td>PDF, DOCX, TXT, etc.</td>\n<td>Static or one-off reference docs</td>\n</tr>\n<tr>\n<td><strong>Dataverse</strong></td>\n<td>Power Platform tables</td>\n<td>Structured business records</td>\n</tr>\n<tr>\n<td><strong>Microsoft Graph (enterprise)</strong></td>\n<td>M365 content org-wide</td>\n<td>Enterprise knowledge across apps</td>\n</tr>\n<tr>\n<td><strong>Azure AI Search</strong></td>\n<td>A prebuilt vector index</td>\n<td>Large/custom corpora, advanced RAG</td>\n</tr>\n<tr>\n<td><strong>Connectors</strong></td>\n<td>External systems (Salesforce, ServiceNow…)</td>\n<td>Third-party data</td>\n</tr>\n<tr>\n<td><strong>Advanced / MCP</strong></td>\n<td>Other graph or MCP knowledge</td>\n<td>Specialized sources</td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p>Availability of some sources depends on <strong>license</strong>, <strong>region</strong>, and <strong>cloud</strong> (commercial vs.\nGCC/GCC High/DoD).</p>\n</blockquote>\n<hr />\n<h2 id=\"3-two-levels-of-knowledge\">3. Two levels of knowledge</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Level</th>\n<th>Where you add it</th>\n<th>Scope</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Agent-level</strong></td>\n<td><strong>Knowledge</strong> page / <strong>Overview → Knowledge</strong></td>\n<td>Whole agent; used by generative answers automatically</td>\n</tr>\n<tr>\n<td><strong>Node-level</strong></td>\n<td><strong>Create generative answers</strong> node</td>\n<td>Only the sources you pick, inside one topic</td>\n</tr>\n</tbody>\n</table></div><ul>\n<li>Use <strong>agent-level</strong> for general “answer from our docs” behavior.</li>\n<li>Use <strong>node-level</strong> when a specific topic must draw from <strong>specific, non-overlapping</strong> sources\n(e.g., the <em>Device Help</em> topic uses only the <em>Device Manuals</em> source). See\n<a href=\"#/learn/copilot-studio/grounding#11-grounding__4-generative-answers-node-scoped-grounding-inside-a-topic\">11-grounding.md</a>.</li>\n</ul>\n<hr />\n<h2 id=\"4-how-to-add-knowledge-step-by-step\">4. How to add knowledge (step by step)</h2>\n<ol>\n<li>Open your agent → <strong>Knowledge</strong> (top nav), or <strong>Overview → Knowledge</strong>.</li>\n<li>Select <strong>+ Add knowledge</strong>.</li>\n<li>Choose a <strong>source type</strong> (website, SharePoint/OneDrive, file, Dataverse, connector…).</li>\n<li>Provide the location (URL / site / file) and a clear <strong>name + description</strong>.</li>\n<li><strong>Add</strong> it, then <strong>wait for indexing</strong> to finish (a status indicator shows when it’s ready).</li>\n<li><strong>Test</strong> with a question whose answer lives in that source.</li>\n<li><strong>Publish</strong> to make it live for users.</li>\n</ol>\n<blockquote>\n<p>The <strong>name + description</strong> matter: the orchestrator uses them to decide <em>which</em> source to search.</p>\n</blockquote>\n<hr />\n<h2 id=\"5-examples-by-scenario\">5. Examples by scenario</h2>\n<p><strong>HR policy (SharePoint)</strong></p>\n<blockquote>\n<p><strong>User:</strong> “How many vacation days do I get in my first year?”\nAgent searches the HR SharePoint → finds the policy → answers <em>“New full-time employees accrue 15\ndays in year one”</em> <strong>with a citation</strong>.</p>\n</blockquote>\n<p><strong>Product FAQ (public website)</strong></p>\n<blockquote>\n<p>Add <code>https://contoso.com/support</code>. User asks <em>“how do I reset my router?”</em> → the agent answers from\nthe support page.</p>\n</blockquote>\n<p><strong>Account record (Dataverse)</strong></p>\n<blockquote>\n<p>Ground on the <code>Accounts</code> table. User asks <em>“what’s the status of account Northwind?”</em> → the agent\nreads the record and answers.</p>\n</blockquote>\n<p><strong>Scoped manuals (node-level)</strong></p>\n<pre aria-label=\"Code sample\"><code>Topic: Device Help\n  Trigger: \"I need help with my device\"\n  → Ask: \"What's your question?\"        → Topic.UserQuestion\n  → Create generative answers\n        Input:        Topic.UserQuestion\n        Data sources: only \"Device Manuals\"\n        Fallback:     \"I couldn't find that in the manuals — connect to support?\"\n</code></pre>\n<hr />\n<h2 id=\"5a-knowledge-sources-in-detail\">5a. Knowledge sources in detail</h2>\n<p>Different source types behave differently. Here’s what to know about the ones beginners use most.</p>\n<h3 id=\"structured-vs-unstructured-data-read-this-first\">Structured vs unstructured data (read this first)</h3>\n<p>The single biggest factor in choosing a source is <strong>what <em>kind</em> of data</strong> you have.</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th></th>\n<th><strong>Unstructured data</strong></th>\n<th><strong>Structured data</strong></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>What it is</td>\n<td>Free-form text/documents</td>\n<td>Rows, columns, fields with defined types</td>\n</tr>\n<tr>\n<td>Examples</td>\n<td>Policies, handbooks, PDFs, web pages, emails</td>\n<td>Dataverse tables, databases, CRM records, clean spreadsheets</td>\n</tr>\n<tr>\n<td>How the agent uses it</td>\n<td><strong>Retrieves text chunks</strong> and summarizes (RAG)</td>\n<td><strong>Looks up / reads records</strong> by field</td>\n</tr>\n<tr>\n<td>Best sources</td>\n<td><strong>SharePoint, file upload (PDF/DOCX), public website</strong></td>\n<td><strong>Dataverse, connectors, tool/HTTP calls</strong></td>\n</tr>\n<tr>\n<td>Great for</td>\n<td><em>Explaining</em> — “what does the policy say?”</td>\n<td><em>Precision</em> — “what’s the status of order 123?”</td>\n</tr>\n<tr>\n<td>Weak at</td>\n<td>Exact values, math, aggregations</td>\n<td>Long-form explanation/narrative</td>\n</tr>\n</tbody>\n</table></div><p><strong>Why it matters</strong></p>\n<ul>\n<li><strong>Unstructured</strong> content is perfect when the answer is <em>written down somewhere</em> and you want the\nagent to <strong>find and explain</strong> it. Knowledge/RAG shines here.</li>\n<li><strong>Structured</strong> content is for <strong>exact, record-level</strong> answers and <strong>live</strong> data. Don’t force this\ninto a spreadsheet-as-knowledge — the agent reads it as text and can’t reliably query it. Use\n<strong>Dataverse</strong> or a <strong>tool/connector</strong> so the answer comes from a real lookup.</li>\n</ul>\n<blockquote>\n<p><strong>Semi-structured</strong> content (a clean, flat Excel table, a CSV, JSON) sits in between: small,\ntidy tables can work as knowledge for simple look-ups, but anything needing <strong>filtering, math, or\naggregation</strong> belongs in structured data + a tool.</p>\n</blockquote>\n<p><strong>Rule of thumb</strong></p>\n<ul>\n<li><em>“Explain / summarize / what does it say?”</em> → <strong>unstructured</strong> (SharePoint, PDF, website).</li>\n<li><em>“Look up / calculate / what’s the exact value?”</em> → <strong>structured</strong> (Dataverse, connector, tool).</li>\n</ul>\n<h3 id=\"sharepoint-onedrive-as-a-knowledge-source\">SharePoint / OneDrive as a knowledge source</h3>\n<p>SharePoint is the most common enterprise source — your policies, handbooks, and team docs already\nlive there.</p>\n<p><strong>How to add</strong></p>\n<ol>\n<li><strong>Knowledge → + Add knowledge → SharePoint</strong> (or paste a SharePoint/OneDrive URL).</li>\n<li>Enter a <strong>site</strong>, <strong>document library</strong>, <strong>folder</strong>, or specific <strong>file</strong> URL.</li>\n<li>Give it a clear <strong>name + description</strong>, then <strong>Add</strong> and wait for indexing.</li>\n</ol>\n<p><strong>Good to know</strong></p>\n<ul>\n<li><strong>Permission-trimmed:</strong> answers respect the <strong>signed-in user’s</strong> SharePoint permissions — users\nnever see content they can’t already open. This needs <strong>end-user authentication</strong> on the channel.</li>\n<li>Works best with <strong>text-based</strong> Office docs (Word, PowerPoint, PDF, text) stored in the library.</li>\n<li>Points to <strong>live</strong> locations — when docs update, re-indexing eventually reflects changes (not\ninstant).</li>\n<li><strong>URL must be reachable</strong> by the agent’s configured identity; broken/private links won’t index.</li>\n</ul>\n<p><strong>SharePoint limitations</strong></p>\n<ul>\n<li><strong>Not for anonymous channels</strong> (no signed-in identity to permission-check).</li>\n<li>Very large libraries: only a bounded number of files/URLs index; curate to the folders that matter.</li>\n<li>Scanned/image PDFs, audio/video, and complex/merged-cell spreadsheets aren’t read well.</li>\n<li>Sub-site/permission inheritance quirks can cause “I can’t find that” even when the file exists.</li>\n<li>Indexing lag means <strong>freshly edited</strong> docs may answer with the <strong>previous</strong> version briefly.</li>\n</ul>\n<blockquote>\n<p><strong>Tip:</strong> Point at a <strong>specific library or folder</strong> of curated, current docs rather than an entire\nsprawling site — relevance and speed both improve.</p>\n</blockquote>\n<h3 id=\"pdf-as-a-knowledge-source\">PDF as a knowledge source</h3>\n<p>PDFs are great for static reference material (handbooks, manuals, policy packs).</p>\n<p><strong>How to add</strong></p>\n<ul>\n<li><strong>Upload</strong> the PDF under <strong>Knowledge → + Add knowledge → Files</strong>, <em>or</em> store it in a connected\n<strong>SharePoint</strong> library and index that.</li>\n</ul>\n<p><strong>Good to know</strong></p>\n<ul>\n<li>The PDF must contain <strong>real, selectable text</strong> — the agent extracts text, then retrieves relevant\nchunks for answers.</li>\n<li>Clear structure (headings, normal paragraphs) → better chunking → better answers.</li>\n</ul>\n<p><strong>PDF limitations</strong></p>\n<ul>\n<li>❌ <strong>Scanned / image-only PDFs have no OCR</strong> — they read as blank. Re-export as a searchable/text PDF.</li>\n<li><strong>Complex layouts</strong> (multi-column, tables-as-images, heavy graphics) can chunk poorly and lose\nmeaning.</li>\n<li><strong>Per-file size limits</strong> apply; huge PDFs may be truncated — split very large documents.</li>\n<li>Charts, diagrams, and images inside the PDF aren’t understood (text only).</li>\n<li>Password-protected/encrypted PDFs won’t index.</li>\n</ul>\n<blockquote>\n<p><strong>Tip:</strong> Before uploading, open the PDF and try to <strong>select text with your cursor</strong>. If you can’t,\nit’s a scan — convert it to text first.</p>\n</blockquote>\n<h3 id=\"excel-spreadsheets-as-a-knowledge-source\">Excel / spreadsheets as a knowledge source</h3>\n<p>Spreadsheets are useful for lists and tabular reference (price lists, product specs, FAQs in rows).</p>\n<p><strong>How to add</strong></p>\n<ul>\n<li><strong>Upload</strong> the workbook, or index it from <strong>SharePoint/OneDrive</strong>. (Dataverse is better for truly\nstructured, queryable records — see below.)</li>\n</ul>\n<p><strong>Good to know</strong></p>\n<ul>\n<li>Works best when data is a <strong>clean, flat table</strong>: a single header row, one record per row, no merged\ncells, on a single sheet.</li>\n<li>Good for <strong>look-up style</strong> reference the agent can read as text (e.g., “what’s the spec for model X?”).</li>\n</ul>\n<p><strong>Excel limitations</strong></p>\n<ul>\n<li>❌ <strong>Formulas, pivots, macros, and charts</strong> aren’t evaluated — only the resulting <strong>text/values</strong>\nare read (and complex ones may not read cleanly).</li>\n<li><strong>Merged cells, multiple tables per sheet, and multi-sheet</strong> layouts confuse chunking.</li>\n<li>It is <strong>not a database</strong> — the agent doesn’t run row-level queries/aggregations (“sum of all\norders” won’t work). For real querying, use <strong>Dataverse</strong> or a <strong>tool/connector</strong>.</li>\n<li>Frequent edits + indexing lag = answers may reflect an <strong>older</strong> version briefly.</li>\n<li>Very wide/long sheets can exceed size limits and get truncated.</li>\n</ul>\n<blockquote>\n<p><strong>Tip:</strong> If you need <em>“look up the exact value for this ID”</em> reliability, model the data in\n<strong>Dataverse</strong> (or call a system via a <strong>tool</strong>) instead of a spreadsheet.</p>\n</blockquote>\n<h3 id=\"public-website-as-a-knowledge-source\">Public website as a knowledge source</h3>\n<ul>\n<li>Indexes <strong>crawlable, public</strong> pages from URLs you provide.</li>\n<li>Good for FAQ, support, and product/marketing pages.</li>\n</ul>\n<p><strong>Public website limitations</strong></p>\n<ul>\n<li>❌ Can’t read <strong>auth-gated</strong> (login-required) pages.</li>\n<li>❌ <strong>Heavily JavaScript-rendered</strong> content often isn’t captured (the crawler sees little HTML).</li>\n<li><strong>Bounded number of URLs</strong> per source — point at the most relevant sections, not the whole site.</li>\n<li><strong>Freshness depends on re-crawling</strong> — not real-time; recent edits may lag.</li>\n<li>No control over <strong>page structure</strong> — messy pages chunk poorly and reduce answer quality.</li>\n<li>Sites that <strong>block crawlers</strong> (robots rules, bot protection) may not index.</li>\n</ul>\n<h3 id=\"dataverse-as-a-knowledge-source\">Dataverse as a knowledge source</h3>\n<ul>\n<li>Best for <strong>structured business records</strong> (accounts, cases, products).</li>\n<li>Respects Dataverse <strong>security roles</strong>.</li>\n<li>Use it when you need record-level accuracy rather than document text.</li>\n</ul>\n<p><strong>Dataverse limitations</strong></p>\n<ul>\n<li>Requires the data to be <strong>modeled in tables</strong> first — heavier setup than uploading a file.</li>\n<li>Respects <strong>security roles</strong>: users without access to a row get nothing.</li>\n<li>Best for <strong>lookup/record</strong> answers; not a replacement for long-form document explanation.</li>\n<li>Complex relationships/large tables may need a <strong>tool/flow</strong> for precise querying.</li>\n</ul>\n<h3 id=\"azure-ai-search-as-a-knowledge-source\">Azure AI Search as a knowledge source</h3>\n<ul>\n<li>Best for <strong>large or custom corpora</strong> and advanced retrieval (your own vector index).</li>\n</ul>\n<p><strong>Azure AI Search limitations</strong></p>\n<ul>\n<li>You must <strong>build and maintain</strong> the index yourself (extra setup, cost, and ownership).</li>\n<li>Index <strong>quality/freshness</strong> is your responsibility — stale indexes give stale answers.</li>\n<li>More moving parts → more that can misconfigure (schema, embeddings, refresh).</li>\n</ul>\n<h3 id=\"connectors-external-systems-as-a-knowledge-source\">Connectors / external systems as a knowledge source</h3>\n<ul>\n<li>Bring in third-party data (e.g., Salesforce, ServiceNow) where supported.</li>\n</ul>\n<p><strong>Connector limitations</strong></p>\n<ul>\n<li>Subject to the connector’s <strong>reliability, rate limits, and throttling</strong>.</li>\n<li>Must be <strong>allowed by DLP</strong> policies in your environment.</li>\n<li>Auth/token expiry can break access until reconfigured.</li>\n<li>Coverage and fidelity vary by connector — test the specific one.</li>\n</ul>\n<h3 id=\"quick-which-source-guide\">Quick “which source?” guide</h3>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Your content</th>\n<th>Best source</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Policies, handbooks, team docs</td>\n<td><strong>SharePoint</strong></td>\n</tr>\n<tr>\n<td>A static manual or policy pack</td>\n<td><strong>PDF</strong> (upload or via SharePoint)</td>\n</tr>\n<tr>\n<td>A flat reference list/table</td>\n<td><strong>Excel</strong> (simple) or <strong>Dataverse</strong> (queryable)</td>\n</tr>\n<tr>\n<td>Public FAQ/support pages</td>\n<td><strong>Public website</strong></td>\n</tr>\n<tr>\n<td>Structured records you query</td>\n<td><strong>Dataverse</strong> / <strong>connector</strong></td>\n</tr>\n<tr>\n<td>Large custom corpus, advanced RAG</td>\n<td><strong>Azure AI Search</strong></td>\n</tr>\n</tbody>\n</table></div><hr />\n<h2 id=\"6-supported-content-formats\">6. Supported content &amp; formats</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Works well</th>\n<th>Not reliably read</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>HTML pages (crawlable)</td>\n<td>Scanned / image-only PDFs (no OCR)</td>\n</tr>\n<tr>\n<td>Word / PDF with <strong>real text</strong></td>\n<td>Images, audio, video</td>\n</tr>\n<tr>\n<td>Structured tables, text files</td>\n<td>Heavily JavaScript-rendered pages</td>\n</tr>\n<tr>\n<td>Permissioned SharePoint docs</td>\n<td>Auth-gated content the agent can’t access</td>\n</tr>\n</tbody>\n</table></div><ul>\n<li>Each file/source has <strong>size and count limits</strong>.</li>\n<li>Indexing is <strong>not real-time</strong> — updates take time to appear.</li>\n<li>See <a href=\"#/learn/copilot-studio/limitations#10-limitations__2-knowledge-generative-answers-limits\">10-limitations.md</a>\nfor current caps.</li>\n</ul>\n<hr />\n<h2 id=\"6a-limitations-of-knowledge-integration\">6a. Limitations of knowledge integration</h2>\n<p>Knowledge is powerful but <strong>not magic</strong>. Knowing the boundaries up front prevents broken designs.</p>\n<h3 id=\"general-limitations-all-sources\">General limitations (all sources)</h3>\n<ul>\n<li><strong>Not real-time.</strong> Content is <strong>indexed</strong>, not live — edits take time to appear; expect lag.</li>\n<li><strong>Size &amp; count caps.</strong> Per-file size limits and a max number of sources/URLs; large content is\n<strong>truncated</strong> or skipped.</li>\n<li><strong>Grounded ≠ guaranteed.</strong> The model can still miss, misread, or over-summarize — always test.</li>\n<li><strong>No deep querying.</strong> Knowledge <strong>retrieves text</strong>; it does <strong>not</strong> run database queries,\naggregations, or math across rows (“total of all sales” won’t work — use Dataverse/a tool).</li>\n<li><strong>Text only.</strong> Images, charts, diagrams, audio, and video inside documents aren’t understood.</li>\n<li><strong>Relevance depends on you.</strong> Vague source <strong>names/descriptions</strong> or too many noisy sources lower\nanswer quality.</li>\n<li><strong>Language quality varies</strong> by language; best in well-supported languages.</li>\n<li><strong>Region/license/cloud</strong> gate availability — some sources are limited in GCC/GCC High/DoD.</li>\n<li><strong>Permissions can hide answers.</strong> Permission-trimmed sources return nothing on <strong>anonymous</strong> channels.</li>\n</ul>\n<h3 id=\"per-source-limitations-at-a-glance\">Per-source limitations at a glance</h3>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Source</th>\n<th>Key limitations</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>SharePoint / OneDrive</strong></td>\n<td>Needs user auth (no anonymous); bounded file count; indexing lag; scanned PDFs &amp; complex sheets read poorly; permission-inheritance quirks</td>\n</tr>\n<tr>\n<td><strong>PDF</strong></td>\n<td><strong>No OCR</strong> for scans; complex/multi-column layouts chunk poorly; per-file size cap; encrypted PDFs fail; images/charts ignored</td>\n</tr>\n<tr>\n<td><strong>Excel / spreadsheets</strong></td>\n<td>Formulas/pivots/macros not evaluated; merged cells &amp; multi-sheet confuse parsing; <strong>not a queryable database</strong>; wide/long sheets truncated</td>\n</tr>\n<tr>\n<td><strong>Public website</strong></td>\n<td>Public + crawlable only; no auth-gated or JS-heavy pages; bounded URL count; freshness depends on re-crawl</td>\n</tr>\n<tr>\n<td><strong>Dataverse</strong></td>\n<td>Respects security roles; needs proper modeling; setup heavier than a file</td>\n</tr>\n<tr>\n<td><strong>Azure AI Search</strong></td>\n<td>Requires building/maintaining the index; more setup/cost</td>\n</tr>\n<tr>\n<td><strong>Connectors</strong></td>\n<td>Depend on connector reliability, throttling, and DLP allow-listing</td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p><strong>Rule of thumb:</strong> documents → great for <em>explaining</em>; structured/live data → use <strong>Dataverse</strong> or a\n<strong>tool</strong>, not a spreadsheet.</p>\n</blockquote>\n<hr />\n<h2 id=\"7-security-permissions-governance\">7. Security, permissions &amp; governance</h2>\n<ul>\n<li><strong>Permission trimming:</strong> SharePoint/Graph respect the <strong>signed-in user’s</strong> permissions — users only\nget answers from content they’re already allowed to see.</li>\n<li><strong>Anonymous channels</strong> can’t use permission-gated sources (no signed-in identity).</li>\n<li><strong>DLP policies</strong> (per environment) can block certain connectors/sources.</li>\n<li>Mark sensitive variables as <strong>sensitive data</strong> so values stay out of transcripts/logs.</li>\n<li><strong>Responsible AI</strong> content filters may block certain prompts/answers.</li>\n</ul>\n<hr />\n<h2 id=\"8-make-knowledge-answer-reliably-checklist\">8. Make knowledge answer reliably — checklist</h2>\n<ul>\n<li>✅ Clear <strong>name + description</strong> on every source (drives selection).</li>\n<li>✅ Few, <strong>high-quality</strong> sources; remove noisy/outdated ones.</li>\n<li>✅ Use <strong>text-based</strong> files; re-export scanned PDFs as searchable text.</li>\n<li>✅ Confirm the source is <strong>enabled</strong> and <strong>indexing finished</strong>.</li>\n<li>✅ Instructions say <strong>“answer only from knowledge, cite, else escalate.”</strong></li>\n<li>✅ Scope with a <strong>generative answers node</strong> when topics need different sources.</li>\n<li>✅ Re-test after every change with a <strong>new test session</strong> ⟳.</li>\n</ul>\n<hr />\n<h2 id=\"9-troubleshooting\">9. Troubleshooting</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Symptom</th>\n<th>Likely cause / fix</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Answers are <strong>generic</strong></td>\n<td>Source disabled or empty; tighten instructions to “only from sources”</td>\n</tr>\n<tr>\n<td>Can’t find <strong>known</strong> content</td>\n<td>Scanned PDF (no OCR), permissions, or non-crawlable URL</td>\n</tr>\n<tr>\n<td><strong>Stale</strong> answers</td>\n<td>Re-index / update the source; indexing isn’t real-time</td>\n</tr>\n<tr>\n<td>Pulls from the <strong>wrong</strong> source</td>\n<td>Scope a <strong>generative answers</strong> node to specific sources</td>\n</tr>\n<tr>\n<td>No <strong>citations</strong></td>\n<td>Confirm generative answers is enabled and the source supports it</td>\n</tr>\n<tr>\n<td>Works in Test, not in <strong>channel</strong></td>\n<td>Anonymous channel can’t access permissioned sources</td>\n</tr>\n</tbody>\n</table></div><hr />\n<h3 id=\"key-takeaways\">Key takeaways</h3>\n<ul>\n<li>Knowledge integration = connect <strong>your</strong> data so answers are <strong>grounded + cited</strong> (RAG).</li>\n<li>Sources: <strong>website, SharePoint/OneDrive, files, Dataverse, Graph, Azure AI Search, connectors</strong>.</li>\n<li>Choose <strong>agent-level</strong> for general use, <strong>node-level</strong> to scope sources per topic.</li>\n<li>Quality of <strong>name/description</strong>, <strong>content format</strong>, and <strong>permissions</strong> decides reliability.</li>\n<li>Verify caps and behavior in <a href=\"#/learn/copilot-studio/limitations\">10-limitations.md</a> and pair with strong\n<strong>instructions</strong> for trustworthy answers.</li>\n</ul>\n<hr />\n<h2 id=\"official-microsoft-documentation-references\">Official Microsoft documentation (references)</h2>\n<ul>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio\" target=\"_blank\" rel=\"noreferrer\">Knowledge sources overview</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/knowledge-add-knowledge\" target=\"_blank\" rel=\"noreferrer\">Add knowledge to an agent</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/knowledge-add-public-website\" target=\"_blank\" rel=\"noreferrer\">Add a public website as a knowledge source</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/knowledge-add-sharepoint\" target=\"_blank\" rel=\"noreferrer\">Add SharePoint as a knowledge source</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/knowledge-add-file-upload\" target=\"_blank\" rel=\"noreferrer\">Add files as a knowledge source</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/knowledge-add-dataverse\" target=\"_blank\" rel=\"noreferrer\">Add Dataverse as a knowledge source</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/nlu-generative-answers-node\" target=\"_blank\" rel=\"noreferrer\">Use the Create generative answers node</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/admin-data-loss-prevention\" target=\"_blank\" rel=\"noreferrer\">Data Loss Prevention (DLP) for agents</a></li>\n</ul>\n<p>Next: <a href=\"#/learn/copilot-studio/grounding\">11-grounding.md</a> — see how knowledge fits alongside tools, instructions, and Power Fx.</p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "1. What \"knowledge\" means here",
+      "id": "1-what-knowledge-means-here"
+    },
+    {
+      "level": 2,
+      "text": "2. Knowledge source types (integration points)",
+      "id": "2-knowledge-source-types-integration-points"
+    },
+    {
+      "level": 2,
+      "text": "3. Two levels of knowledge",
+      "id": "3-two-levels-of-knowledge"
+    },
+    {
+      "level": 2,
+      "text": "4. How to add knowledge (step by step)",
+      "id": "4-how-to-add-knowledge-step-by-step"
+    },
+    {
+      "level": 2,
+      "text": "5. Examples by scenario",
+      "id": "5-examples-by-scenario"
+    },
+    {
+      "level": 2,
+      "text": "5a. Knowledge sources in detail",
+      "id": "5a-knowledge-sources-in-detail"
+    },
+    {
+      "level": 3,
+      "text": "Structured vs unstructured data (read this first)",
+      "id": "structured-vs-unstructured-data-read-this-first"
+    },
+    {
+      "level": 3,
+      "text": "SharePoint / OneDrive as a knowledge source",
+      "id": "sharepoint-onedrive-as-a-knowledge-source"
+    },
+    {
+      "level": 3,
+      "text": "PDF as a knowledge source",
+      "id": "pdf-as-a-knowledge-source"
+    },
+    {
+      "level": 3,
+      "text": "Excel / spreadsheets as a knowledge source",
+      "id": "excel-spreadsheets-as-a-knowledge-source"
+    },
+    {
+      "level": 3,
+      "text": "Public website as a knowledge source",
+      "id": "public-website-as-a-knowledge-source"
+    },
+    {
+      "level": 3,
+      "text": "Dataverse as a knowledge source",
+      "id": "dataverse-as-a-knowledge-source"
+    },
+    {
+      "level": 3,
+      "text": "Azure AI Search as a knowledge source",
+      "id": "azure-ai-search-as-a-knowledge-source"
+    },
+    {
+      "level": 3,
+      "text": "Connectors / external systems as a knowledge source",
+      "id": "connectors-external-systems-as-a-knowledge-source"
+    },
+    {
+      "level": 3,
+      "text": "Quick \"which source?\" guide",
+      "id": "quick-which-source-guide"
+    },
+    {
+      "level": 2,
+      "text": "6. Supported content & formats",
+      "id": "6-supported-content-formats"
+    },
+    {
+      "level": 2,
+      "text": "6a. Limitations of knowledge integration",
+      "id": "6a-limitations-of-knowledge-integration"
+    },
+    {
+      "level": 3,
+      "text": "General limitations (all sources)",
+      "id": "general-limitations-all-sources"
+    },
+    {
+      "level": 3,
+      "text": "Per-source limitations at a glance",
+      "id": "per-source-limitations-at-a-glance"
+    },
+    {
+      "level": 2,
+      "text": "7. Security, permissions & governance",
+      "id": "7-security-permissions-governance"
+    },
+    {
+      "level": 2,
+      "text": "8. Make knowledge answer reliably — checklist",
+      "id": "8-make-knowledge-answer-reliably-checklist"
+    },
+    {
+      "level": 2,
+      "text": "9. Troubleshooting",
+      "id": "9-troubleshooting"
+    },
+    {
+      "level": 3,
+      "text": "Key takeaways",
+      "id": "key-takeaways"
+    },
+    {
+      "level": 2,
+      "text": "Official Microsoft documentation (references)",
+      "id": "official-microsoft-documentation-references"
+    }
+  ],
+  "hasMermaid": true,
+  "previous": {
+    "guideSlug": "copilot-studio",
+    "partKey": "deep-dive",
+    "slug": "grounding",
+    "order": 11,
+    "title": "Grounding: Answering from Your Data",
+    "summary": "Ground an agent in trusted organizational knowledge and inspect its answers.",
+    "type": "chapter",
+    "level": "intermediate",
+    "updated": "2026-08-26",
+    "readingTime": 6,
+    "route": "#/learn/copilot-studio/grounding",
+    "recordFile": "chapter--copilot-studio--grounding"
+  },
+  "next": {
+    "guideSlug": "copilot-studio",
+    "partKey": "advanced-features",
+    "slug": "adaptive-cards-and-forms",
+    "order": 13,
+    "title": "Adaptive Cards & Forms",
+    "summary": "Collect and present structured information with interactive cards and forms.",
+    "type": "chapter",
+    "level": "advanced",
+    "updated": "2026-08-26",
+    "readingTime": 4,
+    "route": "#/learn/copilot-studio/adaptive-cards-and-forms",
+    "recordFile": "chapter--copilot-studio--adaptive-cards-and-forms"
+  }
+}

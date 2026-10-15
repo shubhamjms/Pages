@@ -1,0 +1,120 @@
+{
+  "guideSlug": "copilot-studio",
+  "partKey": "building-blocks",
+  "slug": "variables-and-data-types",
+  "order": 3,
+  "title": "Variables & Data Types",
+  "summary": "Store, transform, and pass typed data through agent conversations.",
+  "type": "chapter",
+  "level": "beginner",
+  "updated": "2026-08-26",
+  "readingTime": 7,
+  "route": "#/learn/copilot-studio/variables-and-data-types",
+  "recordFile": "chapter--copilot-studio--variables-and-data-types",
+  "guideTitle": "Copilot Studio Guide",
+  "partTitle": "Building Blocks",
+  "position": 4,
+  "chapterCount": 19,
+  "html": "<p>Variables are how your agent <strong>remembers</strong> things during a conversation. This file covers the\n<strong>data types</strong>, the <strong>four variable scopes</strong>, <strong>system variables</strong>, and a gentle intro to <strong>Power Fx</strong>.</p>\n<hr />\n<h2 id=\"1-what-is-a-variable\">1. What is a variable?</h2>\n<p>A <strong>variable</strong> is a named container that stores a value while the conversation runs. Example:\nthe user answers <em>“My name is Sam”</em> → you store <code>\"Sam\"</code> in a variable called <code>UserName</code> → later the\nagent says <em>“Thanks, {UserName}!”</em>.</p>\n<p>You usually create variables in two ways:</p>\n<ul>\n<li>Automatically, when an <strong>Ask a question</strong> node saves the user’s answer.</li>\n<li>Manually, with a <strong>Set a variable value</strong> node (Variable management).</li>\n</ul>\n<p>Always <strong>rename</strong> the auto-generated name (like <code>Var1</code>) to something meaningful (<code>customerEmail</code>).</p>\n<hr />\n<h2 id=\"2-data-types-base-types\">2. Data types (base types)</h2>\n<p>Every variable has a <strong>base type</strong> that decides what it can hold and which operators you can use on it.</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Type</th>\n<th>Description</th>\n<th>Example value</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>String</strong></td>\n<td>A sequence of characters (text)</td>\n<td><code>\"Hello\"</code>, <code>\"sam@contoso.com\"</code></td>\n</tr>\n<tr>\n<td><strong>Boolean</strong></td>\n<td>A logical value — only <code>true</code> or <code>false</code></td>\n<td><code>true</code></td>\n</tr>\n<tr>\n<td><strong>Number</strong></td>\n<td>Any real number</td>\n<td><code>42</code>, <code>3.14</code>, <code>1000</code></td>\n</tr>\n<tr>\n<td><strong>Table</strong></td>\n<td>A list of values — all the <strong>same</strong> type</td>\n<td><code>[\"red\",\"green\",\"blue\"]</code></td>\n</tr>\n<tr>\n<td><strong>Record</strong></td>\n<td>A set of name–value pairs; values can be <strong>any</strong> type</td>\n<td><code>{ name: \"Sam\", age: 30 }</code></td>\n</tr>\n<tr>\n<td><strong>DateTime</strong></td>\n<td>A date, time, day, or month relative to a point in time</td>\n<td><code>2026-06-14T09:00</code></td>\n</tr>\n<tr>\n<td><strong>Choice</strong></td>\n<td>A list of string values, each with optional <strong>synonyms</strong></td>\n<td><code>Hiking</code> (synonym: <em>trekking</em>)</td>\n</tr>\n<tr>\n<td><strong>Blank</strong></td>\n<td>A placeholder for “no value / unknown”</td>\n<td><em>(empty)</em></td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p><strong>Type is set on first assignment and then fixed.</strong> If you put <code>1</code> (Number) into a variable,\nyou can’t later put <code>\"apples\"</code> (String) into it — you’ll get an error. During testing a variable\nwith no value yet shows as type <strong>unknown</strong>.</p>\n</blockquote>\n<h3 id=\"limitations-of-data-types\">Limitations of data types</h3>\n<p>Data types are simple by design — keep these boundaries in mind so flows don’t break.</p>\n<p><strong>General limitations</strong></p>\n<ul>\n<li><strong>Type is fixed on first assignment.</strong> You can’t change a variable’s type later; assigning a\ndifferent type throws an error. Use a <strong>new variable</strong> or <strong>Parse value</strong> to convert.</li>\n<li><strong>No automatic conversion.</strong> The agent won’t silently turn a Number into text. Wrap with <code>Text(...)</code>\nto join a number to a string, or <code>Value(...)</code> to turn text into a Number.</li>\n<li><strong>Blank ≠ empty string ≠ 0.</strong> A variable can be <strong>Blank</strong> (no value), <code>\"\"</code> (empty text), or <code>0</code>.\nTest for “no answer” with <code>IsBlank(...)</code>, not <code>= \"\"</code> or <code>= 0</code>.</li>\n<li><strong>“Unknown” until set.</strong> Before a value is assigned, the type shows as <strong>unknown</strong>; referencing it\ntoo early can misbehave — guard with <code>IsBlank(...)</code>.</li>\n<li><strong>Case/format sensitivity.</strong> String comparisons are exact unless you normalize (e.g., <code>Lower(...)</code>,\n<code>Trim(...)</code>).</li>\n</ul>\n<p><strong>Per-type limitations</strong></p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Type</th>\n<th>Watch out for</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>String</strong></td>\n<td>Very long text may hit message/size limits; comparisons are case-sensitive unless normalized.</td>\n</tr>\n<tr>\n<td><strong>Number</strong></td>\n<td>Floating-point rounding (<code>0.1 + 0.2</code> ≠ exactly <code>0.3</code>); no built-in currency/decimal precision — format with <code>Text(...)</code>.</td>\n</tr>\n<tr>\n<td><strong>Boolean</strong></td>\n<td>Only <code>true</code>/<code>false</code>; a Blank Boolean is <strong>not</strong> <code>false</code> — check <code>IsBlank</code> separately.</td>\n</tr>\n<tr>\n<td><strong>DateTime</strong></td>\n<td><strong>Time zones &amp; formats</strong> vary by channel/locale; the displayed string may differ from the stored value. Format explicitly.</td>\n</tr>\n<tr>\n<td><strong>Choice</strong></td>\n<td>Backed by a defined option set/entity; you can’t store an arbitrary value not in the list. Comparisons use the option, not free text.</td>\n</tr>\n<tr>\n<td><strong>Table</strong></td>\n<td>All items must be the <strong>same type</strong>; large tables are heavy and can hit limits; no complex DB-style queries.</td>\n</tr>\n<tr>\n<td><strong>Record</strong></td>\n<td>Field names are fixed once shaped; referencing a missing field returns Blank, not an error.</td>\n</tr>\n<tr>\n<td><strong>Blank</strong></td>\n<td>Propagates through expressions (Blank + text = the text); always handle it explicitly.</td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p><strong>Beginner tip:</strong> Most “why is my variable empty?” bugs are a <strong>type or Blank</strong> issue — print the\nvariable in a Message node or watch the <strong>Variables</strong> tab to see its actual type and value.</p>\n</blockquote>\n<h3 id=\"how-entities-map-to-data-types\">How entities map to data types</h3>\n<p>When a <strong>Question</strong> node uses an entity, the recognized value is saved as the type below\n(this is the <strong>web app</strong> mapping — what current Copilot Studio uses):</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Entity (what you “Identify”)</th>\n<th>Stored as</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Multiple-choice options</td>\n<td>Choice</td>\n</tr>\n<tr>\n<td>User’s entire response</td>\n<td>String</td>\n</tr>\n<tr>\n<td>Age</td>\n<td>Number</td>\n</tr>\n<tr>\n<td>Boolean</td>\n<td>Boolean</td>\n</tr>\n<tr>\n<td>City</td>\n<td>String</td>\n</tr>\n<tr>\n<td>Color</td>\n<td>String</td>\n</tr>\n<tr>\n<td>Continent</td>\n<td>String</td>\n</tr>\n<tr>\n<td>Country or region</td>\n<td>String</td>\n</tr>\n<tr>\n<td>Date and time</td>\n<td>DateTime</td>\n</tr>\n<tr>\n<td>Email</td>\n<td>String</td>\n</tr>\n<tr>\n<td>Event</td>\n<td>String</td>\n</tr>\n<tr>\n<td>Integer</td>\n<td>Number</td>\n</tr>\n<tr>\n<td>Language</td>\n<td>String</td>\n</tr>\n<tr>\n<td>Money</td>\n<td>Number</td>\n</tr>\n<tr>\n<td>Number</td>\n<td>Number</td>\n</tr>\n<tr>\n<td>Ordinal</td>\n<td>Number</td>\n</tr>\n<tr>\n<td>Organization</td>\n<td>String</td>\n</tr>\n<tr>\n<td>Percentage</td>\n<td>Number</td>\n</tr>\n<tr>\n<td>Person name</td>\n<td>String</td>\n</tr>\n<tr>\n<td>Phone number</td>\n<td>String</td>\n</tr>\n<tr>\n<td>Point of interest</td>\n<td>String</td>\n</tr>\n<tr>\n<td>Speed</td>\n<td>Number</td>\n</tr>\n<tr>\n<td>State</td>\n<td>String</td>\n</tr>\n<tr>\n<td>Street address</td>\n<td>String</td>\n</tr>\n<tr>\n<td>Temperature</td>\n<td>Number</td>\n</tr>\n<tr>\n<td>URL</td>\n<td>String</td>\n</tr>\n<tr>\n<td>Weight</td>\n<td>Number</td>\n</tr>\n<tr>\n<td>Zip code</td>\n<td>String</td>\n</tr>\n<tr>\n<td><strong>Custom entity</strong></td>\n<td>Choice</td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p>This is why a Question that uses the <strong>Money</strong> entity on <em>“It costs 1000 dollars”</em> stores the\n<strong>number</strong> <code>1000</code>, not the text — you can then do math or comparisons on it.</p>\n</blockquote>\n<hr />\n<h2 id=\"3-the-four-variable-scopes\">3. The four variable scopes</h2>\n<p>Scope = <strong>where</strong> a variable can be used and <strong>how long</strong> it lives.</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Scope</th>\n<th>Prefix</th>\n<th>Where it works</th>\n<th>Lifetime</th>\n<th>Who sets it</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Topic</strong> (default)</td>\n<td><em>(none)</em> — <code>Topic.X</code></td>\n<td>Only in the topic that created it</td>\n<td>While that topic runs</td>\n<td>You</td>\n</tr>\n<tr>\n<td><strong>Global</strong></td>\n<td><code>Global.X</code> (<code>bot.X</code> in classic)</td>\n<td><strong>All</strong> topics</td>\n<td>Whole user <strong>session</strong></td>\n<td>You / external sources</td>\n</tr>\n<tr>\n<td><strong>System</strong></td>\n<td><code>System.X</code></td>\n<td>All topics</td>\n<td>Provided by the platform</td>\n<td>Copilot Studio</td>\n</tr>\n<tr>\n<td><strong>Environment</strong></td>\n<td><em>(env var name)</em></td>\n<td>All topics — <strong>read-only</strong></td>\n<td>Set in Power Platform</td>\n<td>Admins</td>\n</tr>\n</tbody>\n</table></div><h3 id=\"topic-variables\">Topic variables</h3>\n<p>The default. Created and used inside a single topic. Private to that topic.</p>\n<h3 id=\"global-variables\">Global variables</h3>\n<p>Available everywhere and remembered for the <strong>entire session</strong>. Create one by opening a topic\nvariable’s <strong>Variable properties</strong> and selecting <strong>Global (any topic can access)</strong> — its name gets the\n<code>Global.</code> prefix.</p>\n<p>Use cases:</p>\n<ul>\n<li>Remember the user’s name once, reuse it in every topic (don’t ask twice).</li>\n<li>Receive context from a website or Dynamics 365 (“External sources can set values”).</li>\n</ul>\n<blockquote>\n<p><strong>Lifecycle:</strong> global values persist until the session ends or the <strong>Reset Conversation /\nStart Over</strong> topic runs (which clears them). If a global is used before it’s been filled,\nthe agent jumps to where it’s first defined, asks, then returns — seamlessly.</p>\n</blockquote>\n<h3 id=\"system-variables\">System variables</h3>\n<p>Auto-created, read-only context about the conversation. Reference with <code>System.</code> in formulas. Examples:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>System variable</th>\n<th>Type</th>\n<th>Meaning</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>Activity.Text</code></td>\n<td>string</td>\n<td>The user’s most recent message</td>\n</tr>\n<tr>\n<td><code>Activity.Channel</code></td>\n<td>choice</td>\n<td>Which channel the chat is on</td>\n</tr>\n<tr>\n<td><code>Conversation.Id</code></td>\n<td>string</td>\n<td>Unique ID of this conversation</td>\n</tr>\n<tr>\n<td><code>Conversation.InTestMode</code></td>\n<td>Boolean</td>\n<td><code>true</code> when running in the Test pane</td>\n</tr>\n<tr>\n<td><code>User.DisplayName</code></td>\n<td>string</td>\n<td>Signed-in user’s display name (when authenticated)</td>\n</tr>\n<tr>\n<td><code>User.IsLoggedIn</code></td>\n<td>Boolean</td>\n<td>Whether the user is authenticated</td>\n</tr>\n<tr>\n<td><code>Bot.Name</code></td>\n<td>string</td>\n<td>The agent’s name</td>\n</tr>\n</tbody>\n</table></div><h3 id=\"environment-variables\">Environment variables</h3>\n<p>A <strong>Power Platform</strong> concept for values that change between environments (dev/test/prod) — API keys,\nURLs, etc. They are <strong>read-only</strong> in Copilot Studio; admins set them in Power Apps. Great for\n<strong>Application Lifecycle Management (ALM)</strong> so you don’t hard-code environment-specific values.</p>\n<hr />\n<h2 id=\"4-passing-variables-between-topics\">4. Passing variables between topics</h2>\n<p>By default a topic variable is private. To share a value without making it global, use the\n<strong>Variables panel</strong> to mark a variable as an <strong>input</strong> (can receive a value from another topic),\nan <strong>output</strong> (can return a value), or both. Then a <strong>Redirect</strong> can pass values in and out — like\narguments and return values for a function.</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart LR\n    A[Topic A] -- pass orderId in --&gt; B[Topic B: Lookup]\n    B -- return status out --&gt; A\n</pre></div><p>Choose <strong>global</strong> when many topics need the value all the time; choose <strong>input/output passing</strong>\nwhen only specific topics exchange a value.</p>\n<hr />\n<h2 id=\"5-power-fx-basics-formulas\">5. Power Fx basics (formulas)</h2>\n<p>Copilot Studio uses <strong>Power Fx</strong> — the same Excel-like language as Power Apps — for conditions and\nexpressions. You’ll meet it in <strong>Condition</strong> nodes and <strong>Set variable value</strong> nodes (choose\n“Formula”). A formula starts conceptually with <code>=</code>.</p>\n<p>Common patterns:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Goal</th>\n<th>Power Fx</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Greet by name</td>\n<td><code>\"Hello \" &amp; Topic.UserName &amp; \"!\"</code></td>\n</tr>\n<tr>\n<td>Uppercase</td>\n<td><code>Upper(Topic.UserName)</code></td>\n</tr>\n<tr>\n<td>Is the box checked?</td>\n<td><code>Topic.Continue = true</code></td>\n</tr>\n<tr>\n<td>Not empty?</td>\n<td><code>!IsBlank(Topic.Email)</code></td>\n</tr>\n<tr>\n<td>Number compare</td>\n<td><code>Topic.Age &gt;= 18</code></td>\n</tr>\n<tr>\n<td>Pick a value</td>\n<td><code>If(Topic.Score &gt; 50, \"Pass\", \"Fail\")</code></td>\n</tr>\n<tr>\n<td>Current date/time</td>\n<td><code>Now()</code></td>\n</tr>\n<tr>\n<td>Combine text + number</td>\n<td><code>\"You ordered \" &amp; Text(Topic.Qty) &amp; \" items\"</code></td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p>Use <code>&amp;</code> to join strings. Wrap a number with <code>Text(...)</code> before joining it to text.\nUse <code>IsBlank(...)</code> to check for “no value”, which is the safest way to branch on optional answers.</p>\n</blockquote>\n<hr />\n<h2 id=\"6-quick-reference-choosing-the-right-type\">6. Quick reference: choosing the right type</h2>\n<ul>\n<li>Storing a name, email, address, ID → <strong>String</strong></li>\n<li>Counting / math / comparisons / money → <strong>Number</strong></li>\n<li>Yes/No, on/off, agreed? → <strong>Boolean</strong></li>\n<li>A date or time → <strong>DateTime</strong></li>\n<li>A pick-from-a-list answer → <strong>Choice</strong> (via Multiple-choice or a custom entity)</li>\n<li>A list of same-typed items → <strong>Table</strong></li>\n<li>A bundle of mixed fields (name + age + email) → <strong>Record</strong></li>\n</ul>\n<hr />\n<h3 id=\"key-takeaways\">Key takeaways</h3>\n<ul>\n<li>Types: <strong>String, Boolean, Number, Table, Record, DateTime, Choice, Blank</strong>.</li>\n<li>Type is <strong>fixed on first assignment</strong>.</li>\n<li>Scopes: <strong>Topic → Global → System → Environment</strong>.</li>\n<li>Use <strong>global</strong> to remember things across topics; <strong>system</strong> for context; <strong>environment</strong> for ALM.</li>\n<li><strong>Power Fx</strong> (<code>&amp;</code>, <code>If</code>, <code>IsBlank</code>, <code>Text</code>) powers conditions and expressions.</li>\n</ul>\n<hr />\n<h2 id=\"official-microsoft-documentation-references\">Official Microsoft documentation (references)</h2>\n<p>The content in this section is based on the following Microsoft Learn pages:</p>\n<ul>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-variables-about\" target=\"_blank\" rel=\"noreferrer\">Variables overview (types, scopes, system variables)</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-variables\" target=\"_blank\" rel=\"noreferrer\">Work with variables</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-variables-bot\" target=\"_blank\" rel=\"noreferrer\">Work with global variables</a></li>\n<li><a href=\"https://learn.microsoft.com/power-apps/maker/data-platform/environmentvariables\" target=\"_blank\" rel=\"noreferrer\">Environment variables (Power Platform)</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-power-fx\" target=\"_blank\" rel=\"noreferrer\">Use Power Fx in Copilot Studio</a></li>\n<li><a href=\"https://learn.microsoft.com/power-platform/power-fx/data-types\" target=\"_blank\" rel=\"noreferrer\">Power Fx data types</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/voice-sensitive-data\" target=\"_blank\" rel=\"noreferrer\">Remove sensitive data</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/guidance/pass-context-variables-from-webpage-to-copilot\" target=\"_blank\" rel=\"noreferrer\">Pass context variables from a webpage to an agent</a></li>\n</ul>\n<p>Next: <a href=\"#/learn/copilot-studio/nodes-message-and-question\">04-nodes-message-and-question.md</a></p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "1. What is a variable?",
+      "id": "1-what-is-a-variable"
+    },
+    {
+      "level": 2,
+      "text": "2. Data types (base types)",
+      "id": "2-data-types-base-types"
+    },
+    {
+      "level": 3,
+      "text": "Limitations of data types",
+      "id": "limitations-of-data-types"
+    },
+    {
+      "level": 3,
+      "text": "How entities map to data types",
+      "id": "how-entities-map-to-data-types"
+    },
+    {
+      "level": 2,
+      "text": "3. The four variable scopes",
+      "id": "3-the-four-variable-scopes"
+    },
+    {
+      "level": 3,
+      "text": "Topic variables",
+      "id": "topic-variables"
+    },
+    {
+      "level": 3,
+      "text": "Global variables",
+      "id": "global-variables"
+    },
+    {
+      "level": 3,
+      "text": "System variables",
+      "id": "system-variables"
+    },
+    {
+      "level": 3,
+      "text": "Environment variables",
+      "id": "environment-variables"
+    },
+    {
+      "level": 2,
+      "text": "4. Passing variables between topics",
+      "id": "4-passing-variables-between-topics"
+    },
+    {
+      "level": 2,
+      "text": "5. Power Fx basics (formulas)",
+      "id": "5-power-fx-basics-formulas"
+    },
+    {
+      "level": 2,
+      "text": "6. Quick reference: choosing the right type",
+      "id": "6-quick-reference-choosing-the-right-type"
+    },
+    {
+      "level": 3,
+      "text": "Key takeaways",
+      "id": "key-takeaways"
+    },
+    {
+      "level": 2,
+      "text": "Official Microsoft documentation (references)",
+      "id": "official-microsoft-documentation-references"
+    }
+  ],
+  "hasMermaid": true,
+  "previous": {
+    "guideSlug": "copilot-studio",
+    "partKey": "fundamentals",
+    "slug": "core-concepts",
+    "order": 2,
+    "title": "Core Concepts",
+    "summary": "Learn the topics, triggers, nodes, variables, entities, and actions behind an agent.",
+    "type": "chapter",
+    "level": "beginner",
+    "updated": "2026-08-26",
+    "readingTime": 10,
+    "route": "#/learn/copilot-studio/core-concepts",
+    "recordFile": "chapter--copilot-studio--core-concepts"
+  },
+  "next": {
+    "guideSlug": "copilot-studio",
+    "partKey": "building-blocks",
+    "slug": "nodes-message-and-question",
+    "order": 4,
+    "title": "Nodes: Message & Question (and all the others)",
+    "summary": "Choose and combine conversation nodes to control an agent's behavior.",
+    "type": "chapter",
+    "level": "beginner",
+    "updated": "2026-08-26",
+    "readingTime": 15,
+    "route": "#/learn/copilot-studio/nodes-message-and-question",
+    "recordFile": "chapter--copilot-studio--nodes-message-and-question"
+  }
+}

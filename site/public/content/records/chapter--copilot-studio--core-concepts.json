@@ -1,0 +1,150 @@
+{
+  "guideSlug": "copilot-studio",
+  "partKey": "fundamentals",
+  "slug": "core-concepts",
+  "order": 2,
+  "title": "Core Concepts",
+  "summary": "Learn the topics, triggers, nodes, variables, entities, and actions behind an agent.",
+  "type": "chapter",
+  "level": "beginner",
+  "updated": "2026-08-26",
+  "readingTime": 10,
+  "route": "#/learn/copilot-studio/core-concepts",
+  "recordFile": "chapter--copilot-studio--core-concepts",
+  "guideTitle": "Copilot Studio Guide",
+  "partTitle": "Fundamentals",
+  "position": 3,
+  "chapterCount": 19,
+  "html": "<p>This is the mental model you need before building anything.</p>\n<blockquote>\n<p>New to creating agents? Walk through <a href=\"#/learn/copilot-studio/create-an-agent\">01-create-an-agent.md</a> first; come back here for the <em>why</em>.</p>\n</blockquote>\n<hr />\n<h2 id=\"1-the-agent\">1. The agent</h2>\n<p>An <strong>agent</strong> is the complete conversational assistant you build and publish. One agent contains:</p>\n<ul>\n<li><strong>Identity</strong> – its <strong>Name</strong>, <strong>Icon</strong>, and <strong>Description</strong>.</li>\n<li><strong>Instructions</strong> – the system prompt that controls how it behaves.</li>\n<li><strong>Model</strong> – the LLM that powers it.</li>\n<li><strong>Topics</strong> – the conversation flows.</li>\n<li><strong>Entities</strong> – the information types it can recognize.</li>\n<li><strong>Knowledge sources</strong> – websites, files, or data it can answer from with generative AI.</li>\n<li><strong>Tools / Actions</strong> – connectors, Power Automate flows, and MCP servers it can call.</li>\n<li><strong>Settings</strong> – language, authentication, channels, security.</li>\n</ul>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    A[Agent] --&gt; ID[Identity: Name, Icon, Description]\n    A --&gt; INS[Instructions]\n    A --&gt; MOD[Model]\n    A --&gt; T[Topics]\n    A --&gt; E[Entities]\n    A --&gt; K[Knowledge sources]\n    A --&gt; X[Tools / Actions]\n    A --&gt; S[Settings &amp; Channels]\n    T --&gt; N[Nodes]\n</pre></div><hr />\n<h2 id=\"1a-description-instructions-and-model-why-they-matter\">1a. Description, Instructions, and Model — why they matter</h2>\n<p>These three live on the agent’s <strong>Overview</strong> page and shape <strong>every</strong> response your agent gives. Get them right and the rest of your authoring becomes much easier.</p>\n<h3 id=\"description-1024-characters-the-what\">Description (≤ 1,024 characters) — the “what”</h3>\n<p>The <strong>Description</strong> is a one-paragraph summary of <em>what your agent does and for whom</em>. You edit it in <strong>Overview → Details</strong>.</p>\n<p><strong>Why it matters</strong></p>\n<ul>\n<li><strong>Discovery</strong> – users see it in the app catalog (Teams, Microsoft 365 Copilot).</li>\n<li><strong>Routing</strong> – when your agent is invoked from Microsoft 365 Copilot or as a <strong>child agent</strong>, the orchestrator reads the <strong>name + description</strong> to decide whether to call it. Vague description → your agent never gets picked.</li>\n</ul>\n<p><strong>Good vs bad</strong></p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>❌ Weak</th>\n<th>✅ Strong</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>“HR chatbot.”</td>\n<td>“HR Assistant helps Contoso employees with HR questions about time-off, benefits, payroll, and onboarding. It answers from the Contoso HR policy library and escalates complex cases to a human HR business partner.”</td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p>Rule: if printing only the Description would tell a stranger <em>what your agent is for</em>, it’s good.</p>\n</blockquote>\n<h3 id=\"instructions-8000-characters-the-how\">Instructions (≤ 8,000 characters) — the “how”</h3>\n<p>The <strong>Instructions</strong> are the agent’s <strong>system prompt</strong> — the standing rules the model follows on every turn. You edit them in <strong>Overview → Instructions</strong>.</p>\n<p><strong>Why they matter</strong></p>\n<ul>\n<li>They set <strong>role, tone, format, what to do, what to avoid, when to call which tool/topic, and how to handle “I don’t know.”</strong></li>\n<li>In <strong>generative orchestration</strong>, they directly shape the plan the model builds for each user message.</li>\n<li>Type <strong><code>/</code></strong> to reference real <strong>tools / topics / agents / knowledge sources / variables / Power Fx</strong> by name. <strong>Names carry more weight than descriptions</strong> when the orchestrator chooses what to call.</li>\n</ul>\n<p><strong>Mini-template (full one in <a href=\"#/learn/copilot-studio/models-and-instructions\">09-models-and-instructions.md</a>)</strong></p>\n<pre aria-label=\"Code sample\"><code>Role         – who you are and who you serve\nTone &amp; style – friendly, concise, bullets, next step\nYou can     – tasks + which /tools or /topics to use\nYou must NOT – guardrails (no inventing, no advice, etc.)\nIf unsure   – say so and offer /Escalate\n</code></pre>\n<h3 id=\"model-the-engine\">Model — the engine</h3>\n<p>The <strong>Model</strong> is the LLM that powers orchestration and responses. You pick it in <strong>Overview → Model</strong>. Each model has a <strong>category tag</strong> that tells you what it’s optimized for:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Tag</th>\n<th>Best for</th>\n<th>Latency</th>\n<th>Cost</th>\n<th>Examples (today)</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>General</strong></td>\n<td>Everyday chat, FAQs, drafting, summarizing</td>\n<td>Lowest</td>\n<td>Lowest</td>\n<td><strong>GPT-4.1</strong> (default), GPT-5 Chat, Claude Sonnet</td>\n</tr>\n<tr>\n<td><strong>Auto</strong></td>\n<td>Mixed workloads — chat + actions</td>\n<td>Variable</td>\n<td>Variable</td>\n<td>GPT-5 Auto</td>\n</tr>\n<tr>\n<td><strong>Deep</strong></td>\n<td>Multistep reasoning, policy/contract analysis</td>\n<td>Highest</td>\n<td>Highest</td>\n<td>GPT-5 Reasoning, Claude Opus</td>\n</tr>\n</tbody>\n</table></div><p>Each model also has a <strong>release tag</strong>: <strong>Default</strong>, <strong>GA</strong>, <strong>Preview</strong>, <strong>Experimental</strong>, <strong>Retired</strong>, <strong>Cross-geo</strong>.\n<strong>Use GA/Default for production.</strong> Preview and Experimental are for testing only.</p>\n<p><strong>Quick rule:</strong></p>\n<ol>\n<li><strong>First agent / chat / FAQ?</strong> → keep the <strong>Default General</strong> model.</li>\n<li><strong>Multi-step reasoning, long docs, complex tools?</strong> → use a <strong>Deep</strong> model.</li>\n<li><strong>Mixed traffic?</strong> → try <strong>Auto</strong>.</li>\n<li><strong>Voice/IVR?</strong> → prefer <strong>General</strong> for low latency.</li>\n</ol>\n<blockquote>\n<p>Full model list, regional availability, governance, and decision tree: <a href=\"#/learn/copilot-studio/models-and-instructions\">09-models-and-instructions.md</a>.</p>\n</blockquote>\n<h3 id=\"how-they-work-together\">How they work together</h3>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart LR\n    D[Description] --&gt; Route[Routing: should this agent be called?]\n    I[Instructions] --&gt; Behave[Behavior: how to reply, what tools to use]\n    M[Model] --&gt; Quality[Quality / latency / cost]\n    Route --&gt; Out[Great agent experience]\n    Behave --&gt; Out\n    Quality --&gt; Out\n</pre></div><div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Get this wrong</th>\n<th>And you’ll see this</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Vague <strong>Description</strong></td>\n<td>Orchestrators (M365 Copilot, parent agents) don’t pick your agent.</td>\n</tr>\n<tr>\n<td>Vague <strong>Instructions</strong></td>\n<td>Inconsistent tone, wrong tools called, hallucinations, no guardrails.</td>\n</tr>\n<tr>\n<td>Wrong <strong>Model</strong></td>\n<td>Too slow, too expensive, or not smart enough for the task.</td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p>After changing any of these three, click <strong>Start new test session</strong> ⟳ in the test pane — the next message will use the latest configuration. <strong>Publish</strong> to release changes to users.</p>\n</blockquote>\n<hr />\n<h2 id=\"2-topics\">2. Topics</h2>\n<p>A <strong>topic</strong> represents a portion of a conversation — usually one user goal, like <em>“Track my order”</em>\nor <em>“Reset my password.”</em> You design each topic on the <strong>authoring canvas</strong> as a sequence of nodes.</p>\n<p>There are two kinds:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Type</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>System topics</strong></td>\n<td>Built-in behaviors (Greeting, Start Over, Escalate, End of Conversation, errors…). You can edit or turn them off but can’t create or delete them.</td>\n</tr>\n<tr>\n<td><strong>Custom topics</strong></td>\n<td>Everything you create. Some starter custom topics (Greeting, Goodbye, etc.) come predefined and can be edited or removed.</td>\n</tr>\n</tbody>\n</table></div><p><strong>Best practice:</strong> keep topics <strong>small and focused</strong> (“bite-size”). Many small topics are easier to\nmaintain and trigger more reliably than a few giant ones. Reusable logic can live in its own topic\nthat others <strong>redirect</strong> to.</p>\n<hr />\n<h2 id=\"3-triggers-how-a-topic-starts\">3. Triggers — how a topic starts</h2>\n<p>Every topic begins with a <strong>Trigger</strong> node. A topic can be triggered in several ways:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Trigger type</th>\n<th>Starts when…</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>User says a phrase</strong> (classic)</td>\n<td>The user’s message matches the topic’s <strong>trigger phrases</strong>.</td>\n</tr>\n<tr>\n<td><strong>The agent chooses</strong> (generative)</td>\n<td>The AI decides the topic’s <strong>name + description</strong> matches the user’s intent.</td>\n</tr>\n<tr>\n<td><strong>Redirect</strong> from another topic</td>\n<td>Another topic explicitly sends the conversation here.</td>\n</tr>\n<tr>\n<td><strong>An event</strong></td>\n<td>E.g., conversation start, inactivity, message received, on error, escalate.</td>\n</tr>\n</tbody>\n</table></div><h3 id=\"trigger-phrases\">Trigger phrases</h3>\n<p>For classic triggering, give each topic <strong>5–10 short example phrases</strong> a user might type. The AI\ngeneralizes from them — it does <strong>not</strong> require an exact match. Example for a “Store Hours” topic:</p>\n<pre aria-label=\"Code sample\"><code>what time do you open\nare you open on sunday\nstore hours\nwhen do you close\nopening times\n</code></pre>\n<blockquote>\n<p>Keep phrases short and varied. Avoid overlapping phrases across topics, or the agent will\nask the user to disambiguate (the <strong>Multiple Topics Matched</strong> system topic).</p>\n</blockquote>\n<hr />\n<h2 id=\"4-nodes-the-steps-inside-a-topic\">4. Nodes — the steps inside a topic</h2>\n<p>A <strong>node</strong> is one action. You add nodes by selecting the <strong>+</strong> (Add node) icon between steps.\nThe most common node types:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Node</th>\n<th>Purpose</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Send a message</strong></td>\n<td>The agent says something (text, image, quick replies, Adaptive Card).</td>\n</tr>\n<tr>\n<td><strong>Ask a question</strong></td>\n<td>The agent asks for input and stores the answer in a <strong>variable</strong>.</td>\n</tr>\n<tr>\n<td><strong>Add a condition</strong></td>\n<td>Branch the flow based on a value (uses Power Fx).</td>\n</tr>\n<tr>\n<td><strong>Variable management</strong></td>\n<td>Set, clear, or parse variable values.</td>\n</tr>\n<tr>\n<td><strong>Topic management</strong></td>\n<td>Redirect to another topic, or end the topic/conversation.</td>\n</tr>\n<tr>\n<td><strong>Call an action</strong></td>\n<td>Run a Power Automate flow, a connector, a prompt, or a tool.</td>\n</tr>\n<tr>\n<td><strong>Advanced</strong></td>\n<td>HTTP request, generative answers, send/receive events, etc.</td>\n</tr>\n</tbody>\n</table></div><p>We cover <strong>Send a message</strong> and <strong>Ask a question</strong> in depth in\n<a href=\"#/learn/copilot-studio/nodes-message-and-question\">04-nodes-message-and-question.md</a>.</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    Trig[Trigger] --&gt; Msg[Send a message: Welcome]\n    Msg --&gt; Ask[Ask a question: What's your name?]\n    Ask --&gt; Cond{Condition}\n    Cond --&gt;|VIP| P1[Message: VIP greeting]\n    Cond --&gt;|All others| P2[Message: Standard greeting]\n</pre></div><hr />\n<h2 id=\"5-orchestration-classic-vs-generative\">5. Orchestration — classic vs generative</h2>\n<p><strong>Orchestration</strong> is the agent’s “brain” — the part that decides, for <strong>every user message</strong>, <em>what\nto do next</em>: which <strong>topic</strong> to run, which <strong>tool</strong> or <strong>knowledge source</strong> to use, in what <strong>order</strong>,\nand how to <strong>combine</strong> the results into a single reply. Think of it as a <strong>dispatcher</strong> standing\nbetween the user and everything you built.</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    U[User message] --&gt; O{Orchestrator}\n    O --&gt;|matches a flow| T[Run a Topic]\n    O --&gt;|needs an action| X[Call a Tool / Flow]\n    O --&gt;|info question| K[Search Knowledge]\n    T --&gt; R[Compose reply]\n    X --&gt; R\n    K --&gt; R\n    R --&gt; U2[Response to user]\n</pre></div><p>Copilot Studio offers <strong>two orchestration modes</strong>, set in <strong>Settings → Generative AI</strong>.</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th></th>\n<th><strong>Classic orchestration</strong></th>\n<th><strong>Generative orchestration</strong></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Routing</td>\n<td>Matches <strong>trigger phrases</strong> to topics</td>\n<td>AI reads topic/tool <strong>descriptions</strong> and chooses</td>\n</tr>\n<tr>\n<td>Best for</td>\n<td>Predictable, scripted flows</td>\n<td>Flexible, natural, multi-step requests</td>\n</tr>\n<tr>\n<td>You author</td>\n<td>Trigger phrases per topic</td>\n<td>Clear names + descriptions; the AI plans</td>\n</tr>\n<tr>\n<td>Default trigger</td>\n<td>“User says a phrase”</td>\n<td>“The agent chooses”</td>\n</tr>\n<tr>\n<td>Multi-step</td>\n<td>One topic at a time</td>\n<td>Can chain several topics/tools in one turn</td>\n</tr>\n<tr>\n<td>Control</td>\n<td>High (you decide the path)</td>\n<td>High-level (you guide; AI decides the path)</td>\n</tr>\n</tbody>\n</table></div><h3 id=\"classic-orchestration-rule-based-routing\">Classic orchestration (rule-based routing)</h3>\n<p>The agent compares the user’s message to the <strong>trigger phrases</strong> you wrote for each topic and runs the\n<strong>best match</strong>. It’s deterministic and easy to follow — what you script is exactly what happens.</p>\n<ul>\n<li><strong>You control the path.</strong> Great for compliance-heavy or strictly scripted flows.</li>\n<li><strong>One topic at a time.</strong> If a request needs two things, the user usually goes through two topics.</li>\n<li><strong>Limitation:</strong> it only knows what you anticipated. Unusual phrasings may match nothing (or the\nwrong topic), triggering the <strong>Multiple Topics Matched</strong> or <strong>Fallback</strong> system topics.</li>\n</ul>\n<blockquote>\n<p>Example: User types <em>“opening times”</em> → matches the <strong>Store Hours</strong> trigger phrases → that topic runs.</p>\n</blockquote>\n<h3 id=\"generative-orchestration-ai-planned-routing\">Generative orchestration (AI-planned routing)</h3>\n<p>Instead of matching phrases, the AI reads the <strong>names and descriptions</strong> of your topics, tools,\nknowledge sources, and child agents, then <strong>builds a plan</strong> for each message — possibly using\n<strong>several</strong> of them in one turn, and asking follow-up questions if information is missing.</p>\n<p>What the orchestrator does each turn:</p>\n<ol>\n<li><strong>Understands</strong> the user’s intent (even from messy, multi-part requests).</li>\n<li><strong>Selects</strong> the relevant topics / tools / knowledge by their <strong>descriptions</strong>.</li>\n<li><strong>Sequences</strong> them (e.g., look up the order <em>then</em> draft an email).</li>\n<li><strong>Fills inputs</strong> automatically from the conversation (proactive slot filling).</li>\n<li><strong>Composes</strong> one coherent answer, with citations when grounded.</li>\n</ol>\n<blockquote>\n<p>Example: User says <em>“My order 123 is late and I want a refund.”</em> The orchestrator can call\n<strong>/LookupOrder</strong>, then run the <strong>Refund</strong> topic, then <strong>escalate</strong> — all from one sentence.</p>\n</blockquote>\n<p><strong>What makes generative orchestration work well</strong></p>\n<ul>\n<li><strong>Great descriptions everywhere.</strong> Names + descriptions are how the AI “sees” each topic/tool.\nVague descriptions → the right tool never gets picked. (Names carry more weight than descriptions.)</li>\n<li><strong>Clear Instructions.</strong> The agent’s <strong>Instructions</strong> steer the plan: <em>“For policy questions, cite the\nsource; for account changes, call /AccountTool; if unsure, escalate.”</em></li>\n<li><strong>Bounded tasks.</strong> Very long multi-step plans can time out or drift — keep tools/topics focused.</li>\n</ul>\n<h3 id=\"how-the-two-compare-at-runtime\">How the two compare at runtime</h3>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart LR\n    subgraph Classic\n      A1[Message] --&gt; A2[Match trigger phrase] --&gt; A3[Run that one topic]\n    end\n    subgraph Generative\n      B1[Message] --&gt; B2[AI reads all descriptions] --&gt; B3[Plan: pick + order tools/topics] --&gt; B4[Run them, compose reply]\n    end\n</pre></div><h3 id=\"which-should-you-use\">Which should you use?</h3>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Choose <strong>classic</strong> when…</th>\n<th>Choose <strong>generative</strong> when…</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Flows must be exact and predictable</td>\n<td>Users phrase things many different ways</td>\n</tr>\n<tr>\n<td>Compliance/audit needs a fixed path</td>\n<td>You want natural, multi-step conversations</td>\n</tr>\n<tr>\n<td>You’re a beginner learning cause→effect</td>\n<td>You have well-described topics, tools, knowledge</td>\n</tr>\n<tr>\n<td>Few, simple topics</td>\n<td>Many capabilities the AI should combine</td>\n</tr>\n</tbody>\n</table></div><p>You switch modes in <strong>Settings → Generative AI</strong>. As a beginner, <strong>classic</strong> makes the cause-and-effect\nof triggers and nodes easiest to see, so the labs use trigger phrases. Once comfortable — and once your\ntopics/tools have clear descriptions — switch to <strong>generative</strong> for more natural, AI-driven conversations.</p>\n<blockquote>\n<p><strong>Note on “agent” orchestration too:</strong> the same description-driven logic decides whether <em>your whole\nagent</em> is invoked as a <strong>child agent</strong> or from <strong>Microsoft 365 Copilot</strong>. Good names + descriptions\nmatter at every level.</p>\n</blockquote>\n<hr />\n<h2 id=\"6-the-conversation-lifecycle-what-happens-at-runtime\">6. The conversation lifecycle (what happens at runtime)</h2>\n<ol>\n<li><strong>User sends a message</strong> (types or speaks).</li>\n<li>The agent’s <strong>NLU</strong> (natural language understanding) figures out the <strong>intent</strong>.</li>\n<li>The matching <strong>topic is triggered</strong>.</li>\n<li>Nodes run <strong>top to bottom</strong>; <strong>conditions</strong> branch left to right.</li>\n<li><strong>Question</strong> nodes pause and wait for the user; answers are saved to <strong>variables</strong>.</li>\n<li><strong>Entities</strong> extract structured info (a date, an email, a choice) from free text.</li>\n<li>The topic ends, redirects, or escalates. Variables persist for the <strong>session</strong>.</li>\n</ol>\n<hr />\n<h2 id=\"7-knowledge-generative-answers-quick-intro\">7. Knowledge &amp; generative answers (quick intro)</h2>\n<p>Beyond scripted topics, an agent can answer from <strong>knowledge sources</strong> (public websites, SharePoint,\nuploaded files, Dataverse, etc.) using <strong>generative AI</strong>. When no topic matches, the agent can fall\nback to generative answers. You’ll mostly use scripted topics in these labs, but know that knowledge\nis what makes an agent feel “smart” beyond your hand-built flows.</p>\n<hr />\n<h2 id=\"8-publishing-channels\">8. Publishing &amp; channels</h2>\n<ul>\n<li><strong>Save</strong> keeps your edits in the authoring environment.</li>\n<li><strong>Publish</strong> pushes the latest version live.</li>\n<li><strong>Channels</strong> are where users reach the agent: a <strong>demo website</strong>, your own website, <strong>Microsoft\nTeams</strong>, <strong>Microsoft 365 Copilot</strong>, telephony/voice, Facebook, and more.</li>\n</ul>\n<hr />\n<h3 id=\"key-takeaways\">Key takeaways</h3>\n<ul>\n<li>An <strong>agent</strong> is made of <strong>topics</strong>; topics are made of <strong>nodes</strong>.</li>\n<li><strong>Triggers</strong> start topics; <strong>trigger phrases</strong> (classic) or <strong>descriptions</strong> (generative) decide routing.</li>\n<li><strong>Variables</strong> remember values; <strong>entities</strong> recognize information types.</li>\n<li>Nodes run <strong>top→bottom, left→right</strong>.</li>\n</ul>\n<hr />\n<h2 id=\"official-microsoft-documentation-references\">Official Microsoft documentation (references)</h2>\n<p>The content in this section is based on the following Microsoft Learn pages:</p>\n<ul>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-create-edit-topics\" target=\"_blank\" rel=\"noreferrer\">Create and edit topics</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-system-topics\" target=\"_blank\" rel=\"noreferrer\">Use system topics</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-triggers\" target=\"_blank\" rel=\"noreferrer\">Set topic triggers</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/guidance/triggering-topics\" target=\"_blank\" rel=\"noreferrer\">Triggering topics (guidance)</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/guidance/trigger-phrases-best-practices\" target=\"_blank\" rel=\"noreferrer\">Design effective trigger phrases</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/guidance/topic-authoring-best-practices\" target=\"_blank\" rel=\"noreferrer\">Follow topic authoring best practices</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-generative-actions\" target=\"_blank\" rel=\"noreferrer\">Orchestrate agent behavior with generative AI</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/guidance/voice-agents-control-conversation\" target=\"_blank\" rel=\"noreferrer\">Choose how to control the conversation</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-instructions\" target=\"_blank\" rel=\"noreferrer\">Write agent instructions</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-select-agent-model\" target=\"_blank\" rel=\"noreferrer\">Select a primary AI model for your agent</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-get-started\" target=\"_blank\" rel=\"noreferrer\">Quickstart: Create and deploy an agent</a></li>\n</ul>\n<p>Next: <a href=\"#/learn/copilot-studio/variables-and-data-types\">03-variables-and-data-types.md</a></p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "1. The agent",
+      "id": "1-the-agent"
+    },
+    {
+      "level": 2,
+      "text": "1a. Description, Instructions, and Model — why they matter",
+      "id": "1a-description-instructions-and-model-why-they-matter"
+    },
+    {
+      "level": 3,
+      "text": "Description (≤ 1,024 characters) — the \"what\"",
+      "id": "description-1024-characters-the-what"
+    },
+    {
+      "level": 3,
+      "text": "Instructions (≤ 8,000 characters) — the \"how\"",
+      "id": "instructions-8000-characters-the-how"
+    },
+    {
+      "level": 3,
+      "text": "Model — the engine",
+      "id": "model-the-engine"
+    },
+    {
+      "level": 3,
+      "text": "How they work together",
+      "id": "how-they-work-together"
+    },
+    {
+      "level": 2,
+      "text": "2. Topics",
+      "id": "2-topics"
+    },
+    {
+      "level": 2,
+      "text": "3. Triggers — how a topic starts",
+      "id": "3-triggers-how-a-topic-starts"
+    },
+    {
+      "level": 3,
+      "text": "Trigger phrases",
+      "id": "trigger-phrases"
+    },
+    {
+      "level": 2,
+      "text": "4. Nodes — the steps inside a topic",
+      "id": "4-nodes-the-steps-inside-a-topic"
+    },
+    {
+      "level": 2,
+      "text": "5. Orchestration — classic vs generative",
+      "id": "5-orchestration-classic-vs-generative"
+    },
+    {
+      "level": 3,
+      "text": "Classic orchestration (rule-based routing)",
+      "id": "classic-orchestration-rule-based-routing"
+    },
+    {
+      "level": 3,
+      "text": "Generative orchestration (AI-planned routing)",
+      "id": "generative-orchestration-ai-planned-routing"
+    },
+    {
+      "level": 3,
+      "text": "How the two compare at runtime",
+      "id": "how-the-two-compare-at-runtime"
+    },
+    {
+      "level": 3,
+      "text": "Which should you use?",
+      "id": "which-should-you-use"
+    },
+    {
+      "level": 2,
+      "text": "6. The conversation lifecycle (what happens at runtime)",
+      "id": "6-the-conversation-lifecycle-what-happens-at-runtime"
+    },
+    {
+      "level": 2,
+      "text": "7. Knowledge & generative answers (quick intro)",
+      "id": "7-knowledge-generative-answers-quick-intro"
+    },
+    {
+      "level": 2,
+      "text": "8. Publishing & channels",
+      "id": "8-publishing-channels"
+    },
+    {
+      "level": 3,
+      "text": "Key takeaways",
+      "id": "key-takeaways"
+    },
+    {
+      "level": 2,
+      "text": "Official Microsoft documentation (references)",
+      "id": "official-microsoft-documentation-references"
+    }
+  ],
+  "hasMermaid": true,
+  "previous": {
+    "guideSlug": "copilot-studio",
+    "partKey": "fundamentals",
+    "slug": "create-an-agent",
+    "order": 1,
+    "title": "How to Create an Agent (Step-by-Step)",
+    "summary": "Create, configure, test, and publish a first agent in Copilot Studio.",
+    "type": "chapter",
+    "level": "beginner",
+    "updated": "2026-08-26",
+    "readingTime": 8,
+    "route": "#/learn/copilot-studio/create-an-agent",
+    "recordFile": "chapter--copilot-studio--create-an-agent"
+  },
+  "next": {
+    "guideSlug": "copilot-studio",
+    "partKey": "building-blocks",
+    "slug": "variables-and-data-types",
+    "order": 3,
+    "title": "Variables & Data Types",
+    "summary": "Store, transform, and pass typed data through agent conversations.",
+    "type": "chapter",
+    "level": "beginner",
+    "updated": "2026-08-26",
+    "readingTime": 7,
+    "route": "#/learn/copilot-studio/variables-and-data-types",
+    "recordFile": "chapter--copilot-studio--variables-and-data-types"
+  }
+}

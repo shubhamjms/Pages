@@ -1,0 +1,110 @@
+{
+  "guideSlug": "copilot-studio",
+  "partKey": "deep-dive",
+  "slug": "grounding",
+  "order": 11,
+  "title": "Grounding: Answering from Your Data",
+  "summary": "Ground an agent in trusted organizational knowledge and inspect its answers.",
+  "type": "chapter",
+  "level": "intermediate",
+  "updated": "2026-08-26",
+  "readingTime": 6,
+  "route": "#/learn/copilot-studio/grounding",
+  "recordFile": "chapter--copilot-studio--grounding",
+  "guideTitle": "Copilot Studio Guide",
+  "partTitle": "Deep Dive",
+  "position": 12,
+  "chapterCount": 19,
+  "html": "<p><strong>Grounding</strong> means tying the agent’s generative answers to <strong>your trusted data</strong> — knowledge\nsources, records, or live systems — instead of the model’s general training knowledge. Grounding is\nwhat turns a generic chatbot into a reliable assistant that answers <em>your</em> policies, <em>your</em> prices,\nand <em>your</em> order statuses, with <strong>citations</strong> and far fewer hallucinations.</p>\n<blockquote>\n<p>Mental model: <strong>Model = how it talks. Grounding = what it’s allowed to talk about.</strong></p>\n</blockquote>\n<hr />\n<h2 id=\"1-why-grounding-matters\">1. Why grounding matters</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Without grounding</th>\n<th>With grounding</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Answers from generic training data</td>\n<td>Answers from your documents/records/systems</td>\n</tr>\n<tr>\n<td>Can confidently invent facts (hallucinate)</td>\n<td>Stays within supplied sources; says “I don’t know” when missing</td>\n</tr>\n<tr>\n<td>No citations</td>\n<td>Cites the source it used</td>\n</tr>\n<tr>\n<td>Stale / generic</td>\n<td>Reflects your latest curated content</td>\n</tr>\n</tbody>\n</table></div><div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart LR\n    U[User question] --&gt; R[Retrieve relevant data from your sources]\n    R --&gt; P[Model reads retrieved data]\n    P --&gt; A[Grounded answer + citation]\n</pre></div><p>This retrieve-then-answer pattern is <strong>RAG</strong> (Retrieval-Augmented Generation).</p>\n<hr />\n<h2 id=\"2-the-five-ways-to-ground-in-copilot-studio\">2. The five ways to ground in Copilot Studio</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>#</th>\n<th>Mechanism</th>\n<th>Best for</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>1</td>\n<td><strong>Knowledge sources</strong></td>\n<td>Documents, FAQs, websites, SharePoint, Dataverse</td>\n</tr>\n<tr>\n<td>2</td>\n<td><strong>Generative Answers node</strong></td>\n<td>Grounding at one point in a topic, with scoped sources</td>\n</tr>\n<tr>\n<td>3</td>\n<td><strong>Instructions</strong></td>\n<td>Enforcing “answer only from sources + cite + escalate”</td>\n</tr>\n<tr>\n<td>4</td>\n<td><strong>Tools</strong> (HTTP / Power Automate / connectors)</td>\n<td>Live, transactional data</td>\n</tr>\n<tr>\n<td>5</td>\n<td><strong>Power Fx variables</strong></td>\n<td>Injecting small known facts inline</td>\n</tr>\n</tbody>\n</table></div><hr />\n<h2 id=\"3-knowledge-sources-the-main-way\">3. Knowledge sources (the main way)</h2>\n<p>Add sources under <strong>Overview → Knowledge → Add knowledge</strong>. The agent retrieves relevant chunks and\nfeeds them to the model before answering.</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Source type</th>\n<th>Example use</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Public website</strong></td>\n<td>Add <code>https://contoso.com/support</code> to answer FAQ questions from your site</td>\n</tr>\n<tr>\n<td><strong>SharePoint</strong></td>\n<td>Point to an HR site to answer from policy docs (respects user permissions)</td>\n</tr>\n<tr>\n<td><strong>Uploaded files</strong></td>\n<td>Upload <code>Employee-Handbook.pdf</code> for onboarding questions</td>\n</tr>\n<tr>\n<td><strong>Dataverse</strong></td>\n<td>Ground on the <code>Accounts</code> table to answer “What’s the status of account Northwind?”</td>\n</tr>\n<tr>\n<td><strong>Azure AI Search</strong></td>\n<td>Connect a prebuilt vector index for large enterprise corpora</td>\n</tr>\n</tbody>\n</table></div><p><strong>Example — HR vacation policy</strong></p>\n<blockquote>\n<p><strong>User:</strong> “How many vacation days do I get in my first year?”\n<strong>Agent (grounded):</strong> Searches the HR SharePoint → finds the policy paragraph → answers\n<em>“New full-time employees accrue 15 days in year one”</em> <strong>with a citation</strong> — instead of guessing.</p>\n</blockquote>\n<p><strong>Tips</strong></p>\n<ul>\n<li>Give each source a clear <strong>name + description</strong> (used for relevance/routing).</li>\n<li>Fewer, higher-quality sources beat many noisy ones.</li>\n<li>Test with real questions whose answers live in the source.</li>\n</ul>\n<h3 id=\"3a-knowledge-integration-in-detail\">3a. Knowledge integration in detail</h3>\n<p><strong>How to add knowledge (step by step)</strong></p>\n<ol>\n<li>Open your agent → <strong>Knowledge</strong> (top nav) or <strong>Overview → Knowledge</strong>.</li>\n<li>Select <strong>+ Add knowledge</strong>.</li>\n<li>Pick a <strong>source type</strong> (website, SharePoint/OneDrive, file upload, Dataverse, connector…).</li>\n<li>Provide the location (URL, site, file) and give it a clear <strong>name + description</strong>.</li>\n<li><strong>Add</strong> it, then <strong>wait for indexing</strong> to finish (status shows when it’s ready).</li>\n<li><strong>Test</strong> with a question whose answer lives in that source. <strong>Publish</strong> when happy.</li>\n</ol>\n<p><strong>Where knowledge can live (integration points)</strong></p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Integration</th>\n<th>What it connects to</th>\n<th>Typical use</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Public website</strong></td>\n<td>Crawlable public URLs</td>\n<td>Marketing/FAQ/support pages</td>\n</tr>\n<tr>\n<td><strong>SharePoint / OneDrive</strong></td>\n<td>Your tenant’s documents</td>\n<td>Policies, handbooks, internal docs</td>\n</tr>\n<tr>\n<td><strong>File upload</strong></td>\n<td>PDF, DOCX, TXT, etc.</td>\n<td>One-off or static reference docs</td>\n</tr>\n<tr>\n<td><strong>Dataverse</strong></td>\n<td>Tables in Power Platform</td>\n<td>Structured business records</td>\n</tr>\n<tr>\n<td><strong>Microsoft Graph</strong></td>\n<td>M365 content (enterprise)</td>\n<td>Org-wide enterprise knowledge</td>\n</tr>\n<tr>\n<td><strong>Azure AI Search</strong></td>\n<td>A prebuilt vector index</td>\n<td>Large/custom corpora, advanced RAG</td>\n</tr>\n<tr>\n<td><strong>Connectors</strong></td>\n<td>External systems (e.g., Salesforce, ServiceNow)</td>\n<td>Third-party data</td>\n</tr>\n<tr>\n<td><strong>Public/MCP &amp; advanced</strong></td>\n<td>Other graph/connector knowledge</td>\n<td>Specialized sources</td>\n</tr>\n</tbody>\n</table></div><p><strong>Two levels of knowledge</strong></p>\n<ul>\n<li><strong>Agent-level knowledge</strong> — added on the Knowledge page; available to the whole agent and used by\n<strong>generative answers</strong> automatically when no topic fully handles the request.</li>\n<li><strong>Node-level knowledge</strong> — a <strong>Create generative answers</strong> node scoped to specific sources, so a\ngiven topic only draws from the sources you choose (see section 4).</li>\n</ul>\n<p><strong>Supported content &amp; formats (rules of thumb)</strong></p>\n<ul>\n<li>Works best with <strong>text-based</strong> content: HTML pages, Word/PDF with real text, structured tables.</li>\n<li><strong>Not</strong> reliably read: scanned/image-only PDFs (no OCR), images, audio/video, heavily JavaScript-\nrendered pages, and auth-gated content the agent can’t access.</li>\n<li>Each file/source has <strong>size and count limits</strong>, and indexing is <strong>not real-time</strong> — updates take\ntime to appear. (See <a href=\"#/learn/copilot-studio/limitations\">10-limitations.md</a>.)</li>\n</ul>\n<p><strong>Security, permissions &amp; governance</strong></p>\n<ul>\n<li><strong>SharePoint/Graph respect the signed-in user’s permissions</strong> — users only get answers from content\nthey’re already allowed to see. Anonymous channels can’t use permission-gated sources.</li>\n<li><strong>DLP policies</strong> (per environment) can block certain connectors/sources.</li>\n<li>Mark sensitive variables as <strong>sensitive data</strong> so values stay out of transcripts/logs.</li>\n</ul>\n<p><strong>How retrieval actually works (RAG recap)</strong></p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart LR\n    Q[User question] --&gt; S[Search indexed knowledge]\n    S --&gt; C[Top relevant chunks]\n    C --&gt; M[Model reads chunks]\n    M --&gt; A[Answer + citation]\n</pre></div><p>The agent <strong>doesn’t</strong> send your whole document to the model — it <strong>retrieves the most relevant\nchunks</strong> and grounds the answer on those, then cites them.</p>\n<p><strong>Make knowledge answer reliably — checklist</strong></p>\n<ul>\n<li>✅ Clear <strong>name + description</strong> per source (drives selection).</li>\n<li>✅ Few, <strong>high-quality</strong> sources; remove noisy/outdated ones.</li>\n<li>✅ Text-based files; re-export scanned PDFs as searchable text.</li>\n<li>✅ Confirm the source is <strong>enabled</strong> and <strong>indexing finished</strong>.</li>\n<li>✅ Instructions say <strong>“answer only from knowledge, cite, else escalate.”</strong></li>\n<li>✅ Re-test after every change with a <strong>new test session</strong> ⟳.</li>\n</ul>\n<hr />\n<h2 id=\"4-generative-answers-node-scoped-grounding-inside-a-topic\">4. Generative Answers node (scoped grounding inside a topic)</h2>\n<p>Use the <strong>Create generative answers</strong> node to ground only at a specific point in a flow, optionally\nrestricting <strong>which</strong> sources are used.</p>\n<pre aria-label=\"Code sample\"><code>Topic: Product Help\n  Trigger: \"I need help with my device\"\n  → Ask a question: \"What's your question?\"   → save to Topic.UserQuestion\n  → Create generative answers\n        Input:        Topic.UserQuestion\n        Data sources: only the \"Device Manuals\" knowledge source\n        Fallback:     \"I couldn't find that in the manuals — connect to support?\"\n</code></pre>\n<p>This grounds the answer strictly on device manuals and won’t pull from general knowledge. Use this\nwhen different topics should draw from different, <strong>non-overlapping</strong> sources.</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    Q[Ask: user question] --&gt; G[Create generative answers]\n    G --&gt;|found| A[Grounded answer + citation]\n    G --&gt;|not found| F[Fallback: escalate to support]\n</pre></div><hr />\n<h2 id=\"5-instructions-that-enforce-grounding\">5. Instructions that enforce grounding</h2>\n<p>Grounding sources <strong>plus</strong> strict instructions = far fewer hallucinations.</p>\n<pre aria-label=\"Code sample\"><code>What you can do\n- Answer ONLY from the connected knowledge sources.\n\nWhat you must NOT do\n- Do not invent policies, prices, or dates.\n- If the answer isn't in the knowledge, say you don't know and offer to escalate.\n\nHow to respond\n- Always cite the source you used.\n- Keep answers concise; quote the relevant rule.\n</code></pre>\n<blockquote>\n<p>Describe knowledge <strong>generically</strong> (“the HR policy library”) rather than naming files directly, so\nthe agent selects sources by relevance.</p>\n</blockquote>\n<hr />\n<h2 id=\"6-real-time-grounding-via-tools\">6. Real-time grounding via tools</h2>\n<p>For <strong>live</strong> data that isn’t in documents (order status, account balance, inventory), ground on a\nsystem call with <strong>HTTP request</strong>, <strong>Power Automate</strong>, or a <strong>connector</strong>.</p>\n<p><strong>Example — order status</strong></p>\n<pre aria-label=\"Code sample\"><code>Ask a question: \"What's your order number?\"   → Topic.OrderId\nCall an action:  /LookupOrder (Power Automate) → returns status, eta\nSend a message:  \"Order {Topic.OrderId} is {status}, arriving {eta}.\"\n</code></pre>\n<p>Here the <strong>ground truth is the live API response</strong>, injected into the reply. Use a tool whenever the\nanswer changes minute-to-minute or lives in a system of record.</p>\n<hr />\n<h2 id=\"7-inline-grounding-with-power-fx-variables\">7. Inline grounding with Power Fx variables</h2>\n<p>Inject small, known facts into a prompt so the model can’t drift.</p>\n<pre aria-label=\"Code sample\"><code>Set a variable:  Topic.StoreHours = \"Mon–Fri 9–6, Sat 10–4, closed Sun\"\nCreate generative answers (or Message):\n   \"Answer using only these hours: {Topic.StoreHours}\"\n</code></pre>\n<p>Great for short, authoritative snippets you don’t want to store as a whole document.</p>\n<hr />\n<h2 id=\"8-choosing-the-right-grounding-method\">8. Choosing the right grounding method</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>You need to ground on…</th>\n<th>Use</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Documents, FAQs, manuals, policies</td>\n<td><strong>Knowledge sources</strong> (website / SharePoint / files)</td>\n</tr>\n<tr>\n<td>Structured business records</td>\n<td><strong>Dataverse</strong> knowledge or a <strong>connector</strong></td>\n</tr>\n<tr>\n<td>Live / transactional data</td>\n<td><strong>HTTP</strong> or <strong>Power Automate</strong> tool</td>\n</tr>\n<tr>\n<td>Different sources per topic</td>\n<td><strong>Generative Answers node</strong> with scoped sources</td>\n</tr>\n<tr>\n<td>A short authoritative fact</td>\n<td><strong>Power Fx variable</strong> injected into the prompt</td>\n</tr>\n<tr>\n<td>Stopping hallucinations</td>\n<td><strong>Instructions</strong> (“only from sources, cite, else escalate”)</td>\n</tr>\n</tbody>\n</table></div><hr />\n<h2 id=\"9-testing-troubleshooting-grounding\">9. Testing &amp; troubleshooting grounding</h2>\n<ul>\n<li><strong>Track between topics</strong> + <strong>Activity map</strong> show which source/tool the agent used.</li>\n<li>If answers are <strong>generic</strong>: confirm the knowledge source is <strong>enabled</strong> and actually contains the\nanswer; tighten instructions to “answer only from sources.”</li>\n<li>If answers are <strong>wrong/stale</strong>: re-index or update the source; remember indexing isn’t real-time.</li>\n<li>If it <strong>can’t find</strong> known content: check file type (scanned PDFs have no OCR), permissions, and\nthat the public URL is crawlable.</li>\n<li>If it pulls from the <strong>wrong</strong> source: scope the <strong>Generative Answers</strong> node to specific sources.</li>\n<li>Always <strong>test on the target channel</strong>, not just the Test pane.</li>\n</ul>\n<hr />\n<h3 id=\"key-takeaways\">Key takeaways</h3>\n<ul>\n<li>Grounding = <strong>retrieve your data, then answer</strong> (RAG) — relevant + cited + trustworthy.</li>\n<li>Five mechanisms: <strong>Knowledge sources, Generative Answers node, Instructions, Tools, Power Fx</strong>.</li>\n<li>Use <strong>documents</strong> for static content, <strong>tools</strong> for live data, <strong>Generative Answers</strong> to scope\nsources, and <strong>Instructions</strong> to enforce “only from sources, else escalate.”</li>\n<li>A well-grounded agent = <strong>good sources + scoped answers + strict instructions + a fallback path</strong>.</li>\n</ul>\n<hr />\n<h2 id=\"official-microsoft-documentation-references\">Official Microsoft documentation (references)</h2>\n<ul>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/knowledge-copilot-studio\" target=\"_blank\" rel=\"noreferrer\">Knowledge sources overview</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/knowledge-add-knowledge\" target=\"_blank\" rel=\"noreferrer\">Add knowledge to an agent</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/nlu-boost-conversations\" target=\"_blank\" rel=\"noreferrer\">Boost conversations with generative answers</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/nlu-generative-answers-node\" target=\"_blank\" rel=\"noreferrer\">Use the Create generative answers node</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/guidance/generative-orchestration\" target=\"_blank\" rel=\"noreferrer\">Generative orchestration guidance</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-plugin-actions\" target=\"_blank\" rel=\"noreferrer\">Add tools (Power Automate, connectors, HTTP)</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-instructions\" target=\"_blank\" rel=\"noreferrer\">Write agent instructions</a></li>\n</ul>\n<p>Next: review <a href=\"#/learn/copilot-studio/limitations\">10-limitations.md</a> to keep your grounding design within platform limits.</p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "1. Why grounding matters",
+      "id": "1-why-grounding-matters"
+    },
+    {
+      "level": 2,
+      "text": "2. The five ways to ground in Copilot Studio",
+      "id": "2-the-five-ways-to-ground-in-copilot-studio"
+    },
+    {
+      "level": 2,
+      "text": "3. Knowledge sources (the main way)",
+      "id": "3-knowledge-sources-the-main-way"
+    },
+    {
+      "level": 3,
+      "text": "3a. Knowledge integration in detail",
+      "id": "3a-knowledge-integration-in-detail"
+    },
+    {
+      "level": 2,
+      "text": "4. Generative Answers node (scoped grounding inside a topic)",
+      "id": "4-generative-answers-node-scoped-grounding-inside-a-topic"
+    },
+    {
+      "level": 2,
+      "text": "5. Instructions that enforce grounding",
+      "id": "5-instructions-that-enforce-grounding"
+    },
+    {
+      "level": 2,
+      "text": "6. Real-time grounding via tools",
+      "id": "6-real-time-grounding-via-tools"
+    },
+    {
+      "level": 2,
+      "text": "7. Inline grounding with Power Fx variables",
+      "id": "7-inline-grounding-with-power-fx-variables"
+    },
+    {
+      "level": 2,
+      "text": "8. Choosing the right grounding method",
+      "id": "8-choosing-the-right-grounding-method"
+    },
+    {
+      "level": 2,
+      "text": "9. Testing & troubleshooting grounding",
+      "id": "9-testing-troubleshooting-grounding"
+    },
+    {
+      "level": 3,
+      "text": "Key takeaways",
+      "id": "key-takeaways"
+    },
+    {
+      "level": 2,
+      "text": "Official Microsoft documentation (references)",
+      "id": "official-microsoft-documentation-references"
+    }
+  ],
+  "hasMermaid": true,
+  "previous": {
+    "guideSlug": "copilot-studio",
+    "partKey": "deep-dive",
+    "slug": "limitations",
+    "order": 10,
+    "title": "Limitations & Boundaries",
+    "summary": "Recognize platform constraints and design explicit boundaries around them.",
+    "type": "reference",
+    "level": "intermediate",
+    "updated": "2026-08-26",
+    "readingTime": 6,
+    "route": "#/learn/copilot-studio/limitations",
+    "recordFile": "chapter--copilot-studio--limitations"
+  },
+  "next": {
+    "guideSlug": "copilot-studio",
+    "partKey": "deep-dive",
+    "slug": "knowledge-integration",
+    "order": 12,
+    "title": "Knowledge Integration",
+    "summary": "Connect and govern the data sources an agent uses for knowledge.",
+    "type": "chapter",
+    "level": "intermediate",
+    "updated": "2026-08-26",
+    "readingTime": 12,
+    "route": "#/learn/copilot-studio/knowledge-integration",
+    "recordFile": "chapter--copilot-studio--knowledge-integration"
+  }
+}

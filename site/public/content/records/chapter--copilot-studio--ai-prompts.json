@@ -1,0 +1,95 @@
+{
+  "guideSlug": "copilot-studio",
+  "partKey": "advanced-features",
+  "slug": "ai-prompts",
+  "order": 14,
+  "title": "AI Prompts",
+  "summary": "Create reusable generative building blocks with clear inputs and outputs.",
+  "type": "chapter",
+  "level": "advanced",
+  "updated": "2026-08-26",
+  "readingTime": 4,
+  "route": "#/learn/copilot-studio/ai-prompts",
+  "recordFile": "chapter--copilot-studio--ai-prompts",
+  "guideTitle": "Copilot Studio Guide",
+  "partTitle": "Advanced Features",
+  "position": 15,
+  "chapterCount": 19,
+  "html": "<p>An <strong>AI prompt</strong> is a reusable, purpose-built instruction to an AI model that you can call from your\nagent to do <strong>one focused generative task</strong> — summarize text, classify a message, extract fields,\ndraft a reply, translate, and more. Think of it as a <strong>mini AI function</strong> you create once and reuse.</p>\n<blockquote>\n<p>Different from the agent’s <strong>Instructions</strong> (which steer the <em>whole</em> agent). An <strong>AI prompt</strong> is a\nsmall, single-job model call you invoke at a specific step.</p>\n</blockquote>\n<hr />\n<h2 id=\"1-what-is-an-ai-prompt\">1. What is an AI prompt?</h2>\n<p>A prompt takes <strong>inputs</strong>, sends them to a model with your <strong>instruction text</strong>, and returns an\n<strong>output</strong> you can store in a variable and use downstream.</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart LR\n    I[Inputs e.g. Topic.Feedback] --&gt; P[AI prompt: instruction + model]\n    P --&gt; O[Output e.g. Sentiment]\n    O --&gt; U[Use in a Condition / Message / Tool]\n</pre></div><ul>\n<li>Built with <strong>AI Builder / Prompt builder</strong> and surfaced in Copilot Studio as a <strong>Prompt tool</strong>.</li>\n<li>Has <strong>typed inputs</strong> (text, etc.) and a defined <strong>output</strong>.</li>\n<li>Reusable across topics and even across agents.</li>\n</ul>\n<hr />\n<h2 id=\"2-why-use-ai-prompts\">2. Why use AI prompts?</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Without a prompt</th>\n<th>With an AI prompt</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Re-write the same instruction inline everywhere</td>\n<td>Define <strong>once</strong>, reuse everywhere</td>\n</tr>\n<tr>\n<td>Whole-agent instructions get bloated</td>\n<td>Keep a focused task <strong>isolated</strong></td>\n</tr>\n<tr>\n<td>Inconsistent results</td>\n<td>Consistent, testable behavior</td>\n</tr>\n<tr>\n<td>Hard to maintain</td>\n<td>Update in one place</td>\n</tr>\n</tbody>\n</table></div><p>Great for <strong>deterministic-ish, single-purpose</strong> generative steps you want to control tightly.</p>\n<hr />\n<h2 id=\"3-common-use-cases-with-examples\">3. Common use cases (with examples)</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Task</th>\n<th>Input → Output</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Summarize</strong></td>\n<td>Long ticket text → 2-line summary</td>\n</tr>\n<tr>\n<td><strong>Classify / route</strong></td>\n<td>User message → category (<code>Billing</code> / <code>Tech</code> / <code>Sales</code>)</td>\n</tr>\n<tr>\n<td><strong>Sentiment</strong></td>\n<td>Feedback → <code>Positive</code> / <code>Neutral</code> / <code>Negative</code></td>\n</tr>\n<tr>\n<td><strong>Extract fields</strong></td>\n<td>Free text → JSON (<code>{ name, date, amount }</code>)</td>\n</tr>\n<tr>\n<td><strong>Draft a reply</strong></td>\n<td>Bullet points → polished email</td>\n</tr>\n<tr>\n<td><strong>Translate</strong></td>\n<td>Text + target language → translated text</td>\n</tr>\n<tr>\n<td><strong>Rewrite/tone</strong></td>\n<td>Draft → friendlier/shorter version</td>\n</tr>\n</tbody>\n</table></div><p><strong>Example — sentiment prompt</strong></p>\n<pre aria-label=\"Code sample\"><code>Instruction:\n  Classify the sentiment of the customer message as exactly one of:\n  Positive, Neutral, Negative. Return only that single word.\n\nInput:   {Topic.Feedback}\nOutput:  Topic.Sentiment   (e.g., \"Negative\")\n</code></pre>\n<p>Then branch on it with a <strong>Condition</strong> node:</p>\n<pre aria-label=\"Code sample\"><code>If  Topic.Sentiment = \"Negative\"  → escalate to a human\nElse                              → thank the user\n</code></pre>\n<hr />\n<h2 id=\"4-how-to-create-and-use-an-ai-prompt\">4. How to create and use an AI prompt</h2>\n<p><strong>Create the prompt</strong></p>\n<ol>\n<li>In <strong>Copilot Studio → Tools</strong> (or AI Builder <strong>Prompts</strong>), select <strong>+ New prompt</strong> /\n<strong>Create a prompt</strong>.</li>\n<li>Write the <strong>instruction</strong> and insert <strong>input</strong> placeholders (e.g., the user’s text).</li>\n<li>Pick the <strong>model</strong> and <strong>test</strong> with sample inputs in the prompt builder.</li>\n<li><strong>Save / publish</strong> the prompt.</li>\n</ol>\n<p><strong>Use it in an agent</strong></p>\n<ol>\n<li>Add it as a <strong>Tool</strong> (Prompt) to your agent.</li>\n<li><strong>Call it</strong> from a topic with <strong>Call an action → (your prompt)</strong>, mapping a variable to its input.</li>\n<li>Save the <strong>output</strong> to a variable.</li>\n<li>Use that variable in a <strong>Message</strong>, <strong>Condition</strong>, or another <strong>Tool</strong>.</li>\n</ol>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    A[Ask: \"What's your feedback?\"] --&gt; S[Save Topic.Feedback]\n    S --&gt; C[Call AI prompt: Sentiment]\n    C --&gt; V[Save Topic.Sentiment]\n    V --&gt; B{Condition}\n    B --&gt;|Negative| E[Escalate]\n    B --&gt;|else| T[Thank you]\n</pre></div><hr />\n<h2 id=\"5-ai-prompt-vs-other-generative-features\">5. AI prompt vs other generative features</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Feature</th>\n<th>What it’s for</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Agent Instructions</strong></td>\n<td>Steer the <strong>whole</strong> agent’s behavior every turn</td>\n</tr>\n<tr>\n<td><strong>Generative answers / knowledge</strong></td>\n<td>Answer from <strong>your data</strong> (RAG)</td>\n</tr>\n<tr>\n<td><strong>AI prompt (Prompt tool)</strong></td>\n<td>One <strong>focused</strong> generative task you call on demand</td>\n</tr>\n<tr>\n<td><strong>Generative orchestration</strong></td>\n<td>Decide <strong>which</strong> topics/tools to run</td>\n</tr>\n</tbody>\n</table></div><p>Use an <strong>AI prompt</strong> when you need a <em>specific, repeatable transformation</em> of text — not a full\nconversation and not a knowledge lookup.</p>\n<hr />\n<h2 id=\"6-best-practices\">6. Best practices</h2>\n<ul>\n<li><strong>One job per prompt.</strong> Narrow prompts are accurate and testable.</li>\n<li><strong>Constrain the output.</strong> “Return only one word from this list” → easy to branch on.</li>\n<li><strong>Name inputs clearly</strong> and pass clean values (trim/normalize first).</li>\n<li><strong>Test with edge cases</strong> in the prompt builder before wiring it in.</li>\n<li><strong>Handle failure</strong> — if the output is unexpected/blank, branch to a safe default or escalate.</li>\n<li><strong>Mind cost/latency</strong> — each prompt is a model call; avoid calling it in tight loops.</li>\n</ul>\n<hr />\n<h2 id=\"7-limitations-gotchas\">7. Limitations &amp; gotchas</h2>\n<ul>\n<li><strong>Non-deterministic.</strong> Same input can vary slightly; constrain outputs and validate.</li>\n<li><strong>Model/region/license</strong> availability applies (AI Builder capacity may be required).</li>\n<li><strong>Latency &amp; cost</strong> per call — it’s a real model invocation.</li>\n<li><strong>Output is text</strong> — parse/convert (<code>Value(...)</code>, JSON parsing) before using as Number/record.</li>\n<li><strong>Not a knowledge lookup</strong> — a prompt doesn’t search your documents; pair with knowledge for that.</li>\n<li><strong>Content filters</strong> (Responsible AI) may block some inputs/outputs.</li>\n</ul>\n<hr />\n<h3 id=\"key-takeaways\">Key takeaways</h3>\n<ul>\n<li>An <strong>AI prompt</strong> is a <strong>reusable, single-purpose</strong> generative step (summarize, classify, extract,\ndraft, translate).</li>\n<li>Create it in <strong>AI Builder / Prompt builder</strong>, add it as a <strong>Prompt tool</strong>, <strong>call</strong> it, and store\nthe <strong>output</strong> in a variable.</li>\n<li><strong>Constrain outputs</strong>, <strong>test edge cases</strong>, and <strong>handle failures</strong> — and remember it’s a model\ncall (cost, latency, non-determinism).</li>\n</ul>\n<hr />\n<h2 id=\"official-microsoft-documentation-references\">Official Microsoft documentation (references)</h2>\n<ul>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-prompt-actions\" target=\"_blank\" rel=\"noreferrer\">Add a prompt (AI Builder) to an agent</a></li>\n<li><a href=\"https://learn.microsoft.com/ai-builder/create-a-custom-prompt\" target=\"_blank\" rel=\"noreferrer\">Create a custom prompt (AI Builder)</a></li>\n<li><a href=\"https://learn.microsoft.com/ai-builder/prompts-overview\" target=\"_blank\" rel=\"noreferrer\">Prompt builder overview</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-plugin-actions\" target=\"_blank\" rel=\"noreferrer\">Use tools in agents</a></li>\n</ul>\n<p>Next: revisit <a href=\"#/learn/copilot-studio/models-and-instructions\">09-models-and-instructions.md</a> to see how prompts pair with the right model.</p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "1. What is an AI prompt?",
+      "id": "1-what-is-an-ai-prompt"
+    },
+    {
+      "level": 2,
+      "text": "2. Why use AI prompts?",
+      "id": "2-why-use-ai-prompts"
+    },
+    {
+      "level": 2,
+      "text": "3. Common use cases (with examples)",
+      "id": "3-common-use-cases-with-examples"
+    },
+    {
+      "level": 2,
+      "text": "4. How to create and use an AI prompt",
+      "id": "4-how-to-create-and-use-an-ai-prompt"
+    },
+    {
+      "level": 2,
+      "text": "5. AI prompt vs other generative features",
+      "id": "5-ai-prompt-vs-other-generative-features"
+    },
+    {
+      "level": 2,
+      "text": "6. Best practices",
+      "id": "6-best-practices"
+    },
+    {
+      "level": 2,
+      "text": "7. Limitations & gotchas",
+      "id": "7-limitations-gotchas"
+    },
+    {
+      "level": 3,
+      "text": "Key takeaways",
+      "id": "key-takeaways"
+    },
+    {
+      "level": 2,
+      "text": "Official Microsoft documentation (references)",
+      "id": "official-microsoft-documentation-references"
+    }
+  ],
+  "hasMermaid": true,
+  "previous": {
+    "guideSlug": "copilot-studio",
+    "partKey": "advanced-features",
+    "slug": "adaptive-cards-and-forms",
+    "order": 13,
+    "title": "Adaptive Cards & Forms",
+    "summary": "Collect and present structured information with interactive cards and forms.",
+    "type": "chapter",
+    "level": "advanced",
+    "updated": "2026-08-26",
+    "readingTime": 4,
+    "route": "#/learn/copilot-studio/adaptive-cards-and-forms",
+    "recordFile": "chapter--copilot-studio--adaptive-cards-and-forms"
+  },
+  "next": {
+    "guideSlug": "copilot-studio",
+    "partKey": "advanced-features",
+    "slug": "mcp",
+    "order": 15,
+    "title": "MCP (Model Context Protocol)",
+    "summary": "Understand how MCP exposes tools and context to compatible agents.",
+    "type": "chapter",
+    "level": "advanced",
+    "updated": "2026-08-26",
+    "readingTime": 6,
+    "route": "#/learn/copilot-studio/mcp",
+    "recordFile": "chapter--copilot-studio--mcp"
+  }
+}

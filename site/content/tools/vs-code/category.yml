@@ -1,0 +1,8 @@
+title: "VS Code Extensions"
+summary: "Focused extensions built for GitHub Copilot and Dynamics 365 work inside Visual Studio Code."
+order: 1
+featured: true
+draft: false
+featuredTools:
+  - "github-copilot-insights-dashboard"
+  - "d365-solutions-unpacking-agent"

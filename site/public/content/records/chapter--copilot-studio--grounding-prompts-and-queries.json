@@ -1,0 +1,160 @@
+{
+  "guideSlug": "copilot-studio",
+  "partKey": "security-patterns",
+  "slug": "grounding-prompts-and-queries",
+  "order": 17,
+  "title": "Grounding Prompts & Query Formats",
+  "summary": "Write grounded prompts and queries that retrieve useful, inspectable context.",
+  "type": "reference",
+  "level": "advanced",
+  "updated": "2026-08-26",
+  "readingTime": 5,
+  "route": "#/learn/copilot-studio/grounding-prompts-and-queries",
+  "recordFile": "chapter--copilot-studio--grounding-prompts-and-queries",
+  "guideTitle": "Copilot Studio Guide",
+  "partTitle": "Security and Patterns",
+  "position": 18,
+  "chapterCount": 19,
+  "html": "<p>This section is a <strong>practical pattern library</strong> for <em>grounding</em> your prompts and instructions —\ngiving the model the right context, in the right shape, so it answers reliably. It also includes\n<strong>reusable query/prompt formats</strong> for common tasks and <strong>SQL templates</strong> (including <strong>Databricks</strong>)\nyou can call from a tool and feed back into the conversation.</p>\n<blockquote>\n<p>Recap: grounding = answering from <strong>trusted context</strong> instead of the model’s general memory. See\n<a href=\"#/learn/copilot-studio/grounding\">11-grounding.md</a> for the mechanisms and <a href=\"#/learn/copilot-studio/knowledge-integration\">12-knowledge-integration.md</a>\nfor connecting sources.</p>\n</blockquote>\n<hr />\n<h2 id=\"1-ways-to-ground-a-prompt-or-instruction\">1. Ways to ground a prompt or instruction</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Technique</th>\n<th>What it does</th>\n<th>Use when</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Knowledge grounding (RAG)</strong></td>\n<td>Retrieve relevant chunks from your sources</td>\n<td>Answers live in documents/sites</td>\n</tr>\n<tr>\n<td><strong>Variable injection</strong></td>\n<td>Insert known facts into the prompt (<code>{Topic.X}</code>)</td>\n<td>You already hold the value</td>\n</tr>\n<tr>\n<td><strong>Tool/data grounding</strong></td>\n<td>Call a flow/HTTP/SQL and feed results in</td>\n<td>Live or structured data</td>\n</tr>\n<tr>\n<td><strong>Schema/format constraint</strong></td>\n<td>Tell the model the <strong>exact output shape</strong></td>\n<td>You need parseable output</td>\n</tr>\n<tr>\n<td><strong>Role + scope framing</strong></td>\n<td>Define who the model is and its boundaries</td>\n<td>Every prompt</td>\n</tr>\n<tr>\n<td><strong>Few-shot examples</strong></td>\n<td>Show 1–3 input→output examples</td>\n<td>Tricky/ambiguous tasks</td>\n</tr>\n<tr>\n<td><strong>Guardrails</strong></td>\n<td>“Only use provided context; else say you don’t know”</td>\n<td>Reduce hallucination</td>\n</tr>\n</tbody>\n</table></div><p><strong>The grounding sandwich</strong> — a reliable prompt structure:</p>\n<pre aria-label=\"Code sample\"><code>[ROLE]      You are &lt;role&gt;. Answer ONLY from the CONTEXT below.\n[CONTEXT]   &lt;retrieved text / variable values / tool results&gt;\n[TASK]      &lt;the user's question or the transformation to perform&gt;\n[FORMAT]    Respond as &lt;exact format&gt;. If the answer isn't in CONTEXT, say \"I don't know.\"\n</code></pre>\n<hr />\n<h2 id=\"2-reusable-prompt-formats-by-query-type\">2. Reusable prompt formats by query type</h2>\n<h3 id=\"a-question-answering-grounded\">a) Question answering (grounded)</h3>\n<pre aria-label=\"Code sample\"><code>You are a support assistant. Use ONLY the CONTEXT to answer.\nCONTEXT:\n{Topic.RetrievedText}\nQUESTION:\n{Topic.UserQuestion}\nRules: Cite the source line. If not in CONTEXT, reply exactly: \"I don't have that information.\"\n</code></pre>\n<h3 id=\"b-summarization\">b) Summarization</h3>\n<pre aria-label=\"Code sample\"><code>Summarize the TEXT in &lt;=3 bullet points for a busy manager.\nKeep numbers exact. No new facts.\nTEXT:\n{Topic.Document}\n</code></pre>\n<h3 id=\"c-classification-routing-constrained-output\">c) Classification / routing (constrained output)</h3>\n<pre aria-label=\"Code sample\"><code>Classify the MESSAGE into exactly one: Billing | Technical | Sales | Other.\nReturn ONLY the single word.\nMESSAGE: {Topic.UserText}\n</code></pre>\n<h3 id=\"d-extraction-to-json-parseable\">d) Extraction to JSON (parseable)</h3>\n<pre aria-label=\"Code sample\"><code>Extract fields from TEXT. Return STRICT JSON with keys:\n{ \"name\": string, \"date\": \"YYYY-MM-DD\"|null, \"amount\": number|null }\nNo extra text. If a field is missing, use null.\nTEXT: {Topic.UserText}\n</code></pre>\n<h3 id=\"e-rewrite-tone\">e) Rewrite / tone</h3>\n<pre aria-label=\"Code sample\"><code>Rewrite the DRAFT to be friendly, concise, and under 80 words.\nDo not change facts.\nDRAFT: {Topic.Draft}\n</code></pre>\n<h3 id=\"f-translation\">f) Translation</h3>\n<pre aria-label=\"Code sample\"><code>Translate TEXT into {Topic.TargetLanguage}.\nPreserve names and numbers. Return only the translation.\nTEXT: {Topic.Text}\n</code></pre>\n<blockquote>\n<p><strong>Tip:</strong> For anything you’ll branch on (classification, extraction), <strong>constrain the output</strong> to a\nfixed list or strict JSON — it makes downstream <strong>Condition</strong> nodes and parsing reliable.</p>\n</blockquote>\n<hr />\n<h2 id=\"3-grounding-with-structured-data-sql\">3. Grounding with structured data (SQL)</h2>\n<p>When the answer lives in a <strong>database/warehouse</strong>, don’t paste data into the prompt by hand — call a\n<strong>tool</strong> (Power Automate, a connector, or HTTP) that runs a query, then <strong>inject the result</strong> into the\nprompt or message. Pattern:</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart LR\n    Q[User question] --&gt; P[Build parameters]\n    P --&gt; T[Tool runs SQL]\n    T --&gt; R[Rows returned]\n    R --&gt; G[Inject into prompt/message]\n    G --&gt; A[Grounded answer]\n</pre></div><blockquote>\n<p><strong>Security:</strong> always use <strong>parameterized queries</strong> — never concatenate raw user text into SQL\n(prevents SQL injection). Bind values like <code>:orderId</code> instead of string-building.</p>\n</blockquote>\n<h3 id=\"databricks-sql-templates\">Databricks SQL templates</h3>\n<p>Databricks uses <strong>Spark SQL</strong> (ANSI-style) over catalogs/schemas/tables (<code>catalog.schema.table</code>).</p>\n<p><strong>Look up one record (parameterized)</strong></p>\n<pre aria-label=\"sql code sample\"><code class=\"language-sql\">SELECT order_id, status, eta, total_amount\nFROM   sales.orders.orders\nWHERE  order_id = :order_id\nLIMIT  1;\n</code></pre>\n<p><strong>Filter + aggregate</strong></p>\n<pre aria-label=\"sql code sample\"><code class=\"language-sql\">SELECT status, COUNT(*) AS cnt, SUM(total_amount) AS revenue\nFROM   sales.orders.orders\nWHERE  order_date &gt;= :start_date\nGROUP  BY status\nORDER  BY revenue DESC;\n</code></pre>\n<p><strong>Recent rows for a customer</strong></p>\n<pre aria-label=\"sql code sample\"><code class=\"language-sql\">SELECT order_id, order_date, status\nFROM   sales.orders.orders\nWHERE  customer_id = :customer_id\nORDER  BY order_date DESC\nLIMIT  10;\n</code></pre>\n<p><strong>Date window (last 30 days)</strong></p>\n<pre aria-label=\"sql code sample\"><code class=\"language-sql\">SELECT *\nFROM   sales.orders.orders\nWHERE  order_date &gt;= date_sub(current_date(), 30);\n</code></pre>\n<blockquote>\n<p>Databricks specifics: three-part names <code>catalog.schema.table</code>; functions like <code>current_date()</code>,\n<code>date_sub()</code>, <code>to_date()</code>; use <code>LIMIT</code> to cap rows the agent has to read.</p>\n</blockquote>\n<h3 id=\"generic-ansi-sql-sql-server-postgres-mysql\">Generic ANSI SQL (SQL Server / Postgres / MySQL)</h3>\n<pre aria-label=\"sql code sample\"><code class=\"language-sql\">-- Parameterized lookup\nSELECT order_id, status, eta\nFROM   dbo.orders\nWHERE  order_id = @orderId;     -- @orderId (SQL Server) / $1 (Postgres) / ? (MySQL)\n</code></pre>\n<pre aria-label=\"sql code sample\"><code class=\"language-sql\">-- Top N (dialect differs)\n-- SQL Server:  SELECT TOP 10 ...\n-- Postgres/MySQL/Databricks:  ... LIMIT 10\nSELECT customer_id, SUM(total_amount) AS spend\nFROM   orders\nGROUP  BY customer_id\nORDER  BY spend DESC\nLIMIT  10;\n</code></pre>\n<h3 id=\"turning-rows-into-a-grounded-answer\">Turning rows into a grounded answer</h3>\n<p>After the tool returns rows (often JSON), inject them and constrain the reply:</p>\n<pre aria-label=\"Code sample\"><code>You are an orders assistant. Use ONLY the DATA to answer. Do not invent rows.\nDATA (JSON rows):\n{Topic.SqlResultJson}\nQUESTION: {Topic.UserQuestion}\nFORMAT: One short sentence. If DATA is empty, say \"No matching orders were found.\"\n</code></pre>\n<hr />\n<h2 id=\"4-text-to-sql-let-the-model-draft-the-query-safely\">4. Text-to-SQL (let the model draft the query) — safely</h2>\n<p>You can ask the model to <strong>generate</strong> SQL from a natural-language question, but do it carefully:</p>\n<pre aria-label=\"Code sample\"><code>You write READ-ONLY Spark SQL for Databricks.\nSCHEMA:\n  sales.orders.orders(order_id STRING, customer_id STRING, order_date DATE,\n                      status STRING, total_amount DOUBLE)\nRULES:\n- SELECT statements only. Never INSERT/UPDATE/DELETE/DROP.\n- Always add LIMIT 100.\n- Use only columns in SCHEMA.\nQUESTION: {Topic.UserQuestion}\nReturn ONLY the SQL.\n</code></pre>\n<p><strong>Guardrails for generated SQL</strong></p>\n<ul>\n<li><strong>Allow read-only</strong> — reject anything that isn’t a <code>SELECT</code>.</li>\n<li><strong>Validate</strong> against the known schema before running.</li>\n<li><strong>Enforce <code>LIMIT</code></strong> to cap rows.</li>\n<li>Run with a <strong>least-privilege, read-only</strong> account.</li>\n<li>Never run generated SQL <strong>unreviewed</strong> against production without these checks.</li>\n</ul>\n<hr />\n<h2 id=\"4a-enforcing-read-only-no-updates-deletes-or-other-writes\">4a. Enforcing read-only (no updates, deletes, or other writes)</h2>\n<p><strong>Never trust the prompt alone.</strong> A model <em>can</em> be talked into writing an <code>UPDATE</code> or <code>DELETE</code>. Real\nsafety comes from <strong>layers</strong> — if the prompt fails, the database still refuses the write. Use <strong>all</strong>\nof these together (defense in depth):</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    P[1. Prompt rule: SELECT only] --&gt; V[2. App validation: reject non-SELECT]\n    V --&gt; C[3. Connection: read-only account]\n    C --&gt; D[4. Database: GRANT SELECT only]\n    D --&gt; R[Query runs - writes are impossible]\n</pre></div><h3 id=\"layer-1-database-permissions-the-real-lock\">Layer 1 — Database permissions (the real lock)</h3>\n<p>The <strong>strongest</strong> control is at the database: give the agent’s account permission to <strong>read and\nnothing else</strong>. Even a perfect injection can’t delete what it has no rights to touch.</p>\n<pre aria-label=\"sql code sample\"><code class=\"language-sql\">-- Databricks (Unity Catalog): grant read-only, nothing else\nGRANT USE CATALOG ON CATALOG sales TO `agent_readonly`;\nGRANT USE SCHEMA  ON SCHEMA  sales.orders TO `agent_readonly`;\nGRANT SELECT      ON SCHEMA  sales.orders TO `agent_readonly`;\n-- Do NOT grant MODIFY, INSERT, UPDATE, DELETE, CREATE, DROP.\n</code></pre>\n<pre aria-label=\"sql code sample\"><code class=\"language-sql\">-- SQL Server: add the login to the read-only role only\nALTER ROLE db_datareader ADD MEMBER agent_readonly;\n-- Never add db_datawriter / db_owner.\n</code></pre>\n<pre aria-label=\"sql code sample\"><code class=\"language-sql\">-- PostgreSQL: grant SELECT only, and prevent future-table writes\nGRANT CONNECT ON DATABASE sales TO agent_readonly;\nGRANT USAGE  ON SCHEMA public TO agent_readonly;\nGRANT SELECT ON ALL TABLES IN SCHEMA public TO agent_readonly;\nALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO agent_readonly;\n-- No INSERT/UPDATE/DELETE/TRUNCATE granted.\n</code></pre>\n<blockquote>\n<p><strong>Bonus:</strong> where supported, connect to a <strong>read replica</strong> so writes are physically impossible.</p>\n</blockquote>\n<h3 id=\"layer-2-a-read-only-connection\">Layer 2 — A read-only connection</h3>\n<ul>\n<li>Use a connection/credential that maps to the <strong>read-only account</strong> above (not an admin/service\nowner).</li>\n<li>If your driver/connector supports it, set the session/connection to <strong>read-only mode</strong>.</li>\n<li>Set a <strong>query timeout</strong> and <strong>row cap</strong> so a heavy read can’t hurt the system.</li>\n</ul>\n<h3 id=\"layer-3-validate-the-sql-before-running\">Layer 3 — Validate the SQL before running</h3>\n<p>If the model (or a user) supplies SQL, <strong>check it in your flow</strong> (Power Automate/HTTP/code) before\nexecuting. Reject anything that isn’t a single read.</p>\n<pre aria-label=\"Code sample\"><code>Allow ONLY if ALL are true:\n- Statement starts with SELECT (or WITH ... SELECT).\n- Contains exactly ONE statement (no \";\" that starts a second statement).\n- Does NOT match (case-insensitive) any of these words as a keyword:\n  INSERT, UPDATE, DELETE, MERGE, UPSERT, DROP, ALTER, CREATE, TRUNCATE,\n  REPLACE, GRANT, REVOKE, COPY, INTO, CALL, EXEC, EXECUTE.\nOtherwise: reject and return \"Only read queries are allowed.\"\n</code></pre>\n<p>A simple regex gate (reject if it matches a write keyword):</p>\n<pre aria-label=\"regex code sample\"><code class=\"language-regex\">(?i)\\b(insert|update|delete|merge|upsert|drop|alter|create|truncate|replace|grant|revoke|exec|execute|call|copy|into)\\b\n</code></pre>\n<blockquote>\n<p>Combine with: <strong>trim</strong> the input, <strong>block multiple statements</strong> (split on <code>;</code> → must be one), and\n<strong>block comments</strong> (<code>--</code>, <code>/* */</code>) that try to smuggle a second command.</p>\n</blockquote>\n<h3 id=\"layer-4-prompt-rule-last-line-not-the-only-line\">Layer 4 — Prompt rule (last line, not the only line)</h3>\n<p>Keep the instruction explicit so the model produces clean SELECTs:</p>\n<pre aria-label=\"Code sample\"><code>You generate READ-ONLY SQL. SELECT statements only.\nNever write INSERT, UPDATE, DELETE, MERGE, DROP, ALTER, CREATE, TRUNCATE,\nGRANT, REVOKE, or call procedures. Always add LIMIT 100.\nIf the request would change data, refuse and say:\n\"I can only run read-only queries.\"\n</code></pre>\n<h3 id=\"read-only-enforcement-checklist\">Read-only enforcement checklist</h3>\n<ul>\n<li>[ ] <strong>DB account</strong> has <code>SELECT</code> only — no write/DDL grants (the real lock).</li>\n<li>[ ] Connect via that <strong>read-only</strong> credential (or a <strong>read replica</strong>).</li>\n<li>[ ] <strong>Validate</strong> SQL: SELECT-only, single statement, no write keywords/comments.</li>\n<li>[ ] <strong>Parameterized</strong> values; <strong>LIMIT</strong> + <strong>timeout</strong> enforced.</li>\n<li>[ ] Prompt instructs <strong>read-only</strong> and refuses data changes.</li>\n<li>[ ] Tested with attempts like <code>DROP TABLE</code>, <code>; DELETE …</code>, and <code>UPDATE …</code> → all rejected.</li>\n</ul>\n<blockquote>\n<p><strong>Key point:</strong> prompt rules are <strong>layer 4 of 4</strong>. The database <code>GRANT SELECT</code>-only account is what\nactually makes updates/deletes impossible — the other layers just stop bad queries earlier.</p>\n</blockquote>\n<hr />\n<h2 id=\"5-quality-checklist-for-grounded-prompts\">5. Quality checklist for grounded prompts</h2>\n<ul>\n<li>✅ State the <strong>ROLE</strong> and <strong>“use only the provided context.”</strong></li>\n<li>✅ Put <strong>CONTEXT/DATA</strong> right above the <strong>TASK</strong>.</li>\n<li>✅ Constrain the <strong>FORMAT</strong> (list, single word, strict JSON).</li>\n<li>✅ Give an <strong>“I don’t know”</strong> fallback.</li>\n<li>✅ For data: <strong>parameterized</strong> queries, <code>LIMIT</code>, read-only access.</li>\n<li>✅ For generated SQL: <strong>SELECT-only</strong>, schema-validated, capped.</li>\n<li>✅ Test with <strong>edge cases</strong> and empty results.</li>\n</ul>\n<hr />\n<h3 id=\"key-takeaways\">Key takeaways</h3>\n<ul>\n<li>Ground prompts with the <strong>sandwich</strong>: ROLE → CONTEXT → TASK → FORMAT (+ “I don’t know”).</li>\n<li>Keep a <strong>format per query type</strong> (QA, summarize, classify, extract-JSON, rewrite, translate).</li>\n<li>For structured data, <strong>call a tool with parameterized SQL</strong> and inject results — don’t free-type\ndata into prompts.</li>\n<li><strong>Databricks</strong> uses Spark SQL with <code>catalog.schema.table</code> and <code>LIMIT</code>; constrain and validate any\n<strong>generated</strong> SQL to <strong>read-only</strong>.</li>\n</ul>\n<hr />\n<h2 id=\"official-microsoft-documentation-references\">Official Microsoft documentation (references)</h2>\n<ul>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/nlu-boost-conversations\" target=\"_blank\" rel=\"noreferrer\">Boost conversations with generative answers</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-instructions\" target=\"_blank\" rel=\"noreferrer\">Write agent instructions</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-plugin-actions\" target=\"_blank\" rel=\"noreferrer\">Add tools (Power Automate, connectors, HTTP)</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-prompt-actions\" target=\"_blank\" rel=\"noreferrer\">Add a prompt (AI Builder) to an agent</a></li>\n<li><a href=\"https://learn.microsoft.com/azure/databricks/sql/language-manual/\" target=\"_blank\" rel=\"noreferrer\">Databricks SQL language reference</a></li>\n</ul>\n<p>Next: pair these formats with <a href=\"#/learn/copilot-studio/ai-prompts\">14-ai-prompts.md</a> and secure them via <a href=\"#/learn/copilot-studio/security-guidelines\">16-security-guidelines.md</a>.</p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "1. Ways to ground a prompt or instruction",
+      "id": "1-ways-to-ground-a-prompt-or-instruction"
+    },
+    {
+      "level": 2,
+      "text": "2. Reusable prompt formats by query type",
+      "id": "2-reusable-prompt-formats-by-query-type"
+    },
+    {
+      "level": 3,
+      "text": "a) Question answering (grounded)",
+      "id": "a-question-answering-grounded"
+    },
+    {
+      "level": 3,
+      "text": "b) Summarization",
+      "id": "b-summarization"
+    },
+    {
+      "level": 3,
+      "text": "c) Classification / routing (constrained output)",
+      "id": "c-classification-routing-constrained-output"
+    },
+    {
+      "level": 3,
+      "text": "d) Extraction to JSON (parseable)",
+      "id": "d-extraction-to-json-parseable"
+    },
+    {
+      "level": 3,
+      "text": "e) Rewrite / tone",
+      "id": "e-rewrite-tone"
+    },
+    {
+      "level": 3,
+      "text": "f) Translation",
+      "id": "f-translation"
+    },
+    {
+      "level": 2,
+      "text": "3. Grounding with structured data (SQL)",
+      "id": "3-grounding-with-structured-data-sql"
+    },
+    {
+      "level": 3,
+      "text": "Databricks SQL templates",
+      "id": "databricks-sql-templates"
+    },
+    {
+      "level": 3,
+      "text": "Generic ANSI SQL (SQL Server / Postgres / MySQL)",
+      "id": "generic-ansi-sql-sql-server-postgres-mysql"
+    },
+    {
+      "level": 3,
+      "text": "Turning rows into a grounded answer",
+      "id": "turning-rows-into-a-grounded-answer"
+    },
+    {
+      "level": 2,
+      "text": "4. Text-to-SQL (let the model draft the query) — safely",
+      "id": "4-text-to-sql-let-the-model-draft-the-query-safely"
+    },
+    {
+      "level": 2,
+      "text": "4a. Enforcing read-only (no updates, deletes, or other writes)",
+      "id": "4a-enforcing-read-only-no-updates-deletes-or-other-writes"
+    },
+    {
+      "level": 3,
+      "text": "Layer 1 — Database permissions (the real lock)",
+      "id": "layer-1-database-permissions-the-real-lock"
+    },
+    {
+      "level": 3,
+      "text": "Layer 2 — A read-only connection",
+      "id": "layer-2-a-read-only-connection"
+    },
+    {
+      "level": 3,
+      "text": "Layer 3 — Validate the SQL before running",
+      "id": "layer-3-validate-the-sql-before-running"
+    },
+    {
+      "level": 3,
+      "text": "Layer 4 — Prompt rule (last line, not the only line)",
+      "id": "layer-4-prompt-rule-last-line-not-the-only-line"
+    },
+    {
+      "level": 3,
+      "text": "Read-only enforcement checklist",
+      "id": "read-only-enforcement-checklist"
+    },
+    {
+      "level": 2,
+      "text": "5. Quality checklist for grounded prompts",
+      "id": "5-quality-checklist-for-grounded-prompts"
+    },
+    {
+      "level": 3,
+      "text": "Key takeaways",
+      "id": "key-takeaways"
+    },
+    {
+      "level": 2,
+      "text": "Official Microsoft documentation (references)",
+      "id": "official-microsoft-documentation-references"
+    }
+  ],
+  "hasMermaid": true,
+  "previous": {
+    "guideSlug": "copilot-studio",
+    "partKey": "security-patterns",
+    "slug": "security-guidelines",
+    "order": 16,
+    "title": "Security Guidelines for Agents",
+    "summary": "Apply identity, permission, data, and review controls to agent solutions.",
+    "type": "reference",
+    "level": "advanced",
+    "updated": "2026-08-26",
+    "readingTime": 9,
+    "route": "#/learn/copilot-studio/security-guidelines",
+    "recordFile": "chapter--copilot-studio--security-guidelines"
+  },
+  "next": {
+    "guideSlug": "copilot-studio",
+    "partKey": "security-patterns",
+    "slug": "skills-and-instruction-sets",
+    "order": 18,
+    "title": "Skills & Conditional Instruction Sets",
+    "summary": "Organize specialized behavior into reusable skills and conditional instructions.",
+    "type": "reference",
+    "level": "advanced",
+    "updated": "2026-08-26",
+    "readingTime": 4,
+    "route": "#/learn/copilot-studio/skills-and-instruction-sets",
+    "recordFile": "chapter--copilot-studio--skills-and-instruction-sets"
+  }
+}

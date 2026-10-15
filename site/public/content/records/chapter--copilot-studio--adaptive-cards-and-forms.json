@@ -1,0 +1,100 @@
+{
+  "guideSlug": "copilot-studio",
+  "partKey": "advanced-features",
+  "slug": "adaptive-cards-and-forms",
+  "order": 13,
+  "title": "Adaptive Cards & Forms",
+  "summary": "Collect and present structured information with interactive cards and forms.",
+  "type": "chapter",
+  "level": "advanced",
+  "updated": "2026-08-26",
+  "readingTime": 4,
+  "route": "#/learn/copilot-studio/adaptive-cards-and-forms",
+  "recordFile": "chapter--copilot-studio--adaptive-cards-and-forms",
+  "guideTitle": "Copilot Studio Guide",
+  "partTitle": "Advanced Features",
+  "position": 14,
+  "chapterCount": 19,
+  "html": "<p>Plain text and quick replies are great, but sometimes you need <strong>rich, structured UI</strong> — a styled card\nwith an image and buttons, or a <strong>form</strong> that collects several fields at once. That’s what <strong>Adaptive\nCards</strong> are for. This section explains the two ways to use them and when to pick each.</p>\n<blockquote>\n<p>Quick recap from <a href=\"#/learn/copilot-studio/nodes-message-and-question\">04-nodes-message-and-question.md</a>: the\n<strong>Message</strong> node <em>shows</em> cards (display-only); the <strong>Ask with Adaptive Card</strong> node <em>collects</em> input.</p>\n</blockquote>\n<hr />\n<h2 id=\"1-what-is-an-adaptive-card\">1. What is an Adaptive Card?</h2>\n<p>An <strong>Adaptive Card</strong> is a piece of UI described as <strong>JSON</strong> that renders natively inside the channel\n(Teams, Web Chat, etc.). It can contain text, images, columns, input fields, date pickers, dropdowns,\nand action buttons — all in one tidy block.</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart LR\n    J[Adaptive Card JSON] --&gt; R[Channel renders native UI]\n    R --&gt; D[Display-only card]\n    R --&gt; F[Interactive form -&gt; submit]\n</pre></div><ul>\n<li><strong>Schema-based:</strong> Copilot Studio supports Adaptive Cards <strong>1.6 and earlier</strong>.</li>\n<li><strong>Channel matters:</strong> <strong>Web Chat</strong> supports <strong>1.6</strong> (no <code>Action.Execute</code>); <strong>Teams</strong> and the live\nchat widget are limited to <strong>1.5</strong>.</li>\n<li>Authored in a <strong>visual designer</strong> <em>or</em> by editing the <strong>JSON payload</strong> directly.</li>\n</ul>\n<hr />\n<h2 id=\"2-two-ways-to-use-cards\">2. Two ways to use cards</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th></th>\n<th><strong>Message node → Adaptive Card</strong></th>\n<th><strong>Ask with Adaptive Card node</strong></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Purpose</td>\n<td><strong>Display</strong> rich content</td>\n<td><strong>Collect</strong> input (a form)</td>\n</tr>\n<tr>\n<td>Input</td>\n<td>None</td>\n<td><strong>Several fields at once</strong></td>\n</tr>\n<tr>\n<td>Stores</td>\n<td>Nothing</td>\n<td><strong>One variable per input field</strong></td>\n</tr>\n<tr>\n<td>Use when</td>\n<td>Show a product, receipt, summary</td>\n<td>Gather multiple values in one step</td>\n</tr>\n</tbody>\n</table></div><hr />\n<h2 id=\"3-display-only-cards-message-node\">3. Display-only cards (Message node)</h2>\n<p>Use a card to present information attractively — a product, an order summary, a confirmation.</p>\n<p><strong>How to add</strong></p>\n<ol>\n<li>In a <strong>Send a message</strong> node, open <strong>Add</strong> → <strong>Adaptive Card</strong>.</li>\n<li>Use the designer or paste JSON.</li>\n<li>Insert variables with <code>{x}</code> / Power Fx to make it dynamic.</li>\n</ol>\n<p><strong>Example — order summary card (JSON)</strong></p>\n<pre aria-label=\"json code sample\"><code class=\"language-json\">{\n  \"type\": \"AdaptiveCard\",\n  \"$schema\": \"http://adaptivecards.io/schemas/adaptive-card.json\",\n  \"version\": \"1.5\",\n  \"body\": [\n    { \"type\": \"TextBlock\", \"text\": \"Order Confirmation\", \"weight\": \"Bolder\", \"size\": \"Medium\" },\n    { \"type\": \"TextBlock\", \"text\": \"Thanks, {Topic.CustomerName}!\", \"wrap\": true },\n    { \"type\": \"FactSet\", \"facts\": [\n      { \"title\": \"Item:\", \"value\": \"{Topic.Coffee}\" },\n      { \"title\": \"Size:\", \"value\": \"{Topic.Size}\" },\n      { \"title\": \"Pickup:\", \"value\": \"{Topic.PickupTime}\" }\n    ]}\n  ],\n  \"actions\": [\n    { \"type\": \"Action.OpenUrl\", \"title\": \"Track order\", \"url\": \"https://contoso.com/track\" }\n  ]\n}\n</code></pre>\n<blockquote>\n<p>Display cards don’t capture input — for that, use the form node below.</p>\n</blockquote>\n<hr />\n<h2 id=\"4-forms-collecting-input-ask-with-adaptive-card\">4. Forms — collecting input (Ask with Adaptive Card)</h2>\n<p>When you need <strong>several fields in one step</strong> (name + email + date + dropdown + a Submit button), use\nthe <strong>Ask with Adaptive Card</strong> node. Each input maps to its <strong>own variable</strong> on submit.</p>\n<p><strong>How to add</strong></p>\n<ol>\n<li><strong>+ → Ask with adaptive card</strong>.</li>\n<li><strong>Edit adaptive card</strong> → add <strong>Input</strong> elements (text, number, date, choice/toggle) and a\n<strong>Submit</strong> action.</li>\n<li>Map each input’s <strong>id</strong> to a <strong>variable</strong>; the user’s submission fills them.</li>\n</ol>\n<p><strong>Example — contact form (JSON)</strong></p>\n<pre aria-label=\"json code sample\"><code class=\"language-json\">{\n  \"type\": \"AdaptiveCard\",\n  \"$schema\": \"http://adaptivecards.io/schemas/adaptive-card.json\",\n  \"version\": \"1.5\",\n  \"body\": [\n    { \"type\": \"TextBlock\", \"text\": \"Tell us about you\", \"weight\": \"Bolder\" },\n    { \"type\": \"Input.Text\", \"id\": \"fullName\", \"label\": \"Full name\", \"isRequired\": true },\n    { \"type\": \"Input.Text\", \"id\": \"email\", \"label\": \"Email\", \"style\": \"Email\" },\n    { \"type\": \"Input.Date\", \"id\": \"callbackDate\", \"label\": \"Preferred callback date\" },\n    { \"type\": \"Input.ChoiceSet\", \"id\": \"topic\", \"label\": \"Topic\", \"choices\": [\n      { \"title\": \"Sales\", \"value\": \"sales\" },\n      { \"title\": \"Support\", \"value\": \"support\" }\n    ]}\n  ],\n  \"actions\": [\n    { \"type\": \"Action.Submit\", \"title\": \"Submit\" }\n  ]\n}\n</code></pre>\n<p>On submit, <code>fullName</code>, <code>email</code>, <code>callbackDate</code>, and <code>topic</code> flow into the variables you mapped.</p>\n<p><strong>Form input element types</strong></p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Element</th>\n<th>Collects</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>Input.Text</code></td>\n<td>Free text (styles: text, email, tel, url)</td>\n</tr>\n<tr>\n<td><code>Input.Number</code></td>\n<td>A number</td>\n</tr>\n<tr>\n<td><code>Input.Date</code></td>\n<td>A date</td>\n</tr>\n<tr>\n<td><code>Input.Time</code></td>\n<td>A time</td>\n</tr>\n<tr>\n<td><code>Input.Toggle</code></td>\n<td>Yes/No (boolean)</td>\n</tr>\n<tr>\n<td><code>Input.ChoiceSet</code></td>\n<td>Dropdown or radio/checkboxes</td>\n</tr>\n</tbody>\n</table></div><hr />\n<h2 id=\"5-card-actions-buttons\">5. Card actions (buttons)</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Action</th>\n<th>Does</th>\n<th>Note</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>Action.Submit</code></td>\n<td>Sends form inputs back to the agent</td>\n<td>Use in <strong>forms</strong></td>\n</tr>\n<tr>\n<td><code>Action.OpenUrl</code></td>\n<td>Opens a link</td>\n<td>Must be <code>https://</code></td>\n</tr>\n<tr>\n<td><code>Action.ShowCard</code></td>\n<td>Reveals a nested card</td>\n<td>Inline expand</td>\n</tr>\n<tr>\n<td><code>Action.Execute</code></td>\n<td>Server-driven action</td>\n<td><strong>Web Chat 1.6+ only; not Teams</strong></td>\n</tr>\n</tbody>\n</table></div><hr />\n<h2 id=\"6-properties-of-the-form-node\">6. Properties of the form node</h2>\n<p>Similar to a Question node:</p>\n<ul>\n<li><strong>How many reprompts</strong> — the card is <strong>resent</strong> on each retry (default up to 2).</li>\n<li><strong>Retry prompt</strong> — message shown with the resent card.</li>\n<li><strong>Allow switching to another topic</strong> — if the user <strong>types text</strong> instead of submitting, it counts\nas <strong>invalid</strong> unless it triggers an interruption.</li>\n</ul>\n<hr />\n<h2 id=\"7-when-to-use-what\">7. When to use what</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>You want to…</th>\n<th>Use</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Show a styled summary/receipt</td>\n<td><strong>Message node → Adaptive Card</strong> (display)</td>\n</tr>\n<tr>\n<td>Offer a few tappable options inline</td>\n<td><strong>Quick replies</strong> or <strong>Multiple choice</strong> question</td>\n</tr>\n<tr>\n<td>Collect <strong>one</strong> value</td>\n<td><strong>Question node</strong> (entity)</td>\n</tr>\n<tr>\n<td>Collect <strong>several</strong> values at once</td>\n<td><strong>Ask with Adaptive Card</strong> (form)</td>\n</tr>\n<tr>\n<td>Force a structured submission</td>\n<td><strong>Form</strong> with <code>isRequired</code> inputs</td>\n</tr>\n</tbody>\n</table></div><hr />\n<h2 id=\"8-limitations-gotchas\">8. Limitations &amp; gotchas</h2>\n<ul>\n<li><strong>Schema cap:</strong> 1.6 and earlier; <strong>Teams/live chat = 1.5</strong>, so avoid <code>Action.Execute</code> there.</li>\n<li><strong>Channel rendering differs</strong> — always test on the <strong>target channel</strong>, not just the Test pane.</li>\n<li>A <strong>typed reply</strong> while a form waits counts as <strong>invalid</strong> unless interruptions are on.</li>\n<li><strong>No client-side logic</strong> beyond what the schema offers (no custom JavaScript).</li>\n<li>Keep cards <strong>short</strong> — very large/complex cards render slowly or get clipped on some channels.</li>\n<li>Inputs return <strong>strings</strong> — convert with <code>Value(...)</code> for numbers/dates if you do math.</li>\n</ul>\n<hr />\n<h3 id=\"key-takeaways\">Key takeaways</h3>\n<ul>\n<li><strong>Adaptive Cards</strong> = JSON-described native UI; <strong>Message node</strong> displays, <strong>Ask with Adaptive Card</strong>\ncollects.</li>\n<li><strong>Forms</strong> gather <strong>multiple fields in one step</strong>, each mapped to a variable on <strong>Submit</strong>.</li>\n<li>Mind the <strong>schema cap</strong> (Teams 1.5 / Web Chat 1.6) and <strong>always test on the real channel</strong>.</li>\n</ul>\n<hr />\n<h2 id=\"official-microsoft-documentation-references\">Official Microsoft documentation (references)</h2>\n<ul>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-send-message\" target=\"_blank\" rel=\"noreferrer\">Add rich content with the Message node</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-adaptive-cards\" target=\"_blank\" rel=\"noreferrer\">Ask with an adaptive card</a></li>\n<li><a href=\"https://learn.microsoft.com/adaptive-cards/\" target=\"_blank\" rel=\"noreferrer\">Adaptive Cards overview &amp; schema</a></li>\n<li><a href=\"https://adaptivecards.io/designer/\" target=\"_blank\" rel=\"noreferrer\">Adaptive Cards designer</a></li>\n</ul>\n<p>Next: <a href=\"#/learn/copilot-studio/ai-prompts\">14-ai-prompts.md</a> — add custom AI prompts as reusable building blocks.</p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "1. What is an Adaptive Card?",
+      "id": "1-what-is-an-adaptive-card"
+    },
+    {
+      "level": 2,
+      "text": "2. Two ways to use cards",
+      "id": "2-two-ways-to-use-cards"
+    },
+    {
+      "level": 2,
+      "text": "3. Display-only cards (Message node)",
+      "id": "3-display-only-cards-message-node"
+    },
+    {
+      "level": 2,
+      "text": "4. Forms — collecting input (Ask with Adaptive Card)",
+      "id": "4-forms-collecting-input-ask-with-adaptive-card"
+    },
+    {
+      "level": 2,
+      "text": "5. Card actions (buttons)",
+      "id": "5-card-actions-buttons"
+    },
+    {
+      "level": 2,
+      "text": "6. Properties of the form node",
+      "id": "6-properties-of-the-form-node"
+    },
+    {
+      "level": 2,
+      "text": "7. When to use what",
+      "id": "7-when-to-use-what"
+    },
+    {
+      "level": 2,
+      "text": "8. Limitations & gotchas",
+      "id": "8-limitations-gotchas"
+    },
+    {
+      "level": 3,
+      "text": "Key takeaways",
+      "id": "key-takeaways"
+    },
+    {
+      "level": 2,
+      "text": "Official Microsoft documentation (references)",
+      "id": "official-microsoft-documentation-references"
+    }
+  ],
+  "hasMermaid": true,
+  "previous": {
+    "guideSlug": "copilot-studio",
+    "partKey": "deep-dive",
+    "slug": "knowledge-integration",
+    "order": 12,
+    "title": "Knowledge Integration",
+    "summary": "Connect and govern the data sources an agent uses for knowledge.",
+    "type": "chapter",
+    "level": "intermediate",
+    "updated": "2026-08-26",
+    "readingTime": 12,
+    "route": "#/learn/copilot-studio/knowledge-integration",
+    "recordFile": "chapter--copilot-studio--knowledge-integration"
+  },
+  "next": {
+    "guideSlug": "copilot-studio",
+    "partKey": "advanced-features",
+    "slug": "ai-prompts",
+    "order": 14,
+    "title": "AI Prompts",
+    "summary": "Create reusable generative building blocks with clear inputs and outputs.",
+    "type": "chapter",
+    "level": "advanced",
+    "updated": "2026-08-26",
+    "readingTime": 4,
+    "route": "#/learn/copilot-studio/ai-prompts",
+    "recordFile": "chapter--copilot-studio--ai-prompts"
+  }
+}

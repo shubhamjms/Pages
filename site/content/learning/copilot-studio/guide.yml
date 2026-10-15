@@ -1,0 +1,49 @@
+title: "Copilot Studio Guide"
+summary: "Build useful and secure agents from fundamentals to advanced patterns."
+level: "beginner-to-advanced"
+featured: true
+draft: false
+parts:
+  - key: "fundamentals"
+    title: "Fundamentals"
+    summary: "Understand the platform and create a first agent."
+    chapters:
+      - "what-is-copilot"
+      - "create-an-agent"
+      - "core-concepts"
+  - key: "building-blocks"
+    title: "Building Blocks"
+    summary: "Work with the data and conversation primitives behind an agent."
+    chapters:
+      - "variables-and-data-types"
+      - "nodes-message-and-question"
+      - "entities-and-slot-filling"
+  - key: "hands-on-labs"
+    title: "Hands-On Labs"
+    summary: "Apply the foundations in increasingly capable agent scenarios."
+    chapters:
+      - "lab1"
+      - "lab2"
+      - "scenarios-basic-to-advanced"
+  - key: "deep-dive"
+    title: "Deep Dive"
+    summary: "Study instructions, constraints, grounding, and connected knowledge."
+    chapters:
+      - "models-and-instructions"
+      - "limitations"
+      - "grounding"
+      - "knowledge-integration"
+  - key: "advanced-features"
+    title: "Advanced Features"
+    summary: "Extend agents with cards, prompts, and interoperable tools."
+    chapters:
+      - "adaptive-cards-and-forms"
+      - "ai-prompts"
+      - "mcp"
+  - key: "security-patterns"
+    title: "Security and Patterns"
+    summary: "Secure agent behavior and organize reusable grounded instructions."
+    chapters:
+      - "security-guidelines"
+      - "grounding-prompts-and-queries"
+      - "skills-and-instruction-sets"

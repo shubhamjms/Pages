@@ -1,0 +1,240 @@
+{
+  "guideSlug": "copilot-studio",
+  "partKey": "building-blocks",
+  "slug": "nodes-message-and-question",
+  "order": 4,
+  "title": "Nodes: Message & Question (and all the others)",
+  "summary": "Choose and combine conversation nodes to control an agent's behavior.",
+  "type": "chapter",
+  "level": "beginner",
+  "updated": "2026-08-26",
+  "readingTime": 15,
+  "route": "#/learn/copilot-studio/nodes-message-and-question",
+  "recordFile": "chapter--copilot-studio--nodes-message-and-question",
+  "guideTitle": "Copilot Studio Guide",
+  "partTitle": "Building Blocks",
+  "position": 5,
+  "chapterCount": 19,
+  "html": "<p>Nodes are the steps in a topic. This file goes deep on the two you’ll use most —\n<strong>Send a message</strong> and <strong>Ask a question</strong> — then summarizes every other node type.</p>\n<hr />\n<h2 id=\"node-anatomy-every-node-shares-this\">Node anatomy (every node shares this)</h2>\n<p>No matter the type, each node on the authoring canvas has the same three parts:</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart LR\n    subgraph Node\n      H[\"Name + type icon (rename via … menu)\"]\n      B[\"Body: the node's content / settings\"]\n      P[\"… menu → Properties, Rename, Delete, Cut/Copy\"]\n    end\n    H --&gt; B --&gt; P\n</pre></div><ul>\n<li><strong>Name + icon</strong> — identifies the node; rename it (up to <strong>500 characters</strong>) so topics stay readable.\nYou can’t rename <strong>Trigger</strong> or <strong>Go to step</strong> nodes.</li>\n<li><strong>Body</strong> — the editable content (message text, question, condition, etc.).</li>\n<li><strong>… (More) menu</strong> — opens <strong>Properties</strong>, plus Rename, Delete, Cut/Copy/Paste.</li>\n</ul>\n<p>Nodes run <strong>top → bottom</strong>; <strong>Condition</strong> branches run <strong>left → right</strong>.</p>\n<hr />\n<h2 id=\"part-a-the-message-node-send-a-message\">Part A — The Message node (“Send a message”)</h2>\n<p>The Message node makes the agent <strong>say something</strong>. No input is collected.</p>\n<h3 id=\"add-one\">Add one</h3>\n<ol>\n<li>Select <strong>+</strong> under a node → <strong>Send a message</strong>.</li>\n<li>Type your message text.</li>\n</ol>\n<h3 id=\"insert-a-variable-into-a-message\">Insert a variable into a message</h3>\n<p>Select the <strong><code>{x}</code></strong> icon in the message box to pick a variable. At runtime the value is substituted.</p>\n<pre aria-label=\"Code sample\"><code>Welcome back, {Global.UserName}! Your last order was #{Topic.OrderId}.\n</code></pre>\n<ul>\n<li>The <strong>Custom</strong> tab lists topic and global variables (alphabetical).</li>\n<li>The <strong>System</strong> tab lists context variables like <code>Activity.Channel</code>.</li>\n</ul>\n<h3 id=\"rich-content-the-message-node-supports\">Rich content the Message node supports</h3>\n<p>Use the node’s menu bar (<strong>Add</strong>) to insert any of these. All of them are <strong>also available on the\nQuestion node</strong>.</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Content type</th>\n<th>What it adds</th>\n<th>Key properties</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Text formatting</strong></td>\n<td>Bold, italic, bulleted &amp; numbered lists</td>\n<td>Inline toolbar</td>\n</tr>\n<tr>\n<td><strong>Variables</strong> <code>{x}</code></td>\n<td>Insert a variable value into the text</td>\n<td>Custom / System / etc. tabs</td>\n</tr>\n<tr>\n<td><strong>Message variation</strong></td>\n<td>Extra wordings; the agent randomly picks one each time</td>\n<td>One text box per variation</td>\n</tr>\n<tr>\n<td><strong>Speech override (SSML)</strong></td>\n<td>A separate spoken version for voice agents</td>\n<td>Plays instead of the text when spoken</td>\n</tr>\n<tr>\n<td><strong>Image</strong></td>\n<td>An image from a hosted <strong>URL</strong></td>\n<td><code>Image URL</code>, optional <code>Title</code></td>\n</tr>\n<tr>\n<td><strong>Video</strong></td>\n<td>A direct <strong>MP4 URL</strong> or a <strong>YouTube URL</strong></td>\n<td><code>Media URL</code>, <code>Title</code>, <code>Subtitle</code>, <code>Image URL</code>, <code>Text</code>, buttons</td>\n</tr>\n<tr>\n<td><strong>Basic card</strong></td>\n<td>Text + image + interactive buttons</td>\n<td>Title, subtitle, text, image, buttons</td>\n</tr>\n<tr>\n<td><strong>Adaptive Card</strong></td>\n<td>Rich structured card authored as <strong>JSON</strong> (schema 1.6 and earlier)</td>\n<td>Built-in designer or JSON payload editor</td>\n</tr>\n<tr>\n<td><strong>Quick replies</strong></td>\n<td>Tappable suggestion buttons that don’t block the flow</td>\n<td>See action types below</td>\n</tr>\n</tbody>\n</table></div><h4 id=\"message-node-properties-in-detail\">Message node properties in detail</h4>\n<ul>\n<li><strong>Message variations</strong> — When you add variations, the agent <strong>randomly</strong> picks one each time the\nnode runs, so it doesn’t sound repetitive. Add or remove them from the node’s menu bar.</li>\n<li><strong>Speech (SSML) override</strong> — A voice-only alternative to the text. Voice agents speak this instead\nof reading the on-screen text.</li>\n<li><strong>Quick reply action types</strong> — Select the <strong>Quick replies</strong> box to open its properties and set the\n<strong>Type</strong>:\n<ul>\n<li><strong>Send a message</strong> (default) — sends the text to the agent and shows it in chat history.</li>\n<li><strong>Open URL</strong> — opens a link (must start with <code>https://</code>).</li>\n<li><strong>Make a call</strong> — dials a number; enter <code>PhoneNumber:1234567890</code>.</li>\n<li><strong>Send a hidden message to the agent</strong> — sends text to the agent but hides it from chat history.</li>\n</ul>\n<blockquote>\n<p>Quick replies let users <em>type instead</em> of choosing. To <strong>force</strong> a choice from a list, use a\n<strong>multiple-choice Question node</strong> instead. Some channels don’t support quick replies or limit how\nmany show at once.</p>\n</blockquote>\n</li>\n<li><strong>Multiple cards layout</strong> — If a node has two or more media cards, choose how they display:\n<ul>\n<li><strong>Carousel</strong> (default) — one card at a time.</li>\n<li><strong>List</strong> — all cards stacked vertically.</li>\n</ul>\n</li>\n<li><strong>Rename the node</strong> — Select the node name, or <strong>… → Rename</strong>. Names can be up to <strong>500 characters</strong>\n(you can’t rename <strong>Trigger</strong> or <strong>Go to step</strong> nodes).</li>\n</ul>\n<blockquote>\n<p><strong>Adaptive Card schema note:</strong> Copilot Studio supports Adaptive Cards <strong>1.6 and earlier</strong>, but the\ntarget channel matters — Web Chat supports 1.6 (no <code>Action.Execute</code>), while <strong>Teams</strong> and the live\nchat widget are limited to <strong>1.5</strong>. For <em>interactive</em> cards that collect input, use the dedicated\n<strong>Ask with Adaptive Card</strong> node instead of the Message node.</p>\n</blockquote>\n<h3 id=\"good-message-writing-habits\">Good message-writing habits</h3>\n<ul>\n<li>Keep it short and conversational.</li>\n<li>Confirm what you captured: <em>“Got it — pickup at {Topic.PickupTime}.”</em></li>\n<li>Use variations for greetings to feel natural.</li>\n<li>Don’t put a question here — use a <strong>Question</strong> node so the answer is captured.</li>\n</ul>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    M[Send a message] --&gt; M2[\"Text + {variables} + image/card/quick replies\"]\n</pre></div><hr />\n<h2 id=\"part-b-the-question-node-ask-a-question\">Part B — The Question node (“Ask a question”)</h2>\n<p>The Question node <strong>asks for input, waits</strong>, recognizes it with an <strong>entity</strong>, and <strong>saves it to a\nvariable</strong>. This is the heart of data collection.</p>\n<p>A Question node has three parts:</p>\n<ol>\n<li><strong>Message</strong> – the question text (supports variables and <code>{x}</code>).</li>\n<li><strong>Identify</strong> – <em>what kind of information</em> to extract (an entity).</li>\n<li><strong>Save user response as</strong> – the <strong>variable</strong> that stores the answer (this is <strong>slot filling</strong>).</li>\n</ol>\n<h3 id=\"in-plain-english-for-non-coders\">In plain English (for non-coders)</h3>\n<p>Think of a Question node like a <strong>friendly form field that talks</strong>:</p>\n<ul>\n<li><strong>It asks</strong> — “What’s your name?” (the <em>Message</em>).</li>\n<li><strong>It listens</strong> — and figures out the useful part of the reply (the <em>Identify</em> step). If you say\n<em>“my email is <a href=\"mailto:sam@contoso.com\">sam@contoso.com</a>, thanks!”</em> it grabs just <code>sam@contoso.com</code>.</li>\n<li><strong>It remembers</strong> — by writing the answer on a <strong>sticky note</strong> (the <em>variable</em>) so you can use it\nlater, e.g., <em>“Thanks, {CustomerName}!”</em></li>\n</ul>\n<blockquote>\n<p>Analogy: <strong>Message node = the agent talking.</strong> <strong>Question node = the agent asking and writing down\nyour answer.</strong> The sticky note (variable) keeps that answer for the rest of the chat.</p>\n</blockquote>\n<p><strong>A tiny mental model</strong></p>\n<pre aria-label=\"Code sample\"><code>You ask:      \"What's your name?\"\nUser types:   \"Sam\"\nAgent saves:  CustomerName = Sam     ← the sticky note\nAgent reuses: \"Nice to meet you, Sam!\"\n</code></pre>\n<p>What each part means without jargon:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Builder word</th>\n<th>What it really means</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Identify / Entity</strong></td>\n<td>“What <em>kind</em> of answer am I expecting?” (a name, a date, a yes/no, a choice)</td>\n</tr>\n<tr>\n<td><strong>Variable</strong></td>\n<td>The sticky note that stores the answer</td>\n</tr>\n<tr>\n<td><strong>Slot filling</strong></td>\n<td>The act of writing the answer onto the sticky note</td>\n</tr>\n<tr>\n<td><strong>Prebuilt entity</strong></td>\n<td>A ready-made detector (email, date, number) — no setup</td>\n</tr>\n<tr>\n<td><strong>Multiple choice</strong></td>\n<td>Show <strong>buttons</strong> so the user taps instead of typing</td>\n</tr>\n</tbody>\n</table></div><h3 id=\"add-one-2\">Add one</h3>\n<ol>\n<li>Select <strong>+</strong> → <strong>Ask a question</strong>.</li>\n<li>Type the question, e.g., <em>“What’s your email address?”</em></li>\n<li>Under <strong>Identify</strong>, choose what to recognize (see options below).</li>\n<li>Under <strong>Save response as</strong>, rename the variable to something meaningful (e.g., <code>customerEmail</code>).</li>\n<li>(Optional) Open <strong>Properties</strong> to fine-tune behavior.</li>\n</ol>\n<h3 id=\"identify-options\">“Identify” options</h3>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Identify option</th>\n<th>Use it when…</th>\n<th>Stores</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Multiple choice options</strong></td>\n<td>You want fixed, tappable buttons</td>\n<td>Choice</td>\n</tr>\n<tr>\n<td><strong>User’s entire response</strong></td>\n<td>You want the raw text exactly as typed</td>\n<td>String</td>\n</tr>\n<tr>\n<td>A <strong>prebuilt entity</strong> (Email, Date and time, Number, Age…)</td>\n<td>You want a known information type extracted</td>\n<td>type of that entity</td>\n</tr>\n<tr>\n<td>A <strong>custom entity</strong> (your own list)</td>\n<td>You want to recognize <em>your</em> domain values</td>\n<td>Choice</td>\n</tr>\n<tr>\n<td><strong>One of multiple entities</strong></td>\n<td>The answer could be one of several types (up to 5)</td>\n<td>Record</td>\n</tr>\n</tbody>\n</table></div><h4 id=\"multiple-choice-options\">Multiple choice options</h4>\n<p>You define the choices; each appears as a <strong>button</strong>. Users can tap <strong>or</strong> type. Stores a <strong>Choice</strong>.</p>\n<h4 id=\"users-entire-response\">User’s entire response</h4>\n<p>No extraction — you get the literal text. Good for free-text like feedback, names, or passing raw\ncontext.</p>\n<h4 id=\"prebuilt-custom-entity\">Prebuilt / custom entity</h4>\n<p>The AI extracts just the relevant piece. <em>“It’s <a href=\"mailto:sam@contoso.com\">sam@contoso.com</a>, thanks!”</em> with the <strong>Email</strong> entity\nstores <code>sam@contoso.com</code>. (Entities are covered fully in\n<a href=\"#/learn/copilot-studio/entities-and-slot-filling\">05-entities-and-slot-filling.md</a>.)</p>\n<h4 id=\"one-of-multiple-entities\">One of multiple entities</h4>\n<p>Accept any one of several entities at the same turn — e.g., <em>account number</em> <strong>or</strong> <em>phone number</em>.\nThe result is a <strong>Record</strong> with one field per entity (e.g., <code>Identifier.account</code>, <code>Identifier.phone</code>),\nand you branch with conditions using <strong>is not Blank</strong>. Note: if the user provides two, only the\n<strong>first</strong> configured entity is captured.</p>\n<h3 id=\"show-options-as-buttons\">Show options as buttons</h3>\n<p>When using <strong>Multiple choice</strong> or a <strong>closed-list custom entity</strong>, enable <strong>“Select options for user”</strong>\nto render the list as buttons — convenient and reduces typos. Users can still type a synonym.</p>\n<h3 id=\"question-node-properties-behavior-tuning\">Question node properties (behavior tuning)</h3>\n<p>Open <strong>… → Properties</strong> on the Question node. The <strong>Question properties</strong> panel is organized into\n<strong>categories</strong> (some only appear for voice-enabled agents):</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Category</th>\n<th>What it controls</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Question behavior</strong></td>\n<td>Skip behavior + reprompt (retry) behavior</td>\n</tr>\n<tr>\n<td><strong>Entity recognition</strong></td>\n<td>Extra validation + what happens when no valid entity is found</td>\n</tr>\n<tr>\n<td><strong>Interruptions</strong></td>\n<td>Whether the user can switch to another topic mid-question</td>\n</tr>\n<tr>\n<td><strong>Voice</strong></td>\n<td>Speech-specific settings (voice agents only)</td>\n</tr>\n<tr>\n<td><strong>Hold and resume</strong></td>\n<td>Pause/resume the conversation (voice agents)</td>\n</tr>\n</tbody>\n</table></div><h4 id=\"1-question-behavior\">1. Question behavior</h4>\n<p><strong>Skip behavior</strong> — what to do if the node’s variable <em>already has a value</em> from earlier:</p>\n<ul>\n<li><strong>Allow question to be skipped</strong> — skip the question when the variable is already filled.\nThis is what lets the agent <strong>not re-ask</strong> something it already knows (great with global variables).</li>\n<li><strong>Ask every time</strong> — always ask, even if the variable has a value.</li>\n</ul>\n<p><strong>Reprompt</strong> — what to do when the user’s answer can’t be recognized:</p>\n<ul>\n<li><strong>How many reprompts</strong> — <strong>Repeat up to 2 times</strong> (default), <strong>Repeat once</strong>, or <strong>Don’t repeat</strong>.</li>\n<li><strong>Retry prompt</strong> — select <strong>Customize</strong> to set the message used on a retry. Supports multiple\nvariants plus <strong>Randomize variant selection</strong> (on = random; off = play variants in order, so you\ncan escalate guidance: gentle on retry 1, explicit on retry 2).</li>\n</ul>\n<h4 id=\"2-entity-recognition\">2. Entity recognition</h4>\n<p>Expand validation beyond the entity’s default rules and decide what happens when the agent gives up\nafter the reprompts (<strong>No valid entity found</strong>):</p>\n<ul>\n<li><strong>Set variable to empty (no value)</strong> — clear the variable and move on; check it later with a\n<strong>Condition</strong> node (<code>IsBlank</code>).</li>\n<li><strong>No entity found message</strong> — select <strong>Customize</strong> to set the message shown when it moves on.</li>\n<li><strong>Condition not met prompt</strong> — shown when your extra validation rule fails (also supports variants\nand <strong>Randomize variant selection</strong>).</li>\n</ul>\n<h4 id=\"3-interruptions\">3. Interruptions</h4>\n<p>Controls whether a user can jump to a different topic while this question is waiting:</p>\n<ul>\n<li><strong>Allow switching to another topic</strong> — the user can switch when their reply matches another topic’s\ntrigger with high confidence.</li>\n<li><strong>Only selected topics</strong> — restrict which topics they can switch to.</li>\n</ul>\n<blockquote>\n<p><strong>Troubleshooting tip:</strong> If answers to your question keep triggering <em>other</em> topics instead of\nfilling the variable, turn <strong>Allow switching to another topic</strong> <strong>off</strong> on that node.</p>\n</blockquote>\n<h4 id=\"4-voice-hold-resume-voice-agents-only\">4. Voice / Hold &amp; resume (voice agents only)</h4>\n<p>Speech timing, DTMF, and the ability to place the caller on hold (<strong>Do Not Hold</strong>, <strong>Hold\nAutomatically</strong>, <strong>Hold if user requests</strong>) with hold/resume words, hold message, and hold music URL.</p>\n<h4 id=\"sensitive-data\">Sensitive data</h4>\n<p>Separately, on the topic’s <strong>Details → Input/Output</strong> tabs you can mark a variable as <strong>Sensitive\ndata</strong> so its value is kept out of transcripts and platform logs (use for card numbers, secrets).</p>\n<blockquote>\n<p><strong>Note:</strong> The Adaptive Card question node has its own similar properties (reprompt count, retry\nprompt, allow switching topics) — a text reply while it waits for a card submission counts as an\ninvalid response unless it triggers an interruption.</p>\n</blockquote>\n<h3 id=\"what-it-looks-like-under-the-hood-yaml\">What it looks like under the hood (YAML)</h3>\n<p>You normally never see this, but it helps to know a Question is just structured data:</p>\n<pre aria-label=\"yaml code sample\"><code class=\"language-yaml\">- kind: Question\n  id: question_1\n  alwaysPrompt: true                 # \"Ask every time\" (skip behavior)\n  variable: init:Topic.Continue      # where the answer is saved (slot filling)\n  prompt: Can I help with anything else?\n  entity: BooleanPrebuiltEntity      # what to identify\n</code></pre>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    Q[Ask a question] --&gt; I[Identify: entity]\n    I --&gt; S[\"Save to variable (slot filling)\"]\n    S --&gt; R{Recognized?}\n    R --&gt;|Yes| Next[Continue]\n    R --&gt;|No| Re[Reprompt / escalate]\n</pre></div><hr />\n<h2 id=\"part-b5-the-adaptive-card-question-node-ask-with-adaptive-card\">Part B.5 — The Adaptive Card question node (“Ask with Adaptive Card”)</h2>\n<p>When you need a <strong>rich form</strong> (multiple fields in one card — text boxes, dropdowns, date pickers,\ntoggles, and a Submit button), use the dedicated <strong>Ask with Adaptive Card</strong> node instead of a plain\nQuestion node.</p>\n<h3 id=\"how-it-differs-from-a-normal-question-node\">How it differs from a normal Question node</h3>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th></th>\n<th>Question node</th>\n<th>Adaptive Card question node</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Input style</td>\n<td>One value per turn</td>\n<td><strong>Several fields at once</strong> in a card</td>\n</tr>\n<tr>\n<td>Authoring</td>\n<td>Pick an entity</td>\n<td><strong>Adaptive Card designer</strong> or raw <strong>JSON</strong> payload</td>\n</tr>\n<tr>\n<td>Stores</td>\n<td>One variable</td>\n<td><strong>One variable per input field</strong></td>\n</tr>\n<tr>\n<td>Dynamic data</td>\n<td>Variables in text</td>\n<td><strong>Power Fx</strong> can inject data into the card</td>\n</tr>\n</tbody>\n</table></div><h3 id=\"add-one-3\">Add one</h3>\n<ol>\n<li>Select <strong>+</strong> → <strong>Ask with adaptive card</strong>.</li>\n<li>Select <strong>Edit adaptive card</strong> to open the designer, or paste a <strong>JSON</strong> payload (schema <strong>1.6 and\nearlier</strong>).</li>\n<li>Map each input field to a variable; the user’s submission fills those variables.</li>\n</ol>\n<h3 id=\"properties-similar-to-a-question-node\">Properties (similar to a Question node)</h3>\n<ul>\n<li><strong>How many reprompts</strong> — Repeat up to 2 (default), once, or don’t. The card is <strong>resent</strong> on each retry.</li>\n<li><strong>Retry prompt</strong> — customize the message shown with the resent card.</li>\n<li><strong>Allow switching to another topic</strong> — if the user types text instead of submitting the card, that\ncounts as <strong>invalid</strong> <em>unless</em> it triggers an interruption. With this on (default), it switches\ntopics and the card is re-sent after the interruption ends.</li>\n</ul>\n<blockquote>\n<p><strong>Channel limits:</strong> Web Chat supports schema 1.6 (no <code>Action.Execute</code>); <strong>Teams</strong> and the live chat\nwidget are limited to <strong>1.5</strong>. Use the <strong>Message</strong> node’s Adaptive Card option for <em>display-only</em>\ncards, and this node when you need the user to <strong>submit</strong> input.</p>\n</blockquote>\n<hr />\n<h2 id=\"part-b6-the-condition-node-add-a-condition\">Part B.6 — The Condition node (“Add a condition”)</h2>\n<p>The <strong>Condition</strong> node <strong>branches</strong> the flow: it checks a value and sends the conversation down the\nmatching path. Add it with <strong>+ → Add a condition</strong> (under <strong>Logic</strong>).</p>\n<h3 id=\"in-plain-english-for-non-coders-2\">In plain English (for non-coders)</h3>\n<p>A Condition node is just a <strong>fork in the road</strong> with a yes/no (or which-one) question on the signpost.\nThe agent looks at a <strong>sticky note</strong> (a variable) and <strong>picks the path</strong> that matches.</p>\n<blockquote>\n<p>Analogy: <em>“<strong>If</strong> it’s raining, take an umbrella; <strong>otherwise</strong>, don’t.”</em> The Condition node is the\nword <strong>“if”</strong> — it decides what happens next based on what it already knows.</p>\n</blockquote>\n<p>Everyday examples (no formulas needed — the builder gives you dropdowns):</p>\n<ul>\n<li><em>If the user said they’re a <strong>VIP</strong> → show the VIP greeting; otherwise → show the normal greeting.</em></li>\n<li><em>If <strong>age is 18 or over</strong> → continue; otherwise → show a “sorry” message.</em></li>\n<li><em>If the <strong>email box is empty</strong> → ask again; otherwise → move on.</em></li>\n</ul>\n<p>How you build it (point-and-click):</p>\n<ol>\n<li>Pick the <strong>sticky note</strong> to check (a variable, e.g., <em>Age</em>).</li>\n<li>Pick <strong>how</strong> to check it from a dropdown (<em>is equal to</em>, <em>is greater than</em>, <em>is not blank</em>…).</li>\n<li>Type the <strong>value</strong> to compare against (e.g., <em>18</em>).</li>\n<li>Add more branches if you have more than two outcomes; the agent always has an <strong>“everything else”</strong>\npath for safety.</li>\n</ol>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    S[Sticky note: Age] --&gt; C{Is Age 18 or over?}\n    C --&gt;|Yes| A[Continue]\n    C --&gt;|No| B[Show sorry message]\n</pre></div><h3 id=\"how-a-condition-is-built\">How a condition is built</h3>\n<p>Each condition has:</p>\n<ol>\n<li>A <strong>variable</strong> to check (e.g., <code>Topic.Age</code>).</li>\n<li>An <strong>operator</strong> (is equal to, is greater than, is not blank, …).</li>\n<li>A <strong>value</strong> to compare against (a literal, another variable, or a Power Fx formula).</li>\n</ol>\n<p>A Condition node can have <strong>multiple branches</strong> (like a switch): the first branch whose check is\n<strong>true</strong> runs; if none match, the <strong>All other conditions</strong> (else) branch runs.</p>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    C{Condition} --&gt;|Age &gt;= 18| A[Adult path]\n    C --&gt;|Age &lt; 18| B[Minor path]\n    C --&gt;|All other conditions| D[Else: unknown age]\n</pre></div><h3 id=\"types-of-checks-you-can-add\">Types of checks you can add</h3>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Check type</th>\n<th>Builder operator</th>\n<th>Power Fx equivalent</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Equality</strong></td>\n<td>is / is equal to</td>\n<td><code>Topic.Status = \"Open\"</code></td>\n</tr>\n<tr>\n<td><strong>Inequality</strong></td>\n<td>is not</td>\n<td><code>Topic.Status &lt;&gt; \"Open\"</code></td>\n</tr>\n<tr>\n<td><strong>Comparison</strong></td>\n<td>greater / less than (or equal)</td>\n<td><code>Topic.Age &gt;= 18</code></td>\n</tr>\n<tr>\n<td><strong>Boolean true</strong></td>\n<td>is true</td>\n<td><code>Topic.Agreed</code> or <code>Topic.Agreed = true</code></td>\n</tr>\n<tr>\n<td><strong>Boolean false</strong></td>\n<td>is false</td>\n<td><code>Not(Topic.Agreed)</code></td>\n</tr>\n<tr>\n<td><strong>Has a value</strong></td>\n<td>is not blank</td>\n<td><code>!IsBlank(Topic.Email)</code></td>\n</tr>\n<tr>\n<td><strong>No value</strong></td>\n<td>is blank</td>\n<td><code>IsBlank(Topic.Email)</code></td>\n</tr>\n<tr>\n<td><strong>Text contains</strong></td>\n<td>contains</td>\n<td><code>\"hello\" in Lower(Topic.Text)</code></td>\n</tr>\n<tr>\n<td><strong>In a set</strong></td>\n<td>— (use formula)</td>\n<td><code>Topic.Size in [\"Small\",\"Medium\",\"Large\"]</code></td>\n</tr>\n<tr>\n<td><strong>Multiple conditions</strong></td>\n<td>And / Or rows</td>\n<td><code>Topic.Age &gt;= 18 And Topic.Country = \"US\"</code></td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p>Switch to the <strong>Formula</strong> option in the condition to write any Power Fx expression that returns\n<code>true</code>/<code>false</code>.</p>\n</blockquote>\n<h3 id=\"null-no-value-checks-important\">Null / “no value” checks (important)</h3>\n<p>Copilot Studio doesn’t have a separate <code>null</code> keyword — the concept of “no value / not set / empty”\nis represented by <strong>Blank</strong>. So a <strong>null check is a Blank check</strong>.</p>\n<ul>\n<li><strong>Is it empty / not answered / not set?</strong> → <code>IsBlank(Topic.X)</code></li>\n<li><strong>Does it have a value?</strong> → <code>!IsBlank(Topic.X)</code></li>\n</ul>\n<pre aria-label=\"Code sample\"><code>// User skipped an optional email question?\nIf  IsBlank(Topic.Email)   → ask again / use a default\nElse                       → continue\n</code></pre>\n<p>Why use <code>IsBlank</code> instead of comparing to <code>\"\"</code> or <code>0</code>:</p>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Value of <code>Topic.X</code></th>\n<th><code>IsBlank(Topic.X)</code></th>\n<th><code>Topic.X = \"\"</code></th>\n<th><code>Topic.X = 0</code></th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Never set (Blank)</td>\n<td><strong>true</strong></td>\n<td>false</td>\n<td>false</td>\n</tr>\n<tr>\n<td>Empty text <code>\"\"</code></td>\n<td>false*</td>\n<td>true</td>\n<td>false</td>\n</tr>\n<tr>\n<td>Zero <code>0</code></td>\n<td>false</td>\n<td>false</td>\n<td>true</td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p><em>Tip:</em> To treat <strong>both</strong> “never set” <strong>and</strong> “empty text” as empty, use\n<code>IsBlank(Topic.X) Or Topic.X = \"\"</code> — or normalize first with <code>Trim(...)</code>.</p>\n</blockquote>\n<h3 id=\"blank-check-common-patterns\">Blank check — common patterns</h3>\n<pre aria-label=\"Code sample\"><code>// 1. Default a value when blank\nSet Topic.Size = If(IsBlank(Topic.Size), \"Medium\", Topic.Size)\n\n// 2. Require a value before continuing\nIf IsBlank(Topic.OrderId)  → Message \"I still need your order number\"  → loop back\nElse                       → continue\n\n// 3. Guard a calculation (avoid errors on blank numbers)\nIf !IsBlank(Topic.Qty) And Topic.Qty &gt; 0  → proceed\nElse                                      → \"Please enter a quantity\"\n\n// 4. Coalesce: first non-blank wins\nCoalesce(Topic.PreferredName, Topic.FullName, \"there\")\n</code></pre>\n<h3 id=\"useful-power-fx-for-conditions\">Useful Power Fx for conditions</h3>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Goal</th>\n<th>Formula</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Not blank</td>\n<td><code>!IsBlank(Topic.Email)</code></td>\n</tr>\n<tr>\n<td>Blank <strong>or</strong> empty text</td>\n<td><code>IsBlank(Topic.Email) Or Topic.Email = \"\"</code></td>\n</tr>\n<tr>\n<td>Numeric range</td>\n<td><code>Topic.Age &gt;= 18 And Topic.Age &lt;= 65</code></td>\n</tr>\n<tr>\n<td>Case-insensitive match</td>\n<td><code>Lower(Topic.City) = \"seattle\"</code></td>\n</tr>\n<tr>\n<td>Contains a word</td>\n<td><code>\"refund\" in Lower(Topic.Text)</code></td>\n</tr>\n<tr>\n<td>One of several values</td>\n<td><code>Topic.Coffee in [\"Latte\",\"Espresso\"]</code></td>\n</tr>\n<tr>\n<td>Boolean is false/blank-safe</td>\n<td><code>Topic.Agreed &lt;&gt; true</code></td>\n</tr>\n<tr>\n<td>First non-blank value</td>\n<td><code>Coalesce(Topic.A, Topic.B, \"fallback\")</code></td>\n</tr>\n</tbody>\n</table></div><h3 id=\"condition-node-gotchas\">Condition node gotchas</h3>\n<ul>\n<li><strong>Blank ≠ empty string ≠ 0</strong> — pick the right check (table above).</li>\n<li>A <strong>Blank Boolean is not <code>false</code></strong> — <code>If(Topic.Agreed = false, …)</code> misses the “never answered”\ncase; use <code>IsBlank</code> or <code>Topic.Agreed &lt;&gt; true</code>.</li>\n<li><strong>Order matters</strong> — the <strong>first</strong> true branch wins; put the most specific checks first.</li>\n<li>Always provide an <strong>All other conditions</strong> path so nothing falls through silently.</li>\n<li><strong>Type mismatches</strong> error out — compare a Number to a Number, not to <code>\"18\"</code> (convert with\n<code>Value(...)</code> / <code>Text(...)</code>).</li>\n<li>String compares are <strong>case-sensitive</strong> unless you normalize with <code>Lower(...)</code>/<code>Trim(...)</code>.</li>\n</ul>\n<div class=\"mermaid-shell\"><pre class=\"mermaid\" aria-label=\"Diagram\">flowchart TD\n    Q[Ask: email optional] --&gt; C{IsBlank Email?}\n    C --&gt;|true| D[Use default / re-ask]\n    C --&gt;|false| E[Continue with Email]\n</pre></div><hr />\n<h2 id=\"part-c-every-other-node-type-quick-reference\">Part C — Every other node type (quick reference)</h2>\n<div class=\"table-scroll\" role=\"region\" aria-label=\"Scrollable data table\" tabindex=\"0\"><table><thead>\n<tr>\n<th>Category</th>\n<th>Node</th>\n<th>What it does</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>Send a message</strong></td>\n<td>Send a message</td>\n<td>Agent speaks; rich content supported</td>\n</tr>\n<tr>\n<td><strong>Ask a question</strong></td>\n<td>Ask a question</td>\n<td>Collect + recognize + store input</td>\n</tr>\n<tr>\n<td><strong>Ask with adaptive card</strong></td>\n<td>Adaptive Card question</td>\n<td>Collect input via a rich card form</td>\n</tr>\n<tr>\n<td><strong>Logic</strong></td>\n<td>Add a condition</td>\n<td>Branch on a value (Power Fx)</td>\n</tr>\n<tr>\n<td><strong>Logic</strong></td>\n<td>Conditions (switch-like)</td>\n<td>Multiple branches from one value</td>\n</tr>\n<tr>\n<td><strong>Variable management</strong></td>\n<td>Set a variable value</td>\n<td>Assign a value or Power Fx formula</td>\n</tr>\n<tr>\n<td><strong>Variable management</strong></td>\n<td>Clear variable values</td>\n<td>Reset variables (e.g., on start over)</td>\n</tr>\n<tr>\n<td><strong>Variable management</strong></td>\n<td>Parse value</td>\n<td>Convert/parse text into a typed value</td>\n</tr>\n<tr>\n<td><strong>Topic management</strong></td>\n<td>Redirect</td>\n<td>Jump to another topic (optionally pass variables)</td>\n</tr>\n<tr>\n<td><strong>Topic management</strong></td>\n<td>End current topic</td>\n<td>Finish this topic</td>\n</tr>\n<tr>\n<td><strong>Topic management</strong></td>\n<td>End conversation / Transfer / Escalate</td>\n<td>Hand off to a person or close the chat</td>\n</tr>\n<tr>\n<td><strong>Call an action</strong></td>\n<td>Power Automate flow</td>\n<td>Run a flow (lookup, write to a system, send email)</td>\n</tr>\n<tr>\n<td><strong>Call an action</strong></td>\n<td>Connector / Prompt / Tool</td>\n<td>Call a connector, an AI prompt, or an agent tool</td>\n</tr>\n<tr>\n<td><strong>Advanced</strong></td>\n<td>HTTP request</td>\n<td>Call a REST API directly</td>\n</tr>\n<tr>\n<td><strong>Advanced</strong></td>\n<td>Generative answers</td>\n<td>Answer from knowledge sources with AI</td>\n</tr>\n<tr>\n<td><strong>Advanced</strong></td>\n<td>Send/Receive event, Go to step</td>\n<td>Eventing and flow control</td>\n</tr>\n</tbody>\n</table></div><blockquote>\n<p>Different categories appear under the <strong>+</strong> menu grouped exactly like the table above.</p>\n</blockquote>\n<hr />\n<h3 id=\"key-takeaways\">Key takeaways</h3>\n<ul>\n<li><strong>Message node</strong> = output (supports variables, variations, images, quick replies, Adaptive Cards).</li>\n<li><strong>Question node</strong> = input → <strong>Identify</strong> (entity) → <strong>Save to variable</strong> (slot filling).</li>\n<li>Use <strong>Multiple choice</strong> for buttons, <strong>prebuilt/custom entities</strong> to extract specific info,\n<strong>One of multiple entities</strong> when the answer could be several types.</li>\n<li><strong>Condition node</strong> = branch on a value; “null” means <strong>Blank</strong>, so use <code>IsBlank(...)</code> /\n<code>!IsBlank(...)</code> — not <code>= \"\"</code> or <code>= 0</code>.</li>\n<li><strong>Properties</strong> control reprompts, skip-if-known, validation, interruptions, and sensitive data.</li>\n</ul>\n<hr />\n<h2 id=\"official-microsoft-documentation-references\">Official Microsoft documentation (references)</h2>\n<p>The content in this section is based on the following Microsoft Learn pages:</p>\n<ul>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-send-message\" target=\"_blank\" rel=\"noreferrer\">Send a message (Message node)</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-ask-a-question\" target=\"_blank\" rel=\"noreferrer\">Ask a question (Question node)</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/voice-random-message-selection\" target=\"_blank\" rel=\"noreferrer\">Reprompt messages in a Question node</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-ask-with-adaptive-card\" target=\"_blank\" rel=\"noreferrer\">Ask with Adaptive Cards</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/adaptive-cards-overview\" target=\"_blank\" rel=\"noreferrer\">Adaptive Cards overview</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-using-conditions\" target=\"_blank\" rel=\"noreferrer\">Use conditions</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-send-event-activities\" target=\"_blank\" rel=\"noreferrer\">Send an event or activity</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/voice-hold-resume\" target=\"_blank\" rel=\"noreferrer\">Use Hold and resume</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/advanced-additional-settings-topic-action-inputs\" target=\"_blank\" rel=\"noreferrer\">Additional settings for inputs of topics and actions</a></li>\n<li><a href=\"https://learn.microsoft.com/microsoft-copilot-studio/authoring-create-edit-topics\" target=\"_blank\" rel=\"noreferrer\">Create and edit topics</a></li>\n</ul>\n<p>Next: <a href=\"#/learn/copilot-studio/entities-and-slot-filling\">05-entities-and-slot-filling.md</a></p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "Node anatomy (every node shares this)",
+      "id": "node-anatomy-every-node-shares-this"
+    },
+    {
+      "level": 2,
+      "text": "Part A — The Message node (\"Send a message\")",
+      "id": "part-a-the-message-node-send-a-message"
+    },
+    {
+      "level": 3,
+      "text": "Add one",
+      "id": "add-one"
+    },
+    {
+      "level": 3,
+      "text": "Insert a variable into a message",
+      "id": "insert-a-variable-into-a-message"
+    },
+    {
+      "level": 3,
+      "text": "Rich content the Message node supports",
+      "id": "rich-content-the-message-node-supports"
+    },
+    {
+      "level": 4,
+      "text": "Message node properties in detail",
+      "id": "message-node-properties-in-detail"
+    },
+    {
+      "level": 3,
+      "text": "Good message-writing habits",
+      "id": "good-message-writing-habits"
+    },
+    {
+      "level": 2,
+      "text": "Part B — The Question node (\"Ask a question\")",
+      "id": "part-b-the-question-node-ask-a-question"
+    },
+    {
+      "level": 3,
+      "text": "In plain English (for non-coders)",
+      "id": "in-plain-english-for-non-coders"
+    },
+    {
+      "level": 3,
+      "text": "Add one",
+      "id": "add-one-2"
+    },
+    {
+      "level": 3,
+      "text": "\"Identify\" options",
+      "id": "identify-options"
+    },
+    {
+      "level": 4,
+      "text": "Multiple choice options",
+      "id": "multiple-choice-options"
+    },
+    {
+      "level": 4,
+      "text": "User's entire response",
+      "id": "users-entire-response"
+    },
+    {
+      "level": 4,
+      "text": "Prebuilt / custom entity",
+      "id": "prebuilt-custom-entity"
+    },
+    {
+      "level": 4,
+      "text": "One of multiple entities",
+      "id": "one-of-multiple-entities"
+    },
+    {
+      "level": 3,
+      "text": "Show options as buttons",
+      "id": "show-options-as-buttons"
+    },
+    {
+      "level": 3,
+      "text": "Question node properties (behavior tuning)",
+      "id": "question-node-properties-behavior-tuning"
+    },
+    {
+      "level": 4,
+      "text": "1. Question behavior",
+      "id": "1-question-behavior"
+    },
+    {
+      "level": 4,
+      "text": "2. Entity recognition",
+      "id": "2-entity-recognition"
+    },
+    {
+      "level": 4,
+      "text": "3. Interruptions",
+      "id": "3-interruptions"
+    },
+    {
+      "level": 4,
+      "text": "4. Voice / Hold & resume (voice agents only)",
+      "id": "4-voice-hold-resume-voice-agents-only"
+    },
+    {
+      "level": 4,
+      "text": "Sensitive data",
+      "id": "sensitive-data"
+    },
+    {
+      "level": 3,
+      "text": "What it looks like under the hood (YAML)",
+      "id": "what-it-looks-like-under-the-hood-yaml"
+    },
+    {
+      "level": 2,
+      "text": "Part B.5 — The Adaptive Card question node (\"Ask with Adaptive Card\")",
+      "id": "part-b5-the-adaptive-card-question-node-ask-with-adaptive-card"
+    },
+    {
+      "level": 3,
+      "text": "How it differs from a normal Question node",
+      "id": "how-it-differs-from-a-normal-question-node"
+    },
+    {
+      "level": 3,
+      "text": "Add one",
+      "id": "add-one-3"
+    },
+    {
+      "level": 3,
+      "text": "Properties (similar to a Question node)",
+      "id": "properties-similar-to-a-question-node"
+    },
+    {
+      "level": 2,
+      "text": "Part B.6 — The Condition node (\"Add a condition\")",
+      "id": "part-b6-the-condition-node-add-a-condition"
+    },
+    {
+      "level": 3,
+      "text": "In plain English (for non-coders)",
+      "id": "in-plain-english-for-non-coders-2"
+    },
+    {
+      "level": 3,
+      "text": "How a condition is built",
+      "id": "how-a-condition-is-built"
+    },
+    {
+      "level": 3,
+      "text": "Types of checks you can add",
+      "id": "types-of-checks-you-can-add"
+    },
+    {
+      "level": 3,
+      "text": "Null / \"no value\" checks (important)",
+      "id": "null-no-value-checks-important"
+    },
+    {
+      "level": 3,
+      "text": "Blank check — common patterns",
+      "id": "blank-check-common-patterns"
+    },
+    {
+      "level": 3,
+      "text": "Useful Power Fx for conditions",
+      "id": "useful-power-fx-for-conditions"
+    },
+    {
+      "level": 3,
+      "text": "Condition node gotchas",
+      "id": "condition-node-gotchas"
+    },
+    {
+      "level": 2,
+      "text": "Part C — Every other node type (quick reference)",
+      "id": "part-c-every-other-node-type-quick-reference"
+    },
+    {
+      "level": 3,
+      "text": "Key takeaways",
+      "id": "key-takeaways"
+    },
+    {
+      "level": 2,
+      "text": "Official Microsoft documentation (references)",
+      "id": "official-microsoft-documentation-references"
+    }
+  ],
+  "hasMermaid": true,
+  "previous": {
+    "guideSlug": "copilot-studio",
+    "partKey": "building-blocks",
+    "slug": "variables-and-data-types",
+    "order": 3,
+    "title": "Variables & Data Types",
+    "summary": "Store, transform, and pass typed data through agent conversations.",
+    "type": "chapter",
+    "level": "beginner",
+    "updated": "2026-08-26",
+    "readingTime": 7,
+    "route": "#/learn/copilot-studio/variables-and-data-types",
+    "recordFile": "chapter--copilot-studio--variables-and-data-types"
+  },
+  "next": {
+    "guideSlug": "copilot-studio",
+    "partKey": "building-blocks",
+    "slug": "entities-and-slot-filling",
+    "order": 5,
+    "title": "Entities & Slot Filling",
+    "summary": "Recognize structured information and gather missing values naturally.",
+    "type": "chapter",
+    "level": "beginner",
+    "updated": "2026-08-26",
+    "readingTime": 5,
+    "route": "#/learn/copilot-studio/entities-and-slot-filling",
+    "recordFile": "chapter--copilot-studio--entities-and-slot-filling"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "slug": "the-work-begins-after-the-answer",
+  "title": "The work begins after the answer",
+  "summary": "Useful AI work starts where a fluent response ends: with decisions, actions, and evidence.",
+  "type": "essay",
+  "topic": "ai-copilot",
+  "published": "2026-08-24",
+  "updated": "2026-08-26",
+  "readingTime": 1,
+  "tags": [
+    "agents",
+    "evidence"
+  ],
+  "route": "#/read/the-work-begins-after-the-answer",
+  "recordFile": "article--the-work-begins-after-the-answer",
+  "html": "<p>A polished answer can feel complete before any useful work has happened. The real measure is whether a person can make a better decision, take a deliberate action, and inspect the evidence afterward.</p>\n<h2 id=\"fluency-is-an-opening\">Fluency is an opening</h2>\n<p>Language models are exceptionally good at creating plausible continuations. That makes the first response useful for orientation, but insufficient as proof. A builder still needs to know which source shaped the answer, what assumptions remain, and what changed in the world.</p>\n<blockquote>\n<p>Treat the answer as an interface to the work, not as the work itself.</p>\n</blockquote>\n<h2 id=\"connect-answer-to-action\">Connect answer to action</h2>\n<p>An action should be small enough to explain. Name its inputs, permission boundary, expected result, and failure state. When those details are hidden, confidence becomes guesswork.</p>\n<h2 id=\"leave-evidence-behind\">Leave evidence behind</h2>\n<p>Evidence may be a citation, a changed record, a test result, or a clear statement that nothing was changed. It gives the next reader somewhere firm to begin.</p>\n<h3 id=\"a-useful-sequence\">A useful sequence</h3>\n<ol>\n<li>Ask what decision needs support.</li>\n<li>Gather the minimum trusted context.</li>\n<li>Take the smallest authorized action.</li>\n<li>Return the result and its evidence.</li>\n<li>Leave a clear review point for a person.</li>\n</ol>\n<p>The work after the answer is where trust becomes earned rather than implied.</p>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "Fluency is an opening",
+      "id": "fluency-is-an-opening"
+    },
+    {
+      "level": 2,
+      "text": "Connect answer to action",
+      "id": "connect-answer-to-action"
+    },
+    {
+      "level": 2,
+      "text": "Leave evidence behind",
+      "id": "leave-evidence-behind"
+    },
+    {
+      "level": 3,
+      "text": "A useful sequence",
+      "id": "a-useful-sequence"
+    }
+  ],
+  "hasMermaid": false,
+  "relatedArticles": [
+    "grounding-a-useful-answer",
+    "agents-need-boundaries"
+  ]
+}

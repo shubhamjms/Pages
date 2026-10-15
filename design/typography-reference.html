@@ -1,0 +1,1249 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Typography and color reference for The Builder's Fieldnotes."
+    />
+    <title>Typography Reference | The Builder's Fieldnotes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --mist: #eef1ef;
+        --glass-white: #ffffff;
+        --ink: #17201b;
+        --muted-ink: #66706a;
+        --accent: #1f7599;
+        --accent-wash: #ddf3fc;
+        --rule: rgb(23 32 27 / 14%);
+        --font-editorial: "Source Serif 4", Georgia, serif;
+        --font-interface: "Space Grotesk", "Segoe UI", sans-serif;
+        --font-mono: "IBM Plex Mono", Consolas, monospace;
+        --home-title: 64px;
+        --home-leading: 68px;
+        --article-title: 56px;
+        --article-leading: 60px;
+        --intro-size: 22px;
+        --intro-leading: 34px;
+        --body-size: 19px;
+        --body-leading: 32px;
+        --h2-size: 34px;
+        --h2-leading: 40px;
+        --h3-size: 24px;
+        --h3-leading: 30px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        color-scheme: light;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        color: var(--ink);
+        background: linear-gradient(
+          180deg,
+          var(--mist),
+          color-mix(in srgb, var(--mist) 58%, var(--accent-wash)) 48%,
+          color-mix(in srgb, var(--mist) 96%, var(--ink))
+        );
+        background-attachment: fixed;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      :focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 3px;
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        min-height: 72px;
+        border-bottom: 1px solid rgb(255 255 255 / 78%);
+        background: linear-gradient(145deg, rgb(255 255 255 / 76%), rgb(255 255 255 / 58%));
+        box-shadow: inset 0 1px 0 rgb(255 255 255 / 78%), 0 6px 24px rgb(23 32 27 / 7%);
+        backdrop-filter: blur(24px) saturate(120%);
+      }
+
+      .header-inner,
+      main,
+      .footer-inner {
+        width: min(calc(100% - 40px), 1196px);
+        margin-inline: auto;
+      }
+
+      .header-inner {
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--ink);
+        font: 600 16px/20px var(--font-interface);
+        text-decoration: none;
+      }
+
+      .brand-mark {
+        font-size: 28px;
+        line-height: 1;
+      }
+
+      .document-kind,
+      .eyebrow,
+      .meta,
+      .token-name,
+      .size-note,
+      code {
+        font-family: var(--font-mono);
+        font-weight: 400;
+      }
+
+      .document-kind,
+      .eyebrow,
+      .meta,
+      .token-name,
+      .size-note {
+        font-size: 10px;
+        line-height: 16px;
+      }
+
+      .document-kind,
+      .meta,
+      .size-note {
+        color: var(--muted-ink);
+      }
+
+      main {
+        position: relative;
+        isolation: isolate;
+        overflow: clip;
+        padding-block: 72px 96px;
+      }
+
+      .fox-field {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+        user-select: none;
+      }
+
+      .crystal-fox {
+        position: absolute;
+        display: block;
+        font-size: var(--fox-size);
+        line-height: 1;
+        opacity: var(--fox-opacity);
+        filter: grayscale(1) sepia(0.25) hue-rotate(145deg) saturate(2.2) brightness(1.12);
+        text-shadow: -1px -1px 0 rgb(255 255 255 / 92%), 1px 1px 0 rgb(31 117 153 / 20%);
+      }
+
+      .crystal-fox::after {
+        content: "🦊";
+        position: absolute;
+        inset: 0;
+        opacity: 0.48;
+        clip-path: polygon(43% 0, 57% 0, 49% 100%, 36% 100%);
+        transform: translate(3px, -2px);
+      }
+
+      .crystal-fox--top {
+        --fox-size: clamp(320px, 24vw, 340px);
+        --fox-opacity: 0.115;
+        top: 56px;
+        right: 16px;
+      }
+
+      .crystal-fox--middle {
+        --fox-size: clamp(210px, 17vw, 240px);
+        --fox-opacity: 0.1;
+        top: 66%;
+        left: -32px;
+      }
+
+      .crystal-fox--lower {
+        --fox-size: clamp(240px, 19vw, 270px);
+        --fox-opacity: 0.1;
+        top: 88%;
+        right: -32px;
+      }
+
+      main > :not(.fox-field) {
+        position: relative;
+        z-index: 1;
+      }
+
+      .reference-intro {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+        gap: 48px;
+        padding-bottom: 52px;
+      }
+
+      .eyebrow {
+        margin: 0 0 14px;
+        color: var(--accent);
+        text-transform: uppercase;
+      }
+
+      .reference-title {
+        max-width: 800px;
+        margin: 0;
+        font: 600 64px/68px var(--font-editorial);
+      }
+
+      .reference-summary {
+        max-width: 690px;
+        margin: 20px 0 0;
+        color: var(--muted-ink);
+        font: 400 22px/34px var(--font-editorial);
+      }
+
+      .scale-control {
+        align-self: end;
+      }
+
+      .scale-control-label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--muted-ink);
+        font: 500 12px/16px var(--font-interface);
+      }
+
+      .segmented-control {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2px;
+        min-width: 270px;
+        padding: 3px;
+        border: 1px solid rgb(255 255 255 / 78%);
+        border-radius: 6px;
+        background: rgb(255 255 255 / 58%);
+        box-shadow: inset 0 1px 0 white, 0 8px 24px rgb(23 32 27 / 8%);
+        backdrop-filter: blur(20px) saturate(120%);
+      }
+
+      .scale-button {
+        min-height: 40px;
+        padding: 0 14px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        color: var(--muted-ink);
+        background: transparent;
+        cursor: pointer;
+        font: 500 13px/18px var(--font-interface);
+      }
+
+      .scale-button[aria-pressed="true"] {
+        border-color: var(--rule);
+        color: var(--accent);
+        background: white;
+      }
+
+      .reference-section {
+        padding-block: 56px;
+        border-top: 1px solid var(--rule);
+      }
+
+      .section-heading-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+      }
+
+      .section-heading {
+        margin: 0;
+        font: 600 28px/34px var(--font-interface);
+      }
+
+      .font-row {
+        display: grid;
+        grid-template-columns: 160px minmax(0, 1fr) 170px;
+        align-items: center;
+        gap: 32px;
+        min-height: 150px;
+        padding-block: 26px;
+        border-top: 1px solid var(--rule);
+      }
+
+      .font-row:last-child {
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .font-name {
+        margin: 0 0 6px;
+        font: 600 18px/24px var(--font-interface);
+      }
+
+      .font-use {
+        margin: 0;
+        color: var(--muted-ink);
+        font: 400 10px/16px var(--font-mono);
+      }
+
+      .font-glyphs {
+        min-width: 0;
+        margin: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .font-glyphs.serif {
+        font: 600 46px/52px var(--font-editorial);
+      }
+
+      .font-glyphs.sans {
+        font: 600 38px/46px var(--font-interface);
+      }
+
+      .font-glyphs.mono {
+        font: 400 24px/34px var(--font-mono);
+      }
+
+      .font-role {
+        margin: 0;
+        color: var(--muted-ink);
+        font: 400 13px/20px var(--font-interface);
+      }
+
+      .home-preview {
+        display: grid;
+        grid-template-columns: minmax(0, 1.75fr) minmax(240px, 0.75fr);
+        border-block: 1px solid var(--rule);
+        background: rgb(255 255 255 / 28%);
+      }
+
+      .lead-reading,
+      .field-note {
+        padding: 44px;
+      }
+
+      .field-note {
+        border-left: 1px solid var(--rule);
+        background: rgb(255 255 255 / 52%);
+      }
+
+      .lead-title {
+        max-width: 760px;
+        margin: 20px 0;
+        font-family: var(--font-editorial);
+        font-size: var(--home-title);
+        font-weight: 600;
+        line-height: var(--home-leading);
+      }
+
+      .lead-summary {
+        max-width: 620px;
+        margin: 0;
+        color: var(--muted-ink);
+        font-family: var(--font-editorial);
+        font-size: var(--intro-size);
+        font-weight: 400;
+        line-height: var(--intro-leading);
+      }
+
+      .field-note-title {
+        margin: 0 0 38px;
+        font: 500 13px/18px var(--font-interface);
+      }
+
+      .field-sequence {
+        display: grid;
+        gap: 8px;
+        margin: 0;
+        font: 600 16px/22px var(--font-interface);
+      }
+
+      .field-sequence span:nth-child(even) {
+        color: var(--accent);
+        font-size: 18px;
+        font-weight: 500;
+      }
+
+      .article-preview {
+        max-width: 960px;
+        margin-inline: auto;
+        padding: 56px clamp(28px, 7vw, 112px) 64px;
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        background: white;
+        box-shadow: 0 16px 44px rgb(23 32 27 / 8%);
+      }
+
+      .article-title {
+        max-width: 760px;
+        margin: 20px 0 18px;
+        font-family: var(--font-editorial);
+        font-size: var(--article-title);
+        font-weight: 600;
+        line-height: var(--article-leading);
+      }
+
+      .article-intro {
+        max-width: 700px;
+        margin: 0 0 20px;
+        color: var(--muted-ink);
+        font-family: var(--font-editorial);
+        font-size: var(--intro-size);
+        line-height: var(--intro-leading);
+      }
+
+      .article-meta {
+        margin: 0 0 42px;
+      }
+
+      .reading-column {
+        max-width: 720px;
+      }
+
+      .reading-column h2 {
+        margin: 48px 0 14px;
+        font-family: var(--font-editorial);
+        font-size: var(--h2-size);
+        font-weight: 600;
+        line-height: var(--h2-leading);
+      }
+
+      .reading-column h3 {
+        margin: 36px 0 10px;
+        font-family: var(--font-interface);
+        font-size: var(--h3-size);
+        font-weight: 600;
+        line-height: var(--h3-leading);
+      }
+
+      .reading-column p {
+        margin: 0 0 22px;
+        font-family: var(--font-editorial);
+        font-size: var(--body-size);
+        line-height: var(--body-leading);
+      }
+
+      .reading-column a,
+      .sample-link {
+        color: var(--accent);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+      }
+
+      .inline-code {
+        padding: 2px 5px;
+        border: 1px solid var(--rule);
+        border-radius: 3px;
+        background: var(--mist);
+        font: 400 14px/22px var(--font-mono);
+      }
+
+      .interface-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+        gap: 48px;
+        align-items: start;
+      }
+
+      .interface-demo,
+      .metadata-demo {
+        padding-block: 30px;
+        border-block: 1px solid var(--rule);
+      }
+
+      .ui-title {
+        margin: 12px 0 22px;
+        font: 600 28px/34px var(--font-interface);
+      }
+
+      .nav-row,
+      .action-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .nav-row {
+        margin-bottom: 28px;
+      }
+
+      .nav-link {
+        padding: 8px 0;
+        color: var(--ink);
+        font: 500 14px/20px var(--font-interface);
+        text-decoration: none;
+      }
+
+      .nav-link + .nav-link {
+        margin-left: 18px;
+      }
+
+      .nav-link.active {
+        color: var(--accent);
+        box-shadow: inset 0 -2px var(--accent);
+      }
+
+      .action-button {
+        min-height: 44px;
+        padding: 0 16px;
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        color: var(--ink);
+        background: white;
+        font: 500 14px/20px var(--font-interface);
+      }
+
+      .action-button.primary {
+        border-color: var(--accent);
+        color: white;
+        background: var(--accent);
+      }
+
+      .metadata-list {
+        display: grid;
+        gap: 14px;
+        margin: 22px 0 0;
+      }
+
+      .metadata-line {
+        display: grid;
+        grid-template-columns: 118px 1fr;
+        gap: 16px;
+        margin: 0;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--rule);
+        font: 400 10px/16px var(--font-mono);
+      }
+
+      .metadata-line dt {
+        color: var(--muted-ink);
+      }
+
+      .metadata-line dd {
+        margin: 0;
+        color: var(--ink);
+      }
+
+      .swatch-grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .swatch {
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        background: white;
+      }
+
+      .swatch-color {
+        min-height: 116px;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .swatch-copy {
+        padding: 16px;
+      }
+
+      .swatch-copy p {
+        margin: 5px 0 0;
+        color: var(--muted-ink);
+        font: 400 12px/18px var(--font-interface);
+      }
+
+      .contrast-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .contrast-sample {
+        display: flex;
+        min-height: 120px;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 18px;
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        font: 500 14px/20px var(--font-interface);
+      }
+
+      .contrast-sample strong {
+        font: 400 10px/16px var(--font-mono);
+      }
+
+      .on-mist {
+        color: var(--ink);
+        background: var(--mist);
+      }
+
+      .muted-on-mist {
+        color: var(--muted-ink);
+        background: var(--mist);
+      }
+
+      .accent-on-mist {
+        color: var(--accent);
+        background: var(--mist);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      .on-accent {
+        color: white;
+        background: var(--accent);
+      }
+
+      .scale-table-wrap {
+        overflow-x: auto;
+        border-block: 1px solid var(--rule);
+      }
+
+      .scale-table {
+        width: 100%;
+        min-width: 700px;
+        border-collapse: collapse;
+        text-align: left;
+      }
+
+      .scale-table caption {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+
+      .scale-table th,
+      .scale-table td {
+        padding: 15px 18px;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .scale-table th {
+        color: var(--muted-ink);
+        font: 400 10px/16px var(--font-mono);
+      }
+
+      .scale-table td {
+        font: 500 14px/20px var(--font-interface);
+      }
+
+      .scale-table td:not(:first-child) {
+        font-family: var(--font-mono);
+        font-size: 12px;
+      }
+
+      .scale-table tr[data-active="true"] td {
+        color: var(--accent);
+        background: rgb(255 255 255 / 52%);
+      }
+
+      footer {
+        border-top: 1px solid var(--rule);
+        background: rgb(255 255 255 / 42%);
+      }
+
+      .footer-inner {
+        min-height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        color: var(--muted-ink);
+        font: 400 10px/16px var(--font-mono);
+      }
+
+      [data-scale="mobile"] {
+        --home-title: 40px;
+        --home-leading: 44px;
+        --article-title: 38px;
+        --article-leading: 42px;
+        --intro-size: 20px;
+        --intro-leading: 30px;
+        --body-size: 18px;
+        --body-leading: 30px;
+        --h2-size: 28px;
+        --h2-leading: 34px;
+        --h3-size: 22px;
+        --h3-leading: 28px;
+      }
+
+      [data-scale="tablet"] {
+        --home-title: 52px;
+        --home-leading: 58px;
+        --article-title: 48px;
+        --article-leading: 52px;
+        --intro-size: 22px;
+        --intro-leading: 34px;
+        --body-size: 19px;
+        --body-leading: 32px;
+        --h2-size: 34px;
+        --h2-leading: 40px;
+        --h3-size: 24px;
+        --h3-leading: 30px;
+      }
+
+      @supports not (backdrop-filter: blur(1rem)) {
+        .site-header,
+        .segmented-control {
+          background: rgb(255 255 255 / 96%);
+        }
+      }
+
+      @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+        .fox-field {
+          display: none;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .reference-intro,
+        .interface-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .scale-control {
+          justify-self: start;
+        }
+
+        .font-row {
+          grid-template-columns: 140px 1fr;
+        }
+
+        .font-role {
+          grid-column: 2;
+        }
+
+        .home-preview {
+          grid-template-columns: 1fr;
+        }
+
+        .field-note {
+          border-top: 1px solid var(--rule);
+          border-left: 0;
+        }
+
+        .swatch-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .contrast-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 620px) {
+        .header-inner,
+        main,
+        .footer-inner {
+          width: min(calc(100% - 32px), 1196px);
+        }
+
+        .document-kind {
+          display: none;
+        }
+
+        main {
+          padding-block: 48px 72px;
+        }
+
+        .crystal-fox--top {
+          --fox-size: 208px;
+          --fox-opacity: 0.095;
+          top: 32px;
+          right: -56px;
+        }
+
+        .crystal-fox--middle {
+          --fox-size: 148px;
+          --fox-opacity: 0.08;
+          left: -56px;
+        }
+
+        .crystal-fox--lower {
+          --fox-size: 168px;
+          --fox-opacity: 0.085;
+          right: -64px;
+        }
+
+        .reference-title {
+          font-size: 40px;
+          line-height: 44px;
+        }
+
+        .reference-summary {
+          font-size: 20px;
+          line-height: 30px;
+        }
+
+        .segmented-control {
+          width: 100%;
+          min-width: 0;
+        }
+
+        .section-heading-row {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .font-row {
+          grid-template-columns: 1fr;
+          gap: 18px;
+        }
+
+        .font-role {
+          grid-column: 1;
+        }
+
+        .font-glyphs.serif {
+          font-size: 38px;
+          line-height: 44px;
+        }
+
+        .font-glyphs.sans {
+          font-size: 32px;
+          line-height: 40px;
+        }
+
+        .font-glyphs.mono {
+          font-size: 19px;
+          line-height: 30px;
+        }
+
+        .lead-reading,
+        .field-note {
+          padding: 30px 24px;
+        }
+
+        .article-preview {
+          padding: 38px 24px 46px;
+        }
+
+        .swatch-grid,
+        .contrast-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .swatch-color {
+          min-height: 88px;
+        }
+
+        .footer-inner {
+          min-height: 76px;
+          align-items: flex-start;
+          flex-direction: column;
+          justify-content: center;
+          gap: 4px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="#top" aria-label="The Builder's Fieldnotes typography reference">
+          <span class="brand-mark" aria-hidden="true">🦊</span>
+          <span>The Builder's Fieldnotes</span>
+        </a>
+        <span class="document-kind">TYPOGRAPHY / COLOR REFERENCE</span>
+      </div>
+    </header>
+
+    <main id="top" data-scale="wide">
+      <div class="fox-field" aria-hidden="true">
+        <span class="crystal-fox crystal-fox--top">🦊</span>
+        <span class="crystal-fox crystal-fox--middle">🦊</span>
+        <span class="crystal-fox crystal-fox--lower">🦊</span>
+      </div>
+      <section class="reference-intro" aria-labelledby="reference-title">
+        <div>
+          <p class="eyebrow">Visual system / August 2026</p>
+          <h1 class="reference-title" id="reference-title">Type with a reading voice.</h1>
+          <p class="reference-summary">
+            Warm serif reading, precise interface labels, and technical metadata share one quiet field-note palette.
+          </p>
+        </div>
+
+        <div class="scale-control">
+          <span class="scale-control-label">Preview responsive scale</span>
+          <div class="segmented-control" role="group" aria-label="Preview responsive typography size">
+            <button class="scale-button" type="button" data-scale-button="mobile" aria-pressed="false">Mobile</button>
+            <button class="scale-button" type="button" data-scale-button="tablet" aria-pressed="false">Tablet</button>
+            <button class="scale-button" type="button" data-scale-button="wide" aria-pressed="true">Wide</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="reference-section" aria-labelledby="families-heading">
+        <div class="section-heading-row">
+          <h2 class="section-heading" id="families-heading">The three voices</h2>
+          <span class="size-note">THREE FAMILIES / FIVE LOADED WEIGHTS</span>
+        </div>
+
+        <div class="font-row">
+          <div>
+            <h3 class="font-name">Source Serif 4</h3>
+            <p class="font-use">400 / 600</p>
+          </div>
+          <p class="font-glyphs serif">Answers need evidence.</p>
+          <p class="font-role">Editorial titles, article prose, quotations, and reading cards.</p>
+        </div>
+
+        <div class="font-row">
+          <div>
+            <h3 class="font-name">Space Grotesk</h3>
+            <p class="font-use">500 / 600</p>
+          </div>
+          <p class="font-glyphs sans">BUILD · TEST · FOLLOW</p>
+          <p class="font-role">Navigation, buttons, labels, controls, and interface headings.</p>
+        </div>
+
+        <div class="font-row">
+          <div>
+            <h3 class="font-name">IBM Plex Mono</h3>
+            <p class="font-use">400</p>
+          </div>
+          <p class="font-glyphs mono">ISSUE_08 / 14_MIN / v2.4.0</p>
+          <p class="font-role">Dates, versions, counters, metadata, and code.</p>
+        </div>
+      </section>
+
+      <section class="reference-section" aria-labelledby="home-heading">
+        <div class="section-heading-row">
+          <h2 class="section-heading" id="home-heading">Home editorial pairing</h2>
+          <span class="size-note" data-size-readout="home">64 / 68 PX</span>
+        </div>
+
+        <div class="home-preview">
+          <article class="lead-reading">
+            <p class="eyebrow">AI + Copilot</p>
+            <h3 class="lead-title">The work begins after the answer.</h3>
+            <p class="lead-summary">
+              Useful AI work is not measured by the first response. It is measured by the action, evidence, and judgment that follow.
+            </p>
+            <p class="meta">14 MIN READ / AUG 24, 2026</p>
+          </article>
+
+          <aside class="field-note" aria-label="Field note sequence">
+            <p class="field-note-title">Field note / 024</p>
+            <p class="field-sequence">
+              <span>ANSWER</span>
+              <span aria-hidden="true">↓</span>
+              <span>ACTION</span>
+              <span aria-hidden="true">↓</span>
+              <span>EVIDENCE</span>
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="reference-section" aria-labelledby="article-heading">
+        <div class="section-heading-row">
+          <h2 class="section-heading" id="article-heading">Article reading sample</h2>
+          <span class="size-note" data-size-readout="article">56 / 60 PX TITLE</span>
+        </div>
+
+        <article class="article-preview">
+          <p class="eyebrow">Guide / Intermediate</p>
+          <h3 class="article-title">Build a grounded action in Copilot Studio</h3>
+          <p class="article-intro">
+            Connect a useful answer to trusted data, a deliberate action, and evidence the reader can inspect.
+          </p>
+          <p class="meta article-meta">24 MIN / UPDATED AUG 26, 2026 / AI + COPILOT</p>
+
+          <div class="reading-column">
+            <p>
+              A fluent answer can still be incomplete. Grounding gives the response a source, but the reader also needs to understand what happened next and why the result deserves trust.
+            </p>
+            <h2>Begin with the decision</h2>
+            <p>
+              Start by naming the decision the action supports. Then identify the smallest piece of data required to make that decision well. This keeps the implementation focused and makes the resulting evidence easier to read.
+            </p>
+            <h3>Connect the source</h3>
+            <p>
+              Keep configuration names explicit, use a stable <span class="inline-code">sourceId</span>, and provide a visible path back to the source. Read the <a href="#scale-heading">responsive scale</a> before finalizing the page.
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <section class="reference-section" aria-labelledby="interface-heading">
+        <div class="section-heading-row">
+          <h2 class="section-heading" id="interface-heading">Interface and metadata</h2>
+          <span class="size-note">SPACE GROTESK + IBM PLEX MONO</span>
+        </div>
+
+        <div class="interface-grid">
+          <div class="interface-demo">
+            <p class="eyebrow">Interface sample</p>
+            <h3 class="ui-title">Find the next useful field note</h3>
+            <nav class="nav-row" aria-label="Sample navigation">
+              <a class="nav-link active" href="#interface-heading">Home</a>
+              <a class="nav-link" href="#article-heading">Library</a>
+              <a class="nav-link" href="#color-heading">Topics</a>
+            </nav>
+            <div class="action-row">
+              <button class="action-button primary" type="button">Open article</button>
+              <button class="action-button" type="button">Save for later</button>
+            </div>
+          </div>
+
+          <div class="metadata-demo">
+            <p class="eyebrow">Metadata sample</p>
+            <dl class="metadata-list">
+              <div class="metadata-line">
+                <dt>PUBLISHED</dt>
+                <dd>2026-08-24</dd>
+              </div>
+              <div class="metadata-line">
+                <dt>READING TIME</dt>
+                <dd>14 MIN</dd>
+              </div>
+              <div class="metadata-line">
+                <dt>VERSION</dt>
+                <dd>v2.4.0 / STABLE</dd>
+              </div>
+              <div class="metadata-line">
+                <dt>ROUTE</dt>
+                <dd>#/read/grounded-action</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <section class="reference-section" aria-labelledby="color-heading">
+        <div class="section-heading-row">
+          <h2 class="section-heading" id="color-heading">Color field</h2>
+          <span class="size-note">ONE ACCENT / NEUTRAL SURFACES</span>
+        </div>
+
+        <div class="swatch-grid">
+          <article class="swatch">
+            <div class="swatch-color" style="background: #eef1ef"></div>
+            <div class="swatch-copy">
+              <span class="token-name">MIST / #EEF1EF</span>
+              <p>Page canvas</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch-color" style="background: #ffffff"></div>
+            <div class="swatch-copy">
+              <span class="token-name">WHITE / #FFFFFF</span>
+              <p>Reading surface</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch-color" style="background: #17201b"></div>
+            <div class="swatch-copy">
+              <span class="token-name">INK / #17201B</span>
+              <p>Primary text</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch-color" style="background: #66706a"></div>
+            <div class="swatch-copy">
+              <span class="token-name">MUTED / #66706A</span>
+              <p>Supporting text</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch-color" style="background: #1f7599"></div>
+            <div class="swatch-copy">
+              <span class="token-name">SKY / #1F7599</span>
+              <p>Links and active states</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch-color" style="background: #ddf3fc"></div>
+            <div class="swatch-copy">
+              <span class="token-name">WASH / #DDF3FC</span>
+              <p>Crystal highlights</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="contrast-grid" aria-label="Text contrast samples">
+          <div class="contrast-sample on-mist">
+            <span>Primary reading text</span>
+            <strong>INK ON MIST / 14.67:1</strong>
+          </div>
+          <div class="contrast-sample muted-on-mist">
+            <span>Supporting context</span>
+            <strong>MUTED ON MIST / 4.51:1</strong>
+          </div>
+          <div class="contrast-sample accent-on-mist">
+            <span>Open the source</span>
+            <strong>ACCENT ON MIST / 4.54:1</strong>
+          </div>
+          <div class="contrast-sample on-accent">
+            <span>Active control</span>
+            <strong>WHITE ON ACCENT / 5.17:1</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="reference-section" aria-labelledby="scale-heading">
+        <div class="section-heading-row">
+          <h2 class="section-heading" id="scale-heading">Responsive type scale</h2>
+          <span class="size-note">FONT SIZE / LINE HEIGHT</span>
+        </div>
+
+        <div class="scale-table-wrap">
+          <table class="scale-table">
+            <caption>Responsive typography values by role</caption>
+            <thead>
+              <tr>
+                <th scope="col">Role</th>
+                <th scope="col">Font</th>
+                <th scope="col">Mobile</th>
+                <th scope="col">Tablet</th>
+                <th scope="col">Wide</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Home lead</td>
+                <td>Source Serif 4 / 600</td>
+                <td>40 / 44</td>
+                <td>52 / 58</td>
+                <td>64 / 68</td>
+              </tr>
+              <tr>
+                <td>Article title</td>
+                <td>Source Serif 4 / 600</td>
+                <td>38 / 42</td>
+                <td>48 / 52</td>
+                <td>56 / 60</td>
+              </tr>
+              <tr>
+                <td>Introduction</td>
+                <td>Source Serif 4 / 400</td>
+                <td>20 / 30</td>
+                <td>22 / 34</td>
+                <td>22 / 34</td>
+              </tr>
+              <tr>
+                <td>Article body</td>
+                <td>Source Serif 4 / 400</td>
+                <td>18 / 30</td>
+                <td>19 / 32</td>
+                <td>19 / 32</td>
+              </tr>
+              <tr>
+                <td>Interface heading</td>
+                <td>Space Grotesk / 600</td>
+                <td>24 / 30</td>
+                <td>28 / 34</td>
+                <td>28 / 34</td>
+              </tr>
+              <tr>
+                <td>Metadata</td>
+                <td>IBM Plex Mono / 400</td>
+                <td>10 / 16</td>
+                <td>10 / 16</td>
+                <td>10 / 16</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-inner">
+        <span>THE BUILDER'S FIELDNOTES / TYPE REFERENCE</span>
+        <span>Source Serif 4 · Space Grotesk · IBM Plex Mono</span>
+      </div>
+    </footer>
+
+    <script>
+      const main = document.querySelector("main");
+      const buttons = [...document.querySelectorAll("[data-scale-button]")];
+      const readouts = [...document.querySelectorAll("[data-size-readout]")];
+
+      const scaleValues = {
+        mobile: {
+          home: "40 / 44 PX",
+          article: "38 / 42 PX TITLE",
+        },
+        tablet: {
+          home: "52 / 58 PX",
+          article: "48 / 52 PX TITLE",
+        },
+        wide: {
+          home: "64 / 68 PX",
+          article: "56 / 60 PX TITLE",
+        },
+      };
+
+      function setScale(scale) {
+        main.dataset.scale = scale;
+
+        buttons.forEach((button) => {
+          button.setAttribute("aria-pressed", String(button.dataset.scaleButton === scale));
+        });
+
+        readouts.forEach((readout) => {
+          readout.textContent = scaleValues[scale][readout.dataset.sizeReadout];
+        });
+      }
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => setScale(button.dataset.scaleButton));
+      });
+
+      if (window.matchMedia("(max-width: 47.99rem)").matches) {
+        setScale("mobile");
+      } else if (window.matchMedia("(max-width: 74.99rem)").matches) {
+        setScale("tablet");
+      }
+    </script>
+  </body>
+</html>

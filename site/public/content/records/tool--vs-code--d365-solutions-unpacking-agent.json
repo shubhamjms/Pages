@@ -1,0 +1,171 @@
+{
+  "categorySlug": "vs-code",
+  "slug": "d365-solutions-unpacking-agent",
+  "key": "vs-code/d365-solutions-unpacking-agent",
+  "title": "PowerApps Solution Packager",
+  "summary": "Export, download, and unpack Power Apps and Dataverse solutions from a dedicated VS Code sidebar without deleting existing files.",
+  "kind": "extension",
+  "platforms": [
+    "vscode",
+    "windows",
+    "power-platform",
+    "dynamics-365",
+    "dataverse"
+  ],
+  "version": "2.0.1",
+  "status": "stable",
+  "updated": "2026-10-08",
+  "route": "#/tools/vs-code/d365-solutions-unpacking-agent",
+  "recordFile": "tool--vs-code--d365-solutions-unpacking-agent",
+  "titleImage": "./content/tools/vs-code/d365-solutions-unpacking-agent/icon-powerapps-package.png",
+  "categoryTitle": "VS Code Extensions",
+  "presentation": "product",
+  "latestReleaseSummary": "Version 2.0.1 improves prerequisite guidance, inline validation, and sidebar layout behavior.",
+  "html": "<h2 id=\"overview\">Overview</h2>\n<p><strong>PowerApps Solution Packager</strong> is a sidebar-first VS Code extension for moving Dynamics 365 and Dataverse solutions into source control. It supports an offline workflow for solution archives already on disk and an online workflow that signs in, exports a solution through the Dataverse Web API, downloads it, and optionally unpacks it.</p>\n<p>Every extraction runs <code>SolutionPackager.exe</code> with <code>/allowDelete:No</code>. Files already present in the destination but absent from the solution archive are preserved.</p>\n<h2 id=\"why-it-exists\">Why it exists</h2>\n<p>Power Platform solution work often requires developers to move between environment authentication, solution export, file downloads, command-line tools, and destination folders. PowerApps Solution Packager brings those dependencies into one guided Activity Bar view.</p>\n<p>The sidebar orders the workflow around the shared SolutionPackager engine, then offline unpacking, followed by online authentication and download or unpack operations. Status borders, progress reporting, an Activity log, and quick folder access keep the current state visible.</p>\n<h2 id=\"useful-for\">Useful for</h2>\n<ul>\n<li>Unpacking a local solution <code>.zip</code> without signing in.</li>\n<li>Securely authenticating to Dynamics 365 or Dataverse with MSAL and PKCE.</li>\n<li>Listing environment solutions and exporting them as managed or unmanaged.</li>\n<li>Downloading a solution archive without unpacking it.</li>\n<li>Exporting and unpacking a solution in one guided operation.</li>\n<li>Preserving existing destination files during repeated exports.</li>\n<li>Using either an extension-managed or custom <code>SolutionPackager.exe</code>.</li>\n</ul>\n<h2 id=\"key-capabilities\">Key capabilities</h2>\n<h3 id=\"offline-unpack\">Offline unpack</h3>\n<p>Choose a local solution archive, select its managed or unmanaged type, and unpack it into a destination folder. This path requires SolutionPackager but does not require an environment or authentication.</p>\n<h3 id=\"online-download-and-unpack\">Online download and unpack</h3>\n<p>Sign in through the browser, select a solution, and export it through the Dataverse <code>ExportSolution</code> action. Choose <strong>Download only</strong> to retain the <code>.zip</code>, or <strong>Download &amp; Unpack</strong> to extract it into source-controlled files.</p>\n<h3 id=\"secure-authentication\">Secure authentication</h3>\n<p>Authentication uses the MSAL authorization-code flow with PKCE and a loopback redirect. The logical session is cached for up to 24 hours and ends on sign-out, when that limit is reached, or when Microsoft Entra ID expires the refresh token.</p>\n<h3 id=\"managed-solutionpackager\">Managed SolutionPackager</h3>\n<p>The extension downloads <code>Microsoft.CrmSdk.CoreTools</code> from NuGet, caches <code>SolutionPackager.exe</code> and its dependencies in VS Code global storage, displays the installed version, checks for updates, and supports one-click updates.</p>\n<p>A custom executable can be selected when machine policy blocks the managed copy. The extension validates the executable name, Windows signature, product identity, and required adjacent SDK assemblies before using it.</p>\n<h3 id=\"progress-and-safety\">Progress and safety</h3>\n<p>Each workflow card displays success or error state through its side border. During a run, setup cards collapse to keep the Activity log in focus, a determinate progress bar reports the current phase, and <strong>Open folder</strong> reveals the result.</p>\n<h2 id=\"extension-identity-and-workflow\">Extension identity and workflow</h2>\n<p><img src=\"./content/tools/vs-code/d365-solutions-unpacking-agent/icon-powerapps-package-preview.png\" alt=\"PowerApps Solution Packager extension logo\" loading=\"lazy\" /></p>\n<p>The extension’s CodeFox helper uses the same workflow language shown in the sidebar:</p>\n<ol>\n<li>🦊 → 🚪 <strong>Authenticate</strong> — securely sign in to the target environment.</li>\n<li>🦊 → 🔎 <strong>Discover</strong> — load and search the available solutions.</li>\n<li>🦊 📦 <strong>Export</strong> — ask Dataverse to build the selected solution package.</li>\n<li>🦊 📦 <strong>Download</strong> — save the returned archive to the selected location.</li>\n<li>🦊 → 🧰 <strong>Prepare</strong> — validate or provision SolutionPackager.</li>\n<li>🦊 📂 <strong>Unpack</strong> — extract the solution into source files without deleting existing files.</li>\n</ol>\n<h2 id=\"installation\">Installation</h2>\n<p>Install <strong>PowerApps Solution Packager</strong> from the Visual Studio Marketplace. Its extension identifier is <code>codefox.d365-solutions-unpacking-agent-vscode</code>, and it supports VS Code 1.90.0 and newer.</p>\n<p>You can also install it from the command line:</p>\n<pre aria-label=\"text code sample\"><code class=\"language-text\">code --install-extension codefox.d365-solutions-unpacking-agent-vscode\n</code></pre>\n<h2 id=\"usage\">Usage</h2>\n<h3 id=\"offline-workflow\">Offline workflow</h3>\n<ol>\n<li>Open <strong>PowerApps Solution Packager</strong> from the Activity Bar.</li>\n<li>Set up the managed SolutionPackager or select a custom executable.</li>\n<li>Choose a solution <code>.zip</code> already on disk.</li>\n<li>Select <strong>Managed</strong> or <strong>Unmanaged</strong> to match the archive.</li>\n<li>Choose the extraction folder and start unpacking.</li>\n</ol>\n<h3 id=\"online-workflow\">Online workflow</h3>\n<ol>\n<li>Authenticate to the target Dynamics 365 or Dataverse environment.</li>\n<li>Load and select a solution.</li>\n<li>Choose managed or unmanaged export.</li>\n<li>Select a download folder.</li>\n<li>Choose <strong>Download only</strong> or <strong>Download &amp; Unpack</strong>.</li>\n<li>For unpacking, select the destination folder and start the run.</li>\n</ol>\n<p>The online unpack path ultimately runs:</p>\n<pre aria-label=\"text code sample\"><code class=\"language-text\">SolutionPackager.exe /action:Extract /zipfile:&lt;downloaded.zip&gt; /folder:&lt;extract-folder&gt; /packagetype:&lt;Managed|Unmanaged&gt; /allowWrite:Yes /allowDelete:No /errorlevel:Info /nologo\n</code></pre>\n<h2 id=\"configuration\">Configuration</h2>\n<ul>\n<li><code>d365UnpackingAgent.auth.clientId</code> and <code>tenantId</code> control the public-client application and tenant used for sign-in.</li>\n<li><code>d365UnpackingAgent.auth.sessionLifetimeHours</code> allows 1–24 hours and defaults to 24.</li>\n<li><code>d365UnpackingAgent.solutionPackager.pathOverride</code> selects a custom <code>SolutionPackager.exe</code>.</li>\n<li><code>d365UnpackingAgent.solutionPackager.nugetPackageId</code> defaults to <code>Microsoft.CrmSdk.CoreTools</code>.</li>\n<li><code>d365UnpackingAgent.apiVersion</code> defaults to Dataverse Web API <code>v9.2</code>.</li>\n<li><code>d365UnpackingAgent.notifications</code> supports all, important, or silent desktop notifications. The in-view status footer and Activity log remain available in every mode.</li>\n</ul>\n<h2 id=\"release-notes\">Release notes</h2>\n<h3 id=\"version-201-8-october-2026\">Version 2.0.1 — 8 October 2026</h3>\n<p><strong>Interaction and validation</strong></p>\n<ul>\n<li>Kept idle actions available so selecting an unavailable workflow now explains the missing prerequisite instead of presenting only a disabled control.</li>\n<li>Added consolidated guidance for missing authentication, SolutionPackager setup, and required fields.</li>\n<li>Clear field-level and section-level errors as users correct folders, solutions, and other inputs.</li>\n<li>Improved online and offline prerequisite messages, including guidance to use <strong>Download only</strong> when SolutionPackager is not required.</li>\n</ul>\n<p><strong>Layout</strong></p>\n<ul>\n<li>Improved long-label handling with constrained widths, truncation, and safer wrapping in the sidebar.</li>\n<li>Refined CodeFox helper layout behavior alongside the updated form interactions.</li>\n</ul>\n<h3 id=\"version-200-8-october-2026\">Version 2.0.0 — 8 October 2026</h3>\n<p><strong>Product identity</strong></p>\n<ul>\n<li>Renamed the extension from <strong>D365 CRM Solutions Unpacking Agent</strong> to <strong>PowerApps Solution Packager</strong>.</li>\n<li>Introduced the Power Apps package logo used by the Marketplace, Activity Bar, sidebar, and extension page.</li>\n<li>Updated commands, configuration labels, window titles, and sign-in status text to use the new product name.</li>\n</ul>\n<p><strong>Documentation</strong></p>\n<ul>\n<li>Updated the README, developer guide, and feature backlog to match the new identity while retaining the existing extension identifier for compatibility.</li>\n</ul>\n<h3 id=\"version-156-29-september-2026\">Version 1.5.6 — 29 September 2026</h3>\n<p><strong>Sidebar polish</strong></p>\n<ul>\n<li>Corrected the managed/unmanaged archive warning layout so its explanatory text aligns and wraps consistently.</li>\n<li>Improved supporting message presentation without changing the underlying unpack workflow.</li>\n</ul>\n<h3 id=\"version-155-24-september-2026\">Version 1.5.5 — 24 September 2026</h3>\n<p><strong>Offline unpacking</strong></p>\n<ul>\n<li>Added a complete offline path for unpacking a local solution <code>.zip</code> without authentication or an environment.</li>\n<li>Reused the same managed or custom SolutionPackager setup used by online operations.</li>\n</ul>\n<p><strong>Guided sidebar</strong></p>\n<ul>\n<li>Reorganized the sidebar by dependency: SolutionPackager, Offline unpack, then Online unpack with Authentication and Download &amp; Unpack steps.</li>\n<li>Added a read-only environment URL synchronized with the active sign-in and reset the form when the environment changes.</li>\n<li>Added green and red status borders to workflow cards.</li>\n<li>Collapsed setup cards during active runs so the Activity log stays visible.</li>\n</ul>\n<p><strong>Run feedback</strong></p>\n<ul>\n<li>Added determinate progress reporting and an <strong>Open folder</strong> action on completion.</li>\n<li>Ensured Download-only mode clears the hidden unpack destination.</li>\n</ul>\n<h3 id=\"version-145-15-september-2026\">Version 1.4.5 — 15 September 2026</h3>\n<p><strong>Download modes</strong></p>\n<ul>\n<li>Added an explicit choice between <strong>Download only</strong> and <strong>Download &amp; Unpack</strong>.</li>\n<li>Made the extraction folder conditional so it is required only when unpacking.</li>\n<li>Updated form state and validation to follow the selected mode.</li>\n</ul>\n<h2 id=\"roadmap\">Roadmap</h2>\n<p>These items come from the project’s feature backlog. They are ideas under consideration, not committed release dates or guarantees.</p>\n<h3 id=\"near-term-candidates\">Near-term candidates</h3>\n<ul>\n<li><strong>Zip retention policy</strong> — support overwrite, timestamped archives, and keeping the most recent N exports per solution.</li>\n<li><strong>Advanced SolutionPackager options</strong> — expose localization, map files, log files, and configurable error levels.</li>\n</ul>\n<h3 id=\"workflow-expansion\">Workflow expansion</h3>\n<ul>\n<li><strong>Multi-solution batch runs</strong> — export a selected set of solutions with per-solution progress and failure summaries.</li>\n<li><strong>Managed and unmanaged in one run</strong> — export both package types to separate archives and folders.</li>\n<li><strong>Multiple concurrent organizations</strong> — retain several authenticated environment sessions and switch the active environment from the sidebar.</li>\n</ul>\n<h3 id=\"longer-term-exploration\">Longer-term exploration</h3>\n<ul>\n<li><strong>Pack and import</strong> — reverse the flow by packaging an edited source folder and importing it with explicit confirmation and asynchronous status polling.</li>\n<li><strong>Large-solution export</strong> — evaluate <code>ExportSolutionAsync</code> with polling to avoid synchronous export timeouts.</li>\n</ul>\n",
+  "headings": [
+    {
+      "level": 2,
+      "text": "Overview",
+      "id": "overview"
+    },
+    {
+      "level": 2,
+      "text": "Why it exists",
+      "id": "why-it-exists"
+    },
+    {
+      "level": 2,
+      "text": "Useful for",
+      "id": "useful-for"
+    },
+    {
+      "level": 2,
+      "text": "Key capabilities",
+      "id": "key-capabilities"
+    },
+    {
+      "level": 3,
+      "text": "Offline unpack",
+      "id": "offline-unpack"
+    },
+    {
+      "level": 3,
+      "text": "Online download and unpack",
+      "id": "online-download-and-unpack"
+    },
+    {
+      "level": 3,
+      "text": "Secure authentication",
+      "id": "secure-authentication"
+    },
+    {
+      "level": 3,
+      "text": "Managed SolutionPackager",
+      "id": "managed-solutionpackager"
+    },
+    {
+      "level": 3,
+      "text": "Progress and safety",
+      "id": "progress-and-safety"
+    },
+    {
+      "level": 2,
+      "text": "Extension identity and workflow",
+      "id": "extension-identity-and-workflow"
+    },
+    {
+      "level": 2,
+      "text": "Installation",
+      "id": "installation"
+    },
+    {
+      "level": 2,
+      "text": "Usage",
+      "id": "usage"
+    },
+    {
+      "level": 3,
+      "text": "Offline workflow",
+      "id": "offline-workflow"
+    },
+    {
+      "level": 3,
+      "text": "Online workflow",
+      "id": "online-workflow"
+    },
+    {
+      "level": 2,
+      "text": "Configuration",
+      "id": "configuration"
+    },
+    {
+      "level": 2,
+      "text": "Release notes",
+      "id": "release-notes"
+    },
+    {
+      "level": 3,
+      "text": "Version 2.0.1 — 8 October 2026",
+      "id": "version-201-8-october-2026"
+    },
+    {
+      "level": 3,
+      "text": "Version 2.0.0 — 8 October 2026",
+      "id": "version-200-8-october-2026"
+    },
+    {
+      "level": 3,
+      "text": "Version 1.5.6 — 29 September 2026",
+      "id": "version-156-29-september-2026"
+    },
+    {
+      "level": 3,
+      "text": "Version 1.5.5 — 24 September 2026",
+      "id": "version-155-24-september-2026"
+    },
+    {
+      "level": 3,
+      "text": "Version 1.4.5 — 15 September 2026",
+      "id": "version-145-15-september-2026"
+    },
+    {
+      "level": 2,
+      "text": "Roadmap",
+      "id": "roadmap"
+    },
+    {
+      "level": 3,
+      "text": "Near-term candidates",
+      "id": "near-term-candidates"
+    },
+    {
+      "level": 3,
+      "text": "Workflow expansion",
+      "id": "workflow-expansion"
+    },
+    {
+      "level": 3,
+      "text": "Longer-term exploration",
+      "id": "longer-term-exploration"
+    }
+  ],
+  "hasMermaid": false,
+  "links": {
+    "marketplace": {
+      "label": "Install from the Visual Studio Marketplace",
+      "url": "https://marketplace.visualstudio.com/items?itemName=codefox.d365-solutions-unpacking-agent-vscode"
+    },
+    "latest-video": {
+      "label": "Watch the latest PowerApps Solution Packager walkthrough",
+      "url": "https://youtu.be/cmokj2ZzPZY"
+    },
+    "video": {
+      "label": "Watch the PowerApps Solution Packager overview",
+      "url": "https://youtu.be/sJ4nCBstuK8"
+    }
+  },
+  "relatedTools": [
+    "edge/eagleeye"
+  ],
+  "relatedArticles": []
+}
