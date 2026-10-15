@@ -57,8 +57,8 @@ interface HomeCarouselItem {
   label: string;
   detail: string;
   action: string;
-  kind: "general" | "tool" | "learning";
-  icon: "book-open" | "layout-grid" | "wrench";
+  kind: "general" | "tool" | "learning" | "blogs";
+  icon: "book-open" | "layout-grid" | "users-round" | "wrench";
 }
 
 function escapeHtml(value: string): string {
@@ -222,6 +222,16 @@ function renderHome(): string {
       kind: "learning" as const,
       icon: "book-open" as const,
     })),
+    {
+      title: "CodeFox Community Hub",
+      summary: "Community-written articles on AI, GitHub Copilot, Dynamics 365, and practical builder workflows.",
+      route: "./codefox-blogs/",
+      label: "Blogs · Community publication",
+      detail: "1 story · Author interest open",
+      action: "Open blogs",
+      kind: "blogs",
+      icon: "users-round",
+    },
   ];
 
   return `
@@ -229,7 +239,7 @@ function renderHome(): string {
       <section class="home-carousel-section" aria-labelledby="home-title">
         <header class="home-carousel-header">
           <p class="kicker">Field kit</p>
-          <h1 id="home-title" tabindex="-1">Tools &amp; learning</h1>
+          <h1 id="home-title" tabindex="-1">Tools, learning &amp; blogs</h1>
         </header>
         <div class="home-carousel" data-home-carousel role="region" aria-roledescription="carousel" aria-label="Tools and learning">
           <div class="home-carousel-stage" data-home-carousel-stage tabindex="0">
@@ -876,7 +886,7 @@ function setupHomeCarousel(): void {
     });
 
     const selectedTitle = slides[activeIndex]?.querySelector("h2")?.textContent?.trim() ?? "";
-    carousel.setAttribute("aria-label", `Tools and learning. Selected: ${selectedTitle}`);
+    carousel.setAttribute("aria-label", `Tools, learning, and blogs. Selected: ${selectedTitle}`);
   };
 
   const scrollToIndex = (index: number, behavior: ScrollBehavior): void => {
