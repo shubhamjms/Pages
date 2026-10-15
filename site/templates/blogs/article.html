@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="{{ARTICLE_META_DESCRIPTION}}"
+      content="{{BLOG_META_DESCRIPTION}}"
     />
     <meta name="theme-color" content="#f3efe7" />
-    <title>{{ARTICLE_PAGE_TITLE}}</title>
+    <title>{{BLOG_PAGE_TITLE}}</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f07848'/%3E%3Ctext x='32' y='38' text-anchor='middle' font-family='monospace' font-size='18' font-weight='700' fill='%2332404f'%3EC/F%3C/text%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -39,7 +39,6 @@
         --interface: "DM Sans", "Segoe UI", sans-serif;
         --mono: "IBM Plex Mono", Consolas, monospace;
         --page: 1240px;
-        --reading: 720px;
       }
 
       *,
@@ -50,7 +49,7 @@
 
       html {
         scroll-behavior: smooth;
-        scroll-padding-top: 112px;
+        scroll-padding-top: 96px;
       }
 
       body {
@@ -70,13 +69,17 @@
         -webkit-tap-highlight-color: transparent;
       }
 
+      button {
+        font: inherit;
+      }
+
       a {
         color: inherit;
       }
 
       img {
         display: block;
-        max-width: 100%;
+        width: 100%;
       }
 
       :focus-visible {
@@ -100,24 +103,6 @@
         transform: translateY(0);
       }
 
-      .reading-progress {
-        position: fixed;
-        top: 68px;
-        right: 0;
-        left: 0;
-        z-index: 40;
-        height: 3px;
-        background: var(--line-dark);
-      }
-
-      .reading-progress span {
-        width: 0;
-        height: 100%;
-        display: block;
-        background: var(--orange);
-        transform-origin: left;
-      }
-
       .site-header {
         position: sticky;
         top: 0;
@@ -131,11 +116,10 @@
 
       .blog-floating-navigation {
         position: sticky;
-        top: 68px;
+        top: 80px;
         z-index: 25;
         width: min(calc(100% - 40px), var(--page));
-        height: 56px;
-        padding-top: 12px;
+        height: 0;
         margin-inline: auto;
         pointer-events: none;
       }
@@ -229,144 +213,1092 @@
         text-transform: uppercase;
       }
 
-      .article-label {
+      .primary-nav {
         justify-self: center;
-        color: var(--orange-dark);
-        font: 500 9px/1.5 var(--mono);
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-      }
-
-      .header-actions {
         display: flex;
-        align-items: center;
-        gap: 8px;
+        gap: 28px;
       }
 
-      .header-link {
+      .primary-nav a {
+        position: relative;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .primary-nav a::after {
+        position: absolute;
+        right: 0;
+        bottom: -8px;
+        left: 0;
+        height: 2px;
+        background: var(--orange);
+        content: "";
+        opacity: 0;
+        transform: scaleX(0.5);
+        transition: opacity 160ms ease, transform 160ms ease;
+      }
+
+      .primary-nav a:hover {
+        color: var(--ink);
+      }
+
+      .primary-nav a:hover::after {
+        opacity: 1;
+        transform: scaleX(1);
+      }
+
+      .return-link {
         min-height: 38px;
-        padding: 0 15px;
+        padding: 0 16px;
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        color: var(--ink);
-        border: 1px solid var(--line);
+        gap: 9px;
+        color: #155b78;
+        border: 1px solid rgba(31, 117, 153, 0.42);
         border-radius: var(--radius);
+        background: linear-gradient(135deg, #f7fcfe 0%, #dff2f8 56%, #bfe3f1 100%);
+        box-shadow: 0 7px 18px rgba(31, 117, 153, 0.12);
         text-decoration: none;
         font-size: 12px;
         font-weight: 600;
         transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
       }
 
-      .header-link:hover {
-        color: var(--ink);
-        border-color: var(--orange);
-        background: var(--orange-gradient);
+      .return-link:hover {
+        color: #104b63;
+        border-color: rgba(20, 139, 184, 0.68);
+        background: linear-gradient(135deg, #f1fbfe 0%, #ccecf6 52%, #82cbe4 100%);
+        box-shadow: 0 10px 24px rgba(31, 117, 153, 0.18);
       }
 
-      .header-link:active {
-        background: var(--orange-gradient-strong);
+      main {
+        overflow: clip;
       }
 
-      .header-link--quiet {
-        border-color: transparent;
-        color: var(--muted);
-      }
-
-      .header-link--quiet:hover {
-        color: var(--ink);
-        border-color: var(--line);
-        background: transparent;
-      }
-
-      .article-hero {
+      .hero {
         position: relative;
-        overflow: hidden;
         color: var(--ink);
         background:
-          radial-gradient(circle at 12% 15%, rgb(240 120 72 / 16%), transparent 29%),
-          radial-gradient(circle at 91% 80%, rgb(199 215 239 / 50%), transparent 27%),
+          radial-gradient(circle at 8% 14%, rgb(240 120 72 / 17%), transparent 28%),
+          radial-gradient(circle at 88% 82%, rgb(199 215 239 / 50%), transparent 30%),
           var(--paper);
       }
 
-      .article-hero::after {
+      .hero::before {
         position: absolute;
         inset: 0;
-        opacity: 0.08;
+        opacity: 0.09;
         background-image: radial-gradient(circle, var(--ink) 1px, transparent 1px);
         background-size: 24px 24px;
         content: "";
-        mask-image: linear-gradient(90deg, black, transparent 72%);
+        mask-image: linear-gradient(90deg, black, transparent 62%);
       }
 
       .hero-inner {
         position: relative;
-        z-index: 1;
         width: min(calc(100% - 40px), var(--page));
+        min-height: 0;
         margin-inline: auto;
-        padding: 40px 0 36px;
-      }
-
-      .breadcrumb {
-        margin-bottom: 24px;
-        display: flex;
-        flex-wrap: wrap;
+        padding: 72px 0 48px;
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.72fr);
         align-items: center;
-        gap: 10px;
-        color: var(--muted);
-        font: 500 10px/1.5 var(--mono);
-        text-transform: uppercase;
-      }
-
-      .breadcrumb a {
-        color: var(--orange-dark);
-        text-decoration: none;
-      }
-
-      .breadcrumb a:hover {
-        text-decoration: underline;
+        gap: 58px;
       }
 
       .eyebrow {
-        margin: 0 0 20px;
+        margin: 0 0 22px;
         color: var(--orange);
         font: 600 11px/1.5 var(--mono);
         letter-spacing: 0.13em;
         text-transform: uppercase;
       }
 
-      .article-hero h1 {
-        max-width: 900px;
+      .hero h1 {
+        max-width: 720px;
         margin: 0;
-        font: 700 clamp(38px, 4.4vw, 56px) / 1.02 var(--display);
-        letter-spacing: -0.04em;
+        font: 700 clamp(46px, 5vw, 68px) / 0.96 var(--display);
+        letter-spacing: -0.055em;
       }
 
-      .article-deck {
-        max-width: 760px;
-        margin: 18px 0 0;
+      .hero h1 span {
+        display: block;
+        color: var(--orange-dark);
+        font-style: italic;
+        font-weight: 600;
+      }
+
+      .hero-deck {
+        max-width: 610px;
+        margin: 24px 0 0;
         color: var(--muted);
         font-size: 17px;
-        line-height: 1.55;
+        line-height: 1.65;
       }
 
-      .article-byline {
-        margin-top: 24px;
+      .hero-actions {
+        margin-top: 28px;
         display: flex;
         flex-wrap: wrap;
-        align-items: center;
-        gap: 22px;
-      }
-
-      .author {
-        display: flex;
-        align-items: center;
         gap: 12px;
       }
 
-      .author-mark {
-        width: 42px;
-        height: 42px;
+      .button {
+        min-height: 48px;
+        padding: 0 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border: 1px solid transparent;
+        border-radius: var(--radius);
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: transform 160ms ease, background 180ms ease, border-color 160ms ease, box-shadow 160ms ease;
+      }
+
+      .button:hover {
+        transform: translateY(-2px);
+      }
+
+      .button--primary {
+        color: var(--ink);
+        background: var(--orange);
+      }
+
+      .button--primary:hover {
+        border-color: var(--orange);
+        background: var(--orange-gradient-strong);
+        box-shadow: 0 8px 20px rgb(240 120 72 / 16%);
+      }
+
+      .button--quiet {
+        color: var(--ink);
+        border-color: var(--line);
+      }
+
+      .button--quiet:hover {
+        color: var(--ink);
+        border-color: var(--orange);
+        background: var(--orange-gradient);
+      }
+
+      .button:active {
+        background: var(--orange-gradient-strong);
+        box-shadow: none;
+        transform: translateY(0);
+      }
+
+      .hero-stats {
+        margin: 32px 0 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+      }
+
+      .hero-stats div {
+        min-width: 104px;
+      }
+
+      .hero-stats dt {
+        color: var(--orange-dark);
+        font: 500 9px/1.4 var(--mono);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .hero-stats dd {
+        margin: 5px 0 0;
+        font: 600 20px/1 var(--display);
+      }
+
+      .feature-card {
+        position: relative;
+        color: var(--ink);
+        border: 1px solid var(--ink);
+        border-radius: var(--radius);
+        background: var(--crystal);
+        box-shadow: 7px 7px 0 var(--sky);
+        transform: none;
+        backdrop-filter: blur(14px);
+        transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+      }
+
+      .feature-card:hover,
+      .feature-card:focus-within {
+        border-color: var(--orange);
+        background: var(--orange-gradient);
+        box-shadow: 8px 8px 0 rgb(240 120 72 / 20%);
+        transform: translateY(-3px);
+      }
+
+      .feature-card::before {
+        position: absolute;
+        top: -18px;
+        right: 24px;
+        z-index: 2;
+        padding: 8px 12px;
+        color: var(--night);
+        background: var(--lime);
+        content: "FEATURED";
+        font: 500 9px/1 var(--mono);
+        letter-spacing: 0.12em;
+      }
+
+      .feature-image {
+        aspect-ratio: 16 / 8.5;
+        overflow: hidden;
+        border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
+        background: var(--night-soft);
+      }
+
+      .feature-image img {
+        height: 100%;
+        object-fit: cover;
+        transition: transform 300ms ease;
+      }
+
+      .feature-card:hover .feature-image img {
+        transform: scale(1.025);
+      }
+
+      .feature-body {
+        padding: 22px;
+      }
+
+      .story-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font: 500 9px/1.5 var(--mono);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .story-meta .category {
+        color: var(--orange-dark);
+        font-weight: 500;
+      }
+
+      .feature-body h2 {
+        margin: 14px 0 12px;
+        font: 700 26px/1.1 var(--display);
+        letter-spacing: -0.035em;
+      }
+
+      .feature-body p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.65;
+      }
+
+      .text-link {
+        width: fit-content;
+        margin-top: 22px;
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .text-link::after {
+        width: 24px;
+        height: 1px;
+        background: currentColor;
+        content: "";
+        transition: width 160ms ease;
+      }
+
+      .text-link:hover {
+        color: var(--orange-dark);
+      }
+
+      .text-link:hover::after {
+        width: 38px;
+      }
+
+      .ticker {
+        overflow: hidden;
+        color: var(--night);
+        border-bottom: 1px solid var(--night);
+        background: var(--lime);
+      }
+
+      .ticker-track {
+        width: max-content;
+        padding: 13px 0;
+        display: flex;
+        gap: 34px;
+        font: 600 10px/1 var(--mono);
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        animation: ticker 24s linear infinite;
+      }
+
+      .ticker-track span::after {
+        margin-left: 34px;
+        color: var(--orange-dark);
+        content: "/";
+      }
+
+      @keyframes ticker {
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      .section {
+        width: min(calc(100% - 40px), var(--page));
+        margin-inline: auto;
+        padding: 104px 0;
+      }
+
+      .section-heading {
+        margin-bottom: 42px;
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 32px;
+      }
+
+      .section-heading h2 {
+        max-width: 670px;
+        margin: 0;
+        font: 700 clamp(42px, 5vw, 68px) / 0.98 var(--display);
+        letter-spacing: -0.05em;
+      }
+
+      .section-heading p:last-child {
+        max-width: 430px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.65;
+      }
+
+      .topic-strip {
+        width: min(calc(100% - 40px), var(--page));
+        margin-inline: auto;
+        padding: 72px 0 0;
+      }
+
+      .topic-strip .eyebrow {
+        margin-bottom: 14px;
+      }
+
+      .topic-bar {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .topic-bar > a,
+      .topic-bar > span {
+        min-height: 58px;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--crystal);
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        backdrop-filter: blur(12px);
+        transition: background 180ms ease, border-color 160ms ease, transform 160ms ease;
+      }
+
+      .topic-bar a:hover,
+      .topic-bar a:focus-visible,
+      .topic-bar a[aria-current="true"] {
+        border-color: var(--orange);
+        background: var(--orange-gradient);
+        transform: translateY(-2px);
+      }
+
+      .topic-bar strong {
+        color: var(--orange);
+        font: 600 9px/1 var(--mono);
+        text-transform: uppercase;
+      }
+
+      .topic-bar .topic-coming-soon {
+        color: var(--muted);
+        background: rgb(255 255 255 / 55%);
+      }
+
+      .topic-bar .topic-coming-soon strong {
+        color: var(--muted);
+      }
+
+      .stories-section {
+        width: 100%;
+        padding: 104px max(20px, calc((100% - var(--page)) / 2));
+        color: var(--ink);
+        background: #e8edf5;
+      }
+
+      .stories-section .section-heading {
+        width: min(100%, var(--page));
+        margin-inline: auto;
+      }
+
+      .stories-section .eyebrow {
+        color: var(--orange-dark);
+      }
+
+      .stories-section .section-heading p:last-child {
+        color: var(--muted);
+      }
+
+      .stories-status {
+        width: min(100%, var(--page));
+        margin: -18px auto 26px;
+        color: var(--muted);
+        font: 400 10px/1.5 var(--mono);
+        text-transform: uppercase;
+      }
+
+      .story-grid {
+        width: min(100%, var(--page));
+        margin-inline: auto;
+        display: grid;
+        grid-template-columns: minmax(0, 420px);
+        gap: 18px;
+      }
+
+      .story-card {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--crystal);
+        backdrop-filter: blur(12px);
+        transition: background 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+      }
+
+      .story-card:hover,
+      .story-card:focus-within {
+        z-index: 1;
+        background: var(--orange-gradient);
+        box-shadow: 0 14px 34px rgb(81 99 122 / 12%);
+        transform: translateY(-3px);
+      }
+
+      .story-card[hidden] {
+        display: none;
+      }
+
+      .story-card__image {
+        aspect-ratio: 16 / 10;
+        display: block;
+        overflow: hidden;
+        background: var(--night-soft);
+      }
+
+      .story-card__image img {
+        height: 100%;
+        object-fit: cover;
+        filter: saturate(0.78);
+        transition: filter 200ms ease, transform 240ms ease;
+      }
+
+      .story-card:hover .story-card__image img {
+        filter: saturate(1);
+        transform: scale(1.025);
+      }
+
+      .story-card__body {
+        min-height: 320px;
+        padding: 26px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .story-card .story-meta {
+        color: var(--muted);
+      }
+
+      .story-card .story-meta .category {
+        color: var(--orange);
+        font-weight: 600;
+      }
+
+      .story-card h3 {
+        margin: 18px 0 12px;
+        font: 600 27px/1.1 var(--display);
+        letter-spacing: -0.025em;
+      }
+
+      .story-card h3 a {
+        color: var(--ink);
+        text-decoration: none;
+      }
+
+      .story-card h3 a:hover {
+        color: var(--orange-dark);
+      }
+
+      .story-card p {
+        margin: 0 0 24px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.65;
+      }
+
+      .story-card .text-link {
+        margin-top: auto;
+        color: var(--orange-dark);
+      }
+
+      .contributors {
+        padding: 104px 20px;
+        border-bottom: 1px solid var(--ink);
+        background: var(--paper-bright);
+      }
+
+      .contributors-inner {
+        width: min(100%, var(--page));
+        margin-inline: auto;
+      }
+
+      .publishing-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+        gap: 1px;
+        border: 1px solid var(--ink);
+        border-radius: var(--radius);
+        background: var(--ink);
+        overflow: hidden;
+      }
+
+      .publishing-path,
+      .contributor-promise {
+        background: var(--crystal);
+        backdrop-filter: blur(12px);
+      }
+
+      .publishing-path {
+        padding: 38px;
+      }
+
+      .publishing-path h3,
+      .contributor-promise h3 {
+        margin: 0;
+        font: 700 32px/1.08 var(--display);
+        letter-spacing: -0.035em;
+      }
+
+      .interest-form {
+        margin-top: 32px;
+      }
+
+      .interest-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .interest-field {
+        min-width: 0;
+        display: grid;
+        gap: 8px;
+      }
+
+      .interest-field--wide {
+        grid-column: 1 / -1;
+      }
+
+      .interest-field > span {
+        color: var(--ink);
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .interest-field input,
+      .interest-field select,
+      .interest-field textarea {
+        width: 100%;
+        padding: 0 13px;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgb(255 255 255 / 88%);
+        font: 500 13px/1.5 var(--interface);
+      }
+
+      .interest-field input,
+      .interest-field select {
+        min-height: 44px;
+      }
+
+      .interest-field textarea {
+        min-height: 128px;
+        padding-block: 12px;
+        resize: vertical;
+      }
+
+      .rich-text-editor {
+        display: block;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgb(255 255 255 / 88%);
+      }
+
+      .rich-text-toolbar {
+        padding: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        border-bottom: 1px solid var(--line);
+        background: var(--sky);
+      }
+
+      .rich-text-toolbar button {
+        min-width: 34px;
+        min-height: 32px;
+        padding: 0 9px;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--paper-bright);
+        cursor: pointer;
+        font: 700 11px/1 var(--interface);
+      }
+
+      .rich-text-toolbar button:hover {
+        border-color: var(--orange);
+        background: var(--orange-gradient);
+      }
+
+      .rich-text-input {
+        min-height: 240px;
+        padding: 16px;
+        display: block;
+        color: var(--ink);
+        font: 500 14px/1.65 var(--interface);
+        outline: none;
+      }
+
+      .rich-text-input:empty::before {
+        color: var(--muted);
+        content: attr(data-placeholder);
+        pointer-events: none;
+      }
+
+      .rich-text-input h2,
+      .rich-text-input h3,
+      .rich-text-input p {
+        margin: 0 0 12px;
+      }
+
+      .rich-text-input h2 {
+        font: 700 24px/1.2 var(--display);
+      }
+
+      .rich-text-input h3 {
+        font: 700 19px/1.25 var(--display);
+      }
+
+      .rich-text-input ul,
+      .rich-text-input ol {
+        margin: 0 0 14px;
+        padding-left: 24px;
+      }
+
+      .rich-text-input blockquote {
+        margin: 14px 0;
+        padding: 12px 16px;
+        border-left: 4px solid var(--orange);
+        background: #fff0ad;
+      }
+
+      .rich-text-input pre {
+        margin: 14px 0;
+        padding: 14px;
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--night-soft);
+        font: 400 12px/1.6 var(--mono);
+      }
+
+      .rich-text-input table {
+        width: 100%;
+        margin: 14px 0;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+
+      .rich-text-input th,
+      .rich-text-input td {
+        padding: 9px;
+        border: 1px solid var(--line);
+        text-align: left;
+      }
+
+      .rich-text-input th {
+        background: var(--sky);
+      }
+
+      .rich-text-input a {
+        color: var(--orange-dark);
+        text-decoration: underline;
+      }
+
+      .rich-text-editor:focus-within {
+        border-color: var(--orange);
+        outline: 3px solid rgb(240 120 72 / 18%);
+        outline-offset: 1px;
+      }
+
+      .interest-help {
+        color: var(--muted);
+        font-size: 10px;
+        line-height: 1.5;
+      }
+
+      .interest-field input:hover,
+      .interest-field select:hover,
+      .interest-field textarea:hover {
+        border-color: var(--orange);
+      }
+
+      .interest-field input:focus,
+      .interest-field select:focus,
+      .interest-field textarea:focus {
+        border-color: var(--orange);
+        background: var(--paper-bright);
+        outline: 3px solid rgb(240 120 72 / 18%);
+        outline-offset: 1px;
+      }
+
+      .interest-consent {
+        margin-top: 18px;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: start;
+        gap: 10px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .interest-consent input {
+        width: 17px;
+        height: 17px;
+        margin: 1px 0 0;
+        accent-color: var(--orange);
+      }
+
+      .interest-actions {
+        margin-top: 22px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .interest-email {
+        color: var(--orange-dark);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .interest-privacy,
+      .interest-status {
+        margin: 16px 0 0;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.55;
+      }
+
+      .interest-status {
+        min-height: 18px;
+        color: var(--orange-dark);
+        font-weight: 600;
+      }
+
+      .contribution-options {
+        margin-bottom: 18px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .contribution-option {
+        min-height: 120px;
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--crystal);
+        text-decoration: none;
+        transition: background 180ms ease, border-color 160ms ease, transform 160ms ease;
+      }
+
+      .contribution-option:hover,
+      .contribution-option:focus-visible {
+        border-color: var(--orange);
+        background: var(--orange-gradient);
+        transform: translateY(-2px);
+      }
+
+      .contribution-option span {
+        color: var(--orange);
+        font: 600 9px/1.5 var(--mono);
+        text-transform: uppercase;
+      }
+
+      .contribution-option strong {
+        margin-top: auto;
+        font: 700 24px/1.12 var(--display);
+      }
+
+      .contribution-option small {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .contribution-forms {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .contribution-form-card {
+        padding: 32px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--crystal);
+        backdrop-filter: blur(12px);
+      }
+
+      .contribution-form-card h3 {
+        margin: 0;
+        font: 700 30px/1.1 var(--display);
+        letter-spacing: -0.035em;
+      }
+
+      .submission-note {
+        margin: 16px 0 0;
+        padding: 12px 14px;
+        color: #765714;
+        border: 1px solid #e3bd4d;
+        border-radius: var(--radius);
+        background: #fff0ad;
+        font-size: 11px;
+        line-height: 1.55;
+      }
+
+      .platform-roadmap {
+        margin-top: 18px;
+        padding: 34px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--sky);
+      }
+
+      .roadmap-heading {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 30px;
+      }
+
+      .roadmap-heading h3 {
+        max-width: 620px;
+        margin: 0;
+        font: 700 34px/1.08 var(--display);
+        letter-spacing: -0.04em;
+      }
+
+      .roadmap-heading > p {
+        max-width: 420px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .roadmap-grid {
+        margin: 30px 0 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        list-style: none;
+      }
+
+      .roadmap-grid li {
+        min-height: 190px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--crystal);
+      }
+
+      .roadmap-grid span {
+        color: var(--orange);
+        font: 600 9px/1.5 var(--mono);
+        text-transform: uppercase;
+      }
+
+      .roadmap-grid strong {
+        margin-top: auto;
+        font-size: 14px;
+      }
+
+      .roadmap-grid p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .publishing-steps {
+        margin: 32px 0 0;
+        padding: 0;
+        display: grid;
+        list-style: none;
+        border-top: 1px solid var(--line);
+      }
+
+      .publishing-steps li {
+        padding: 22px 0;
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr) auto;
+        align-items: start;
+        gap: 18px;
+        border-bottom: 1px solid var(--line);
+        transition: background 180ms ease;
+      }
+
+      .publishing-steps li:hover {
+        background: var(--orange-gradient);
+      }
+
+      .step-number {
+        color: var(--orange);
+        font: 600 10px/1.5 var(--mono);
+      }
+
+      .publishing-steps strong {
+        display: block;
+        font-size: 14px;
+      }
+
+      .publishing-steps p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .step-state {
+        padding: 5px 8px;
+        color: var(--ink);
+        background: var(--lime);
+        font: 500 8px/1 var(--mono);
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+      }
+
+      .contributor-promise {
+        padding: 38px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .contributor-promise .publishing-steps li {
+        grid-template-columns: 32px minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .contributor-promise .step-state {
+        grid-column: 2;
+        width: fit-content;
+      }
+
+      .contributor-promise > p:not(.eyebrow) {
+        margin: 18px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.65;
+      }
+
+      .promise-list {
+        margin: 28px 0 34px;
+        padding: 0;
+        display: grid;
+        gap: 13px;
+        list-style: none;
+      }
+
+      .promise-list li {
+        display: grid;
+        grid-template-columns: 22px minmax(0, 1fr);
+        gap: 10px;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .promise-list li::before {
+        width: 20px;
+        height: 20px;
+        display: grid;
+        place-items: center;
+        color: var(--paper-bright);
+        background: var(--orange-dark);
+        content: "+";
+        font: 500 11px/1 var(--mono);
+      }
+
+      .contributor-card {
+        margin-top: auto;
+        padding: 20px;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+        gap: 14px;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--crystal);
+        transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+      }
+
+      .contributor-card:hover {
+        border-color: var(--orange);
+        background: var(--orange-gradient);
+        transform: translateY(-2px);
+      }
+
+      .contributor-avatar {
+        width: 48px;
+        height: 48px;
         display: grid;
         place-items: center;
         color: var(--night);
@@ -375,595 +1307,65 @@
         font: 700 12px/1 var(--mono);
       }
 
-      .author-copy {
-        display: grid;
-        gap: 2px;
-      }
-
-      .author-copy strong {
+      .contributor-card strong {
+        display: block;
         font-size: 13px;
       }
 
-      .author-copy span,
-      .article-meta {
-        color: var(--muted);
-        font: 500 9px/1.5 var(--mono);
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-      }
-
-      .article-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      .rail-cover {
-        margin: 0 0 28px;
-      }
-
-      .rail-cover img {
-        width: 100%;
-        aspect-ratio: 16 / 9;
-        object-fit: cover;
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-      }
-
-      .rail-cover figcaption {
-        margin: 8px 0 0;
-        color: var(--muted);
-        font: 500 8px/1.5 var(--mono);
-        text-transform: uppercase;
-      }
-
-      .article-layout {
-        width: min(calc(100% - 40px), 1320px);
-        margin-inline: auto;
-        padding: 72px 0 104px;
-        display: grid;
-        grid-template-columns: 210px minmax(0, var(--reading)) 210px;
-        justify-content: center;
-        gap: 42px;
-      }
-
-      .article-rail,
-      .ad-rail {
-        align-self: start;
-        position: sticky;
-        top: 116px;
-      }
-
-      .ad-rail {
-        display: grid;
-        gap: 18px;
-      }
-
-      .ad-heading {
-        margin: 0;
-        color: var(--orange-dark);
-        font: 600 8px/1.5 var(--mono);
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-      }
-
-      .ad-slot {
-        min-height: 220px;
-        padding: 20px;
-        display: grid;
-        align-content: center;
-        justify-items: center;
-        gap: 8px;
-        color: var(--muted);
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        background:
-          linear-gradient(rgb(81 99 122 / 4%) 1px, transparent 1px),
-          linear-gradient(90deg, rgb(81 99 122 / 4%) 1px, transparent 1px),
-          var(--paper-bright);
-        background-size: 18px 18px;
-        text-align: center;
-      }
-
-      .ad-slot--short {
-        min-height: 150px;
-      }
-
-      .ad-slot strong {
-        color: var(--ink);
-        font-size: 12px;
-      }
-
-      .ad-slot span {
-        font: 400 8px/1.5 var(--mono);
-        text-transform: uppercase;
-      }
-
-      .ad-policy {
-        margin: 0;
-        color: var(--muted);
-        font-size: 10px;
-        line-height: 1.5;
-      }
-
-      .rail-label {
-        margin: 0 0 16px;
-        color: var(--orange);
-        font: 600 9px/1.5 var(--mono);
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-      }
-
-      .toc {
-        margin: 0;
-        padding: 0;
-        display: grid;
-        gap: 5px;
-        list-style: none;
-        border-left: 1px solid var(--line);
-      }
-
-      .toc a {
-        margin-left: -1px;
-        padding: 8px 0 8px 16px;
-        display: block;
-        color: var(--muted);
-        border-left: 2px solid transparent;
-        font-size: 12px;
-        font-weight: 500;
-        line-height: 1.4;
-        text-decoration: none;
-        transition: color 160ms ease, background 180ms ease, border-color 160ms ease;
-      }
-
-      .toc a:hover,
-      .toc a[aria-current="true"] {
-        color: var(--ink);
-        border-left-color: var(--orange);
-        background: var(--orange-gradient);
-      }
-
-      .article-body {
-        min-width: 0;
-        font: 400 19px/1.75 var(--display);
-      }
-
-      .article-body > p,
-      .article-body > ul,
-      .article-body > ol {
-        margin: 0 0 29px;
-      }
-
-      .article-body .lead {
-        margin-bottom: 42px;
-        font-size: 25px;
-        line-height: 1.55;
-      }
-
-      .article-body h2 {
-        margin: 72px 0 24px;
-        font: 700 42px/1.08 var(--display);
-        letter-spacing: -0.035em;
-      }
-
-      .article-body h3 {
-        margin: 44px 0 17px;
-        font: 700 27px/1.2 var(--display);
-      }
-
-      .article-body a {
-        color: var(--orange-dark);
-        text-decoration-thickness: 1px;
-        text-underline-offset: 3px;
-      }
-
-      .article-body li {
-        margin-bottom: 10px;
-        padding-left: 7px;
-      }
-
-      .article-body li::marker {
-        color: var(--orange-dark);
-        font-family: var(--mono);
-      }
-
-      .article-body blockquote {
-        margin: 42px 0;
-        padding: 24px 28px;
-        color: var(--ink);
-        border: 1px solid #e3bd4d;
-        border-left: 5px solid #dcae2f;
-        border-radius: var(--radius);
-        background: #fff0ad;
-      }
-
-      .article-body blockquote p {
-        margin: 0;
-      }
-
-      .article-body blockquote strong {
-        color: #765714;
-      }
-
-      .article-body pre {
-        margin: 38px 0;
-        padding: 24px;
-        overflow-x: auto;
-        color: var(--ink);
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        background: var(--night-soft);
-        font: 400 13px/1.7 var(--mono);
-      }
-
-      .article-body code {
-        font-family: var(--mono);
-      }
-
-      .article-body p code,
-      .article-body li code {
-        padding: 0.12em 0.32em;
-        border: 1px solid var(--line);
-        border-radius: 3px;
-        background: var(--night-soft);
-        font-size: 0.82em;
-      }
-
-      .article-body img {
-        width: 100%;
-        height: auto;
-        margin: 34px 0;
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-      }
-
-      .article-body .table-scroll {
-        margin: 34px 0;
-        overflow-x: auto;
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        background: var(--paper-bright);
-      }
-
-      .article-body table {
-        width: 100%;
-        min-width: 560px;
-        border-collapse: collapse;
-        font-family: var(--interface);
-        font-size: 13px;
-        line-height: 1.55;
-      }
-
-      .article-body th,
-      .article-body td {
-        padding: 12px 14px;
-        border-right: 1px solid var(--line);
-        border-bottom: 1px solid var(--line);
-        text-align: left;
-        vertical-align: top;
-      }
-
-      .article-body th {
-        background: var(--sky);
-        font-size: 11px;
-        text-transform: uppercase;
-      }
-
-      .article-body tr:last-child td {
-        border-bottom: 0;
-      }
-
-      .article-body th:last-child,
-      .article-body td:last-child {
-        border-right: 0;
-      }
-
-      .video-embed {
-        margin: 42px 0;
-      }
-
-      .video-embed__frame {
-        aspect-ratio: 16 / 9;
-        overflow: hidden;
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        background: var(--night-soft);
-      }
-
-      .video-embed iframe {
-        width: 100%;
-        height: 100%;
-        display: block;
-        border: 0;
-      }
-
-      .video-embed__placeholder {
-        display: grid;
-        place-content: center;
-        justify-items: center;
-        gap: 10px;
-        color: var(--ink);
-        background: linear-gradient(135deg, var(--sky), var(--paper-bright) 56%, #ffd5c0);
-        text-align: center;
-      }
-
-      .video-embed__placeholder > span {
-        width: 58px;
-        height: 58px;
-        display: grid;
-        place-items: center;
-        color: white;
-        border-radius: 50%;
-        background: var(--orange);
-        font: 700 20px/1 var(--interface);
-      }
-
-      .video-embed__placeholder strong {
-        font-family: var(--interface);
-        font-size: 16px;
-      }
-
-      .video-embed__placeholder small {
-        color: var(--muted);
-        font: 500 10px/1.5 var(--mono);
-      }
-
-      .video-embed figcaption {
-        margin-top: 9px;
-        color: var(--muted);
-        font: 500 10px/1.5 var(--mono);
-      }
-
-      .pull-quote {
-        margin: 48px 0;
-        padding: 34px 38px;
-        color: var(--ink);
-        border-left: 4px solid var(--orange);
-        background: var(--sky);
-      }
-
-      .pull-quote p {
-        margin: 0;
-        font: 600 35px/1.25 var(--display);
-      }
-
-      .pull-quote cite {
-        margin-top: 20px;
-        display: block;
+      .contributor-card span:last-child {
         color: var(--muted);
         font: 400 9px/1.5 var(--mono);
-        font-style: normal;
-        letter-spacing: 0.1em;
         text-transform: uppercase;
       }
 
-      .workflow {
-        margin: 40px 0;
-        padding: 0;
-        display: grid;
-        gap: 1px;
-        list-style: none;
-        background: var(--line);
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        overflow: hidden;
+      .community {
+        padding: 108px 20px;
+        background: var(--lime);
       }
 
-      .workflow li {
+      .community-inner {
+        width: min(100%, 960px);
+        margin-inline: auto;
+        text-align: center;
+      }
+
+      .community .eyebrow {
+        color: var(--night);
+      }
+
+      .community h2 {
         margin: 0;
-        padding: 24px;
-        display: grid;
-        grid-template-columns: 44px 1fr;
-        gap: 18px;
-        background: var(--crystal);
-        transition: background 180ms ease;
+        font: 700 clamp(38px, 5vw, 64px) / 0.98 var(--display);
+        letter-spacing: -0.045em;
       }
 
-      .workflow li:hover {
-        background: var(--orange-gradient);
-      }
-
-      .workflow span {
-        color: var(--orange-dark);
-        font: 500 11px/1.5 var(--mono);
-      }
-
-      .workflow div {
-        font-family: var(--interface);
-      }
-
-      .workflow strong {
-        display: block;
-        font-size: 15px;
-      }
-
-      .workflow p {
-        margin: 6px 0 0;
-        color: var(--muted);
-        font-size: 13px;
+      .community p:not(.eyebrow) {
+        max-width: 620px;
+        margin: 28px auto 0;
+        font-size: 18px;
         line-height: 1.6;
       }
 
-      .code-shell {
-        margin: 38px 0;
-        overflow: hidden;
-        color: var(--ink);
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        background: var(--night-soft);
-      }
-
-      .code-header {
-        padding: 12px 16px;
+      .community-actions {
+        margin-top: 34px;
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        color: var(--muted);
-        border-bottom: 1px solid var(--line);
-        background: var(--sky);
-        font: 400 9px/1.5 var(--mono);
-        text-transform: uppercase;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
       }
 
-      pre {
-        margin: 0;
-        padding: 24px;
-        overflow-x: auto;
-        font: 400 13px/1.7 var(--mono);
-      }
-
-      .code-accent {
-        color: var(--orange-dark);
-      }
-
-      .code-type {
-        color: #426c7c;
-      }
-
-      .callout {
-        margin: 42px 0;
-        padding: 28px;
-        border: 1px solid #e3bd4d;
-        border-left: 5px solid #dcae2f;
-        border-radius: var(--radius);
-        background: #fff0ad;
-        font-family: var(--interface);
-      }
-
-      .callout strong {
-        display: block;
-        color: #765714;
-        font-size: 15px;
-      }
-
-      .callout p {
-        margin: 9px 0 0;
-        font-size: 14px;
-        line-height: 1.65;
-      }
-
-      .takeaways {
-        margin-top: 72px;
-        padding: 34px;
+      .community .button--primary {
         color: var(--ink);
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        background: var(--sky);
-      }
-
-      .takeaways .eyebrow {
-        color: var(--orange-dark);
-      }
-
-      .takeaways h2 {
-        margin: 0 0 24px;
-        font-size: 34px;
-      }
-
-      .takeaways ul {
-        margin: 0;
-        padding-left: 20px;
-        color: var(--muted);
-        font-family: var(--interface);
-        font-size: 14px;
-        line-height: 1.65;
-      }
-
-      .takeaways li::marker {
-        color: var(--orange);
-      }
-
-      .author-panel {
-        margin-top: 72px;
-        padding: 30px;
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr);
-        gap: 24px;
-        border: 1px solid var(--ink);
-        border-radius: var(--radius);
-        background: var(--crystal);
-        box-shadow: 6px 6px 0 var(--sky);
-        font-family: var(--interface);
-        backdrop-filter: blur(12px);
-        transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
-      }
-
-      .author-panel:hover {
-        border-color: var(--orange);
-        background: var(--orange-gradient);
-        transform: translateY(-2px);
-      }
-
-      .author-panel__mark {
-        width: 72px;
-        height: 72px;
-        display: grid;
-        place-items: center;
-        color: var(--night);
-        background: var(--lime);
-        border-radius: 50%;
-        font: 700 17px/1 var(--mono);
-      }
-
-      .author-panel .eyebrow {
-        margin-bottom: 8px;
-      }
-
-      .author-panel h2 {
-        margin: 0;
-        font: 700 29px/1.1 var(--display);
-      }
-
-      .author-panel p:not(.eyebrow) {
-        margin: 12px 0 0;
-        color: var(--muted);
-        font-size: 13px;
-        line-height: 1.65;
-      }
-
-      .author-panel a {
-        margin-top: 16px;
-        display: inline-flex;
-        color: var(--orange-dark);
-        font-size: 12px;
-        font-weight: 700;
-      }
-
-      .article-end {
-        margin-top: 44px;
-        padding-top: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
-        border-top: 1px solid var(--ink);
-        font-family: var(--interface);
-      }
-
-      .article-end p {
-        margin: 0;
-        color: var(--muted);
-        font-size: 12px;
-      }
-
-      .article-end a {
-        min-height: 44px;
-        padding: 0 16px;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--ink);
-        border-radius: var(--radius);
         background: var(--orange);
-        font-size: 12px;
-        font-weight: 700;
-        text-decoration: none;
       }
 
-      .article-end a:hover {
-        color: var(--ink);
+      .community .button--primary:hover {
         background: var(--orange-gradient-strong);
+      }
+
+      .community .button--quiet {
+        color: var(--night);
+        border-color: var(--line);
       }
 
       .site-footer {
@@ -974,7 +1376,7 @@
 
       .footer-inner {
         width: min(calc(100% - 40px), var(--page));
-        min-height: 116px;
+        min-height: 128px;
         margin-inline: auto;
         display: grid;
         grid-template-columns: 1fr auto 1fr;
@@ -994,117 +1396,82 @@
         justify-self: center;
       }
 
-      .footer-inner .header-link {
+      .footer-inner .return-link {
         justify-self: end;
       }
 
-      @media (max-width: 1180px) {
-        .article-layout {
-          grid-template-columns: 210px minmax(0, var(--reading));
-        }
-
-        .ad-rail {
-          display: none;
-        }
-      }
-
-      @media (max-width: 1040px) {
-        .article-layout {
-          grid-template-columns: 1fr;
-          justify-content: center;
-        }
-
-        .article-rail {
-          position: static;
-          max-width: var(--reading);
-          margin-inline: auto;
-        }
-
-        .rail-cover {
-          max-width: 260px;
-        }
-
-        .toc {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          border-top: 1px solid var(--line);
-          border-left: 0;
-        }
-
-        .toc a {
-          margin: -1px 0 0;
-          padding: 12px 0;
-          border-top: 2px solid transparent;
-          border-left: 0;
-        }
-
-        .toc a:hover,
-        .toc a[aria-current="true"] {
-          border-top-color: var(--orange);
-          border-left-color: transparent;
-        }
-
-        .article-body {
-          width: min(100%, var(--reading));
-          margin-inline: auto;
-        }
-
-      }
-
-      @media (max-width: 760px) {
+      @media (max-width: 980px) {
         .header-inner {
           grid-template-columns: auto auto;
         }
 
-        .article-label,
-        .header-link--quiet {
+        .primary-nav {
           display: none;
         }
 
-        .header-actions {
+        .return-link {
           justify-self: end;
         }
 
-        .article-hero h1 {
-          font-size: clamp(34px, 9vw, 46px);
+        .hero-inner {
+          grid-template-columns: 1fr;
+          gap: 64px;
         }
 
-        .article-deck {
-          font-size: 16px;
+        .hero-copy {
+          max-width: 780px;
         }
 
-        .pull-quote {
-          margin-right: 0;
-          margin-left: 0;
-          padding: 34px 28px;
+        .feature-card {
+          max-width: 650px;
+          transform: none;
         }
 
-        .pull-quote p {
-          font-size: 29px;
+        .section-heading {
+          align-items: start;
+          flex-direction: column;
         }
 
+        .publishing-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .contribution-forms {
+          grid-template-columns: 1fr;
+        }
+
+        .roadmap-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .roadmap-heading {
+          align-items: start;
+          flex-direction: column;
+        }
+
+        .topic-bar {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
       }
 
-      @media (max-width: 560px) {
-        .reading-progress {
-          top: 68px;
-        }
-
+      @media (max-width: 640px) {
         .header-inner,
         .hero-inner,
-        .article-layout,
+        .section,
+        .topic-strip,
         .footer-inner {
           width: min(calc(100% - 28px), var(--page));
         }
 
         .header-inner {
           min-height: 68px;
-          gap: 10px;
+          gap: 12px;
         }
 
         .blog-floating-navigation {
-          top: 68px;
-          height: 52px;
-          padding-top: 8px;
+          top: 76px;
+          height: 0;
+          padding-top: 0;
           width: calc(100% - 28px);
         }
 
@@ -1117,80 +1484,120 @@
           height: 38px;
         }
 
-        .header-link {
+        .return-link {
           padding: 0 11px;
+          font-size: 0;
+        }
+
+        .return-link::after {
+          content: "Fieldnotes";
           font-size: 11px;
         }
 
         .hero-inner {
-          padding: 34px 0 30px;
+          min-height: 0;
+          padding: 72px 0 50px;
+          gap: 52px;
         }
 
-        .breadcrumb {
-          margin-bottom: 24px;
+        .hero h1 {
+          font-size: clamp(44px, 14vw, 60px);
         }
 
-        .article-byline {
-          align-items: flex-start;
+        .hero-deck {
+          font-size: 17px;
+        }
+
+        .hero-actions {
+          align-items: stretch;
           flex-direction: column;
         }
 
-        .article-layout {
-          padding: 70px 0 82px;
-          gap: 50px;
+        .button {
+          width: 100%;
         }
 
-        .toc {
+        .feature-card {
+          box-shadow: 9px 9px 0 var(--orange);
+        }
+
+        .feature-body h2 {
+          font-size: 27px;
+        }
+
+        .ticker-track {
+          animation: none;
+        }
+
+        .section,
+        .stories-section,
+        .contributors {
+          padding-top: 76px;
+          padding-bottom: 76px;
+        }
+
+        .story-grid {
           grid-template-columns: 1fr;
         }
 
-        .article-body {
-          font-size: 18px;
-          line-height: 1.7;
-        }
-
-        .article-body .lead {
-          font-size: 22px;
-        }
-
-        .article-body h2 {
-          margin-top: 58px;
-          font-size: 35px;
-        }
-
-        .workflow li {
-          grid-template-columns: 34px 1fr;
-          padding: 20px;
-        }
-
-        .code-shell {
-          box-shadow: 6px 6px 0 var(--orange);
-        }
-
-        .takeaways {
-          padding: 27px;
-        }
-
-        .author-panel {
+        .topic-bar {
           grid-template-columns: 1fr;
-          padding: 25px;
-          box-shadow: 6px 6px 0 var(--orange);
         }
 
-        .article-end {
-          align-items: flex-start;
+        .story-card__body {
+          min-height: 290px;
+        }
+
+        .publishing-path,
+        .contributor-promise {
+          padding: 26px;
+        }
+
+        .interest-form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .interest-field--wide {
+          grid-column: auto;
+        }
+
+        .contribution-options,
+        .roadmap-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .contribution-form-card,
+        .platform-roadmap {
+          padding: 24px;
+        }
+
+        .publishing-steps li {
+          grid-template-columns: 34px minmax(0, 1fr);
+        }
+
+        .step-state {
+          grid-column: 2;
+          width: fit-content;
+        }
+
+        .community {
+          padding-block: 78px;
+        }
+
+        .community-actions {
+          align-items: stretch;
           flex-direction: column;
         }
 
         .footer-inner {
-          padding: 34px 0;
+          padding: 36px 0;
           display: flex;
           align-items: flex-start;
           flex-direction: column;
         }
 
         .footer-inner .brand,
-        .footer-inner .header-link {
+        .footer-inner .return-link {
           justify-self: auto;
         }
       }
@@ -1211,223 +1618,319 @@
     </style>
   </head>
   <body>
-    <a class="skip-link" href="#article-content">Skip to article</a>
-    <div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>
+    <a class="skip-link" href="#main-content">Skip to stories</a>
 
     <header class="site-header">
       <div class="header-inner">
         <a class="brand" href="blogs-preview.html" aria-label="{{BLOG_TITLE}} home">
           <span class="brand-mark" aria-hidden="true">C/F</span>
-          <span class="brand-copy"><strong>{{BLOG_BRAND_NAME}}</strong><span>{{BLOG_BRAND_SUFFIX}}</span></span>
+          <span class="brand-copy">
+            <strong>{{BLOG_BRAND_NAME}}</strong>
+            <span>{{BLOG_BRAND_SUFFIX}}</span>
+          </span>
         </a>
 
-        <span class="article-label">CodeFox Community Hub / Article</span>
+        <nav class="primary-nav" aria-label="Blogs navigation">
+          <a href="#topics">Topics</a>
+          <a href="#contributors">Contributors</a>
+          <a href="#community-interest">Contribute</a>
+        </nav>
 
-        <div class="header-actions">
-          <a class="header-link header-link--quiet" href="../site/index.html">
-            The Builder's Fieldnotes
-          </a>
-          <a class="header-link" href="blogs-preview.html">
-            <span aria-hidden="true">&larr;</span> All blogs
-          </a>
-        </div>
+        <a class="return-link" href="../site/index.html">
+          <span aria-hidden="true">&larr;</span>
+          The Builder's Fieldnotes
+        </a>
       </div>
     </header>
 
-    <main>
-      <header class="article-hero">
+    <nav class="blog-floating-navigation" aria-label="Page navigation">
+      <div class="blog-floating-navigation__controls">
+        <a class="blog-icon-button" href="blogs-preview.html" aria-label="Go to Blogs home" aria-current="page">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-9 9 9"></path><path d="M5 10v10h14V10"></path><path d="M9 20v-6h6v6"></path></svg>
+        </a>
+        <button class="blog-icon-button" type="button" aria-label="Go back" data-blog-back>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
+        </button>
+      </div>
+    </nav>
+
+    <main id="main-content">
+      <section class="hero" aria-labelledby="hero-title">
         <div class="hero-inner">
-          <nav class="breadcrumb" aria-label="Breadcrumb">
-            <a href="blogs-preview.html">Blogs</a>
-            <span>/</span>
-            <a href="blogs-preview.html#topics">{{ARTICLE_PRIMARY_CATEGORY}}</a>
-            <span>/</span>
-            <span aria-current="page">{{ARTICLE_BREADCRUMB}}</span>
-          </nav>
-          <p class="eyebrow">{{ARTICLE_CATEGORY_LABEL}}</p>
-          <h1>{{ARTICLE_TITLE}}</h1>
-          <p class="article-deck">{{ARTICLE_SUMMARY}}</p>
-          <div class="article-byline">
-            <div class="author">
-              <span class="author-mark" aria-hidden="true">{{AUTHOR_INITIALS}}</span>
-              <span class="author-copy">
-                <strong>{{AUTHOR_NAME}}</strong>
-                <span>{{AUTHOR_ROLE}}</span>
-              </span>
+          <div class="hero-copy">
+            <p class="eyebrow">{{BLOG_EYEBROW}}</p>
+            <h1 id="hero-title">{{BLOG_HEADLINE}} <span>{{BLOG_HEADLINE_ACCENT}}</span></h1>
+            <p class="hero-deck">{{BLOG_SUMMARY}}</p>
+            <div class="hero-actions">
+              <a class="button button--primary" href="#latest">Explore latest stories <span aria-hidden="true">&darr;</span></a>
+              <a class="button button--quiet" href="#community-interest">Become a contributor <span aria-hidden="true">&rarr;</span></a>
             </div>
-            <div class="article-meta">
-              <time datetime="{{ARTICLE_PUBLISHED_ISO}}">{{ARTICLE_PUBLISHED_DISPLAY}}</time>
-              <span>/</span>
-              <span>{{ARTICLE_READING_TIME}} min read</span>
-              <span>/</span>
-              <span>{{ARTICLE_SOURCE_LABEL}}</span>
-            </div>
+            <dl class="hero-stats" aria-label="Publication details">
+              <div><dt>Stories</dt><dd>{{BLOG_POST_COUNT_PADDED}}</dd></div>
+              <div><dt>Author interest</dt><dd>{{AUTHOR_INTEREST_STATUS}}</dd></div>
+              <div><dt>Identity</dt><dd>Email</dd></div>
+            </dl>
           </div>
+
+          <article class="feature-card">
+            <a class="feature-image" href="{{FEATURED_ROUTE}}" aria-label="Read {{FEATURED_TITLE}}">
+              <img
+                src="{{FEATURED_HOME_COVER}}"
+                alt="{{FEATURED_TITLE}} cover"
+              />
+            </a>
+            <div class="feature-body">
+              <div class="story-meta">
+                <span class="category">{{FEATURED_CATEGORY}}</span>
+                <span>/</span>
+                <time datetime="{{FEATURED_PUBLISHED_ISO}}">{{FEATURED_PUBLISHED_DISPLAY}}</time>
+                <span>/</span>
+                <span>By {{FEATURED_AUTHOR}}</span>
+              </div>
+              <h2>{{FEATURED_TITLE}}</h2>
+              <p>{{FEATURED_SUMMARY}}</p>
+              <a class="text-link" href="{{FEATURED_ROUTE}}">Read the feature</a>
+            </div>
+          </article>
         </div>
-      </header>
+      </section>
 
-      <div class="article-layout">
-        <aside class="article-rail" aria-label="Article navigation">
-          <figure class="rail-cover">
-            <img
-              src="{{ARTICLE_COVER}}"
-              alt="{{ARTICLE_TITLE}} cover"
-            />
-            <figcaption>Optional article cover</figcaption>
-          </figure>
-          <p class="rail-label">In this story</p>
-          <ol class="toc">{{ARTICLE_TOC}}</ol>
-        </aside>
+      <div class="ticker" aria-hidden="true">
+        <div class="ticker-track">
+          <span>AI that earns trust</span><span>Copilot in practice</span><span>Community-written</span><span>Editor-reviewed</span>
+          <span>AI that earns trust</span><span>Copilot in practice</span><span>Community-written</span><span>Editor-reviewed</span>
+        </div>
+      </div>
 
-        <article class="article-body" id="article-content">
-          <!-- BLOG_POST_CONTENT_START -->
-          <p class="lead">
-            A Dynamics 365 plugin is a compact piece of code with an unusually large
-            responsibility. It runs inside a business process, works with privileged data,
-            and can affect every user who triggers the same operation.
-          </p>
+      <section class="topic-strip" id="topics" aria-labelledby="topics-label">
+        <p class="eyebrow" id="topics-label">Explore topics</p>
+        <nav class="topic-bar" aria-label="Blog topics">{{BLOG_TOPIC_LINKS}}</nav>
+      </section>
+
+      <section class="stories-section" id="latest" aria-labelledby="latest-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">The publication</p>
+            <h2 id="latest-title">The first CodeFox story.</h2>
+          </div>
           <p>
-            That makes it a strong candidate for AI-assisted development - and a poor
-            candidate for unreviewed generation. The useful role for an agent is not to
-            invent the behavior. It is to help us move from a clear contract to a complete,
-            testable implementation with less mechanical effort.
+            The publication is starting small. New community-written stories will appear
+            here after they complete editorial review.
           </p>
+        </div>
+        <p class="stories-status">{{BLOG_POST_COUNT_LABEL}}</p>
 
-          <h2 id="contract">Start with the contract, not the code</h2>
-          <p>
-            Before opening agent mode, define what the plugin is allowed to assume and what
-            it must guarantee. A useful specification names the message, stage, entity,
-            filtering attributes, expected images, and the conditions that should end execution.
-          </p>
-          <p>
-            This gives the agent a boundary. More importantly, it gives the reviewer a way
-            to decide whether the generated implementation is correct.
-          </p>
+        <div class="story-grid">
+          <article class="story-card">
+            <a class="story-card__image" href="{{FEATURED_ROUTE}}">
+              <img src="{{FEATURED_HOME_COVER}}" alt="{{FEATURED_TITLE}} cover" loading="lazy" />
+            </a>
+            <div class="story-card__body">
+              <div class="story-meta"><span class="category">{{FEATURED_CATEGORY}}</span><span>/</span><time datetime="{{FEATURED_PUBLISHED_ISO}}">{{FEATURED_PUBLISHED_DISPLAY}}</time><span>/</span><span>{{FEATURED_AUTHOR}}</span></div>
+              <h3><a href="{{FEATURED_ROUTE}}">{{FEATURED_TITLE}}</a></h3>
+              <p>{{FEATURED_SUMMARY}}</p>
+              <a class="text-link" href="{{FEATURED_ROUTE}}">Read article</a>
+            </div>
+          </article>
 
-          <aside class="pull-quote">
-            <p>An agent can accelerate implementation. It cannot replace the contract that makes implementation reviewable.</p>
-            <cite>CodeFox builder principle / 01</cite>
-          </aside>
+        </div>
+      </section>
 
-          <h3>A minimum plugin brief</h3>
-          <ul>
-            <li>The event and pipeline stage where execution belongs.</li>
-            <li>The exact attributes that should trigger the behavior.</li>
-            <li>The data available in the target, pre-image, and post-image.</li>
-            <li>Expected failure behavior and user-facing error messages.</li>
-            <li>Tracing, recursion, security, and performance constraints.</li>
-          </ul>
-
-          <h2 id="context">Give the agent useful context</h2>
-          <p>
-            Agent mode performs better when it can see the patterns already used by the
-            solution. Include the shared plugin base class, tracing helpers, early-bound
-            entity definitions, and representative tests. Point to the conventions that
-            matter instead of relying on a long generic prompt.
-          </p>
-
-          <div class="callout">
-            <strong>Builder warning</strong>
+      <section class="contributors" id="contributors" aria-labelledby="contributors-title">
+        <div class="contributors-inner">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Publish with CodeFox</p>
+              <h2 id="contributors-title">Your experience can become someone else's shortcut.</h2>
+            </div>
             <p>
-              Treat generated plugin code as a starting point. Validate execution depth,
-              registration details, permissions, and data access before deploying it.
+              No CodeFox account is required today. Join the future author community or
+              send an article for editorial review using two separate email workflows.
             </p>
           </div>
 
-          <h2 id="workflow">Use a workflow that stays reviewable</h2>
-          <p>
-            Ask for small, inspectable steps. Each step should produce an artifact you can
-            review before the agent moves on.
-          </p>
-          <ol class="workflow">
-            <li>
-              <span>01</span>
-              <div><strong>Inspect</strong><p>Map the existing project structure, plugin conventions, and available test infrastructure.</p></div>
-            </li>
-            <li>
-              <span>02</span>
-              <div><strong>Plan</strong><p>Describe the registration, guard clauses, data access, and observable outcomes before editing.</p></div>
-            </li>
-            <li>
-              <span>03</span>
-              <div><strong>Implement</strong><p>Create the smallest complete change and keep the business rule separate from pipeline mechanics.</p></div>
-            </li>
-            <li>
-              <span>04</span>
-              <div><strong>Verify</strong><p>Compile, run focused tests, inspect tracing, and verify the registration assumptions.</p></div>
-            </li>
-          </ol>
-
-          <p>
-            Guard clauses are especially important. They make the supported execution path
-            visible and reduce unnecessary organization-service calls.
-          </p>
-
-          <div class="code-shell" aria-label="C sharp plugin guard example">
-            <div class="code-header"><span>Plugin guard example</span><span>C#</span></div>
-            <pre><code><span class="code-accent">public void</span> Execute(<span class="code-type">IServiceProvider</span> services)
-{
-    var context = services.Get&lt;<span class="code-type">IPluginExecutionContext</span>&gt;();
-    var trace = services.Get&lt;<span class="code-type">ITracingService</span>&gt;();
-
-    if (context.Depth &gt; 1 ||
-        context.MessageName != "Update" ||
-        !context.InputParameters.TryGetValue("Target", out var value) ||
-        value is not <span class="code-type">Entity</span> target)
-    {
-        return;
-    }
-
-    trace.Trace("Validated plugin execution contract.");
-    ExecuteBusinessRule(target, context, services);
-}</code></pre>
+          <div class="contribution-options">
+            <a class="contribution-option" href="#community-interest">
+              <span>Future contributor</span>
+              <strong>Join the author community</strong>
+              <small>Register your interest in writing and help shape the future contributor platform.</small>
+            </a>
+            <a class="contribution-option" href="#article-submission">
+              <span>Submit now</span>
+              <strong>Send an article for review</strong>
+              <small>Prepare an editorial submission email with your draft link or attachment instructions.</small>
+            </a>
+            <a class="contribution-option" href="./article-template/">
+              <span>Page example</span>
+              <strong>View the article template</strong>
+              <small>See a realistic example page showing every field, rich content area, media placement, and shared ad container.</small>
+            </a>
           </div>
 
-          <h2 id="draft">Treat generated output as a draft</h2>
-          <p>
-            Compilation is only the first check. Review every service call, column set,
-            exception path, and assumption about the execution context. Confirm that the
-            implementation does not retrieve more data than it needs or trigger recursively.
-          </p>
-          <p>
-            Tests should prove the business outcome as well as the guard behavior. Include
-            missing attributes, unexpected stages, repeated execution, and permission
-            failures. The goal is not to prove the agent produced code. The goal is to prove
-            the plugin behaves correctly inside the platform.
-          </p>
+          <div class="contribution-forms">
+            <section class="contribution-form-card" id="community-interest" aria-labelledby="community-interest-title">
+              <p class="eyebrow">Community interest</p>
+              <h3 id="community-interest-title">Join the future author community.</h3>
+              <form class="interest-form" id="community-interest-form">
+                <div class="interest-form-grid">
+                  <label class="interest-field">
+                    <span>Your name *</span>
+                    <input type="text" name="name" autocomplete="name" required />
+                  </label>
+                  <label class="interest-field">
+                    <span>Email - your primary ID *</span>
+                    <input type="email" name="email" autocomplete="email" required />
+                  </label>
+                  <label class="interest-field">
+                    <span>Primary interest *</span>
+                    <select name="topic" required>
+                      <option value="">Choose a topic</option>
+                      {{BLOG_CATEGORY_OPTIONS}}
+                    </select>
+                  </label>
+                  <label class="interest-field">
+                    <span>GitHub, profile, or portfolio</span>
+                    <input type="url" name="profile" inputmode="url" placeholder="https://" />
+                  </label>
+                  <label class="interest-field interest-field--wide">
+                    <span>Why would you like to contribute? *</span>
+                    <textarea name="motivation" required></textarea>
+                  </label>
+                </div>
+                <label class="interest-consent">
+                  <input type="checkbox" name="consent" required />
+                  <span>I agree that CodeFox may contact this email about future contributor opportunities.</span>
+                </label>
+                <div class="interest-actions">
+                  <button class="button button--primary" type="submit">Prepare community interest <span aria-hidden="true">&rarr;</span></button>
+                  <a class="interest-email" href="mailto:{{OWNER_EMAIL}}?subject=CodeFox%20community%20author%20interest">Email directly</a>
+                </div>
+                <p class="interest-privacy">Your email becomes the primary identifier for future communication. Nothing is stored by this website.</p>
+                <p class="interest-status" id="community-interest-status" aria-live="polite"></p>
+              </form>
+            </section>
 
-          <section class="takeaways" id="takeaways">
-            <p class="eyebrow">Keep close at hand</p>
-            <h2>Key takeaways</h2>
-            <ul>
-              <li>Write the execution contract before asking for implementation.</li>
-              <li>Ground agent mode in the actual solution patterns and helper APIs.</li>
-              <li>Work in small steps with reviewable outputs and focused validation.</li>
-              <li>Review generated code for platform behavior, not only syntax.</li>
-              <li>Keep human ownership of the business rule and release decision.</li>
-            </ul>
-          </section>
+            <section class="contribution-form-card" id="article-submission" aria-labelledby="article-submission-title">
+              <p class="eyebrow">Article submission</p>
+              <h3 id="article-submission-title">Send a story for editorial review.</h3>
+              <form class="interest-form" id="article-submission-form">
+                <div class="interest-form-grid">
+                  <label class="interest-field">
+                    <span>Author name *</span>
+                    <input type="text" name="name" autocomplete="name" required />
+                  </label>
+                  <label class="interest-field">
+                    <span>Email - your primary ID *</span>
+                    <input type="email" name="email" autocomplete="email" required />
+                  </label>
+                  <label class="interest-field">
+                    <span>Public profile or portfolio</span>
+                    <input type="url" name="profile" inputmode="url" placeholder="https://" />
+                  </label>
+                  <label class="interest-field">
+                    <span>Article topic *</span>
+                    <select name="topic" required>
+                      <option value="">Choose a topic</option>
+                      {{BLOG_CATEGORY_OPTIONS}}
+                    </select>
+                  </label>
+                  <label class="interest-field">
+                    <span>Other category, if selected</span>
+                    <input type="text" name="otherCategory" />
+                  </label>
+                  <label class="interest-field interest-field--wide">
+                    <span>Article title *</span>
+                    <input type="text" name="title" required />
+                  </label>
+                  <label class="interest-field interest-field--wide">
+                    <span>Article subtitle *</span>
+                    <input type="text" name="subtitle" required />
+                  </label>
+                  <label class="interest-field interest-field--wide">
+                    <span>Article body *</span>
+                    <span class="interest-help">The body is free-form. Use any structure, headings, lists, links, or pasted rich text that suits the article.</span>
+                    <span class="interest-help">Use the formatting buttons as needed. The Article Page Example shows every supported component and its rendered HTML result.</span>
+                    <span class="rich-text-editor">
+                      <span class="rich-text-toolbar" role="toolbar" aria-label="Body formatting">
+                        <button type="button" data-rich-command="bold" aria-label="Bold">Bold</button>
+                        <button type="button" data-rich-command="italic" aria-label="Italic">Italic</button>
+                        <button type="button" data-rich-command="formatBlock" data-rich-value="h2" aria-label="Main heading">H2</button>
+                        <button type="button" data-rich-command="formatBlock" data-rich-value="h3" aria-label="Subheading">H3</button>
+                        <button type="button" data-rich-command="formatBlock" data-rich-value="blockquote" aria-label="Quote">Quote</button>
+                        <button type="button" data-rich-command="insertUnorderedList" aria-label="Bulleted list">Bullets</button>
+                        <button type="button" data-rich-command="insertOrderedList" aria-label="Numbered list">Numbered</button>
+                        <button type="button" data-rich-command="createLink" aria-label="Add link">Link</button>
+                        <button type="button" data-rich-command="insertHTML" data-rich-html="&lt;pre&gt;&lt;code&gt;[Add code or command]&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;" aria-label="Insert code block">Code</button>
+                        <button type="button" data-rich-command="insertHTML" data-rich-html="&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Heading&lt;/th&gt;&lt;th&gt;Heading&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Value&lt;/td&gt;&lt;td&gt;Value&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;" aria-label="Insert table">Table</button>
+                        <button type="button" data-rich-command="insertText" data-rich-value="##note " aria-label="Insert note">Note</button>
+                        <button type="button" data-rich-command="insertText" data-rich-value="##warning " aria-label="Insert warning">Warning</button>
+                        <button type="button" data-rich-command="insertText" data-rich-value="##tip " aria-label="Insert tip">Tip</button>
+                        <button type="button" data-rich-command="removeFormat" aria-label="Clear formatting">Clear</button>
+                      </span>
+                      <span class="rich-text-input" contenteditable="true" role="textbox" aria-multiline="true" data-rich-body data-placeholder="Write or paste the article body here."></span>
+                    </span>
+                    <input type="hidden" name="body" />
+                  </label>
+                  <label class="interest-field interest-field--wide">
+                    <span>Shareable rich-text document link</span>
+                    <input type="url" name="bodyDocument" inputmode="url" placeholder="https://" />
+                  </label>
+                  <label class="interest-field interest-field--wide">
+                    <span>Optional images</span>
+                    <textarea name="images" placeholder="Image links, attachment names, alternative text, and credits"></textarea>
+                  </label>
+                  <label class="interest-field interest-field--wide">
+                    <span>Optional videos</span>
+                    <textarea name="videos" placeholder="HTTPS YouTube or Vimeo links with titles"></textarea>
+                  </label>
+                </div>
+                <label class="interest-consent">
+                  <input type="checkbox" name="rights" required />
+                  <span>I confirm this is my original work and CodeFox may review it for possible publication.</span>
+                </label>
+                <p class="submission-note">For a long or heavily formatted body, provide a shareable document link or attach the document after the email opens. Images and videos are optional.</p>
+                <div class="interest-actions">
+                  <button class="button button--primary" type="submit">Prepare article submission <span aria-hidden="true">&rarr;</span></button>
+                  <a class="interest-email" href="mailto:{{OWNER_EMAIL}}?subject=CodeFox%20article%20submission">Email directly</a>
+                </div>
+                <p class="interest-privacy">Keep the email thread to ask for review status. Your sender email is the primary submission identity.</p>
+                <p class="interest-status" id="article-submission-status" aria-live="polite"></p>
+              </form>
+            </section>
+          </div>
 
-          <!-- BLOG_POST_CONTENT_END -->
-          <section class="author-panel" aria-labelledby="author-panel-title">
-            <span class="author-panel__mark" aria-hidden="true">{{AUTHOR_INITIALS}}</span>
-            <div>
-              <p class="eyebrow">About the contributor</p>
-              <h2 id="author-panel-title">{{AUTHOR_NAME}}</h2>
-              <p>{{AUTHOR_BIO}}</p>
-              <a href="{{AUTHOR_PROFILE_URL}}" target="_blank" rel="noreferrer">View contributor profile &nearr;</a>
+          <section class="platform-roadmap" aria-labelledby="platform-roadmap-title">
+            <div class="roadmap-heading">
+              <div>
+                <p class="eyebrow">Contributor platform roadmap</p>
+                <h3 id="platform-roadmap-title">From email identity to a complete publishing workspace.</h3>
+              </div>
+              <p>Email is the primary identity now. A future account system can verify that address and connect it to profiles, drafts, reviews, and published stories.</p>
             </div>
+            <ol class="roadmap-grid">
+              <li><span>Phase 01 / Now</span><strong>Email intake</strong><p>Community interest and article submissions are reviewed manually through email.</p></li>
+              <li><span>Phase 02</span><strong>Accounts and roles</strong><p>Passwordless email sign-in, contributor profiles, and author/editor permissions.</p></li>
+              <li><span>Phase 03</span><strong>Writing workspace</strong><p>Create and edit rich drafts, autosave, add images or videos, and preview articles.</p></li>
+              <li><span>Phase 04</span><strong>Review and publish</strong><p>Submit drafts, receive editor comments, track status, revise, and publish.</p></li>
+            </ol>
           </section>
+        </div>
+      </section>
 
-        </article>
-
-        <aside class="ad-rail"{{ADS_HIDDEN_ATTRIBUTE}} aria-label="Sponsored content">
-          <p class="ad-heading">{{ADS_LABEL}}</p>
-          {{ADS_SLOTS}}
-          <p class="ad-policy">{{ADS_POLICY}}</p>
-        </aside>
-      </div>
-
+      <section class="community" id="community" aria-labelledby="community-title">
+        <div class="community-inner">
+          <p class="eyebrow">Join the publication</p>
+          <h2 id="community-title">Have a lesson worth sharing?</h2>
+          <p>
+            Register your interest in the future contributor platform, or send a complete
+            article now for editorial review. Your email is the primary identity for both.
+          </p>
+          <div class="community-actions">
+            <a class="button button--primary" href="#community-interest">Join the future community <span aria-hidden="true">&uarr;</span></a>
+            <a class="button button--quiet" href="#article-submission">Submit an article <span aria-hidden="true">&uarr;</span></a>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="site-footer">
@@ -1437,46 +1940,114 @@
           <span class="brand-mark" aria-hidden="true">C/F</span>
           <span class="brand-copy"><strong>{{BLOG_BRAND_NAME}}</strong><span>{{BLOG_BRAND_SUFFIX}}</span></span>
         </a>
-        <a class="header-link" href="../site/index.html"><span aria-hidden="true">&larr;</span> Fieldnotes</a>
+        <a class="return-link" href="../site/index.html"><span aria-hidden="true">&larr;</span> The Builder's Fieldnotes</a>
       </div>
     </footer>
 
     <script>
-      const progressBar = document.querySelector("#reading-progress-bar");
-      const article = document.querySelector("#article-content");
-      const tocLinks = [...document.querySelectorAll(".toc a")];
-      const sections = tocLinks
-        .map((link) => document.querySelector(link.getAttribute("href")))
-        .filter(Boolean);
+      document.querySelector("[data-blog-back]")?.addEventListener("click", () => window.history.back());
 
-      const updateProgress = () => {
-        if (!progressBar || !article) return;
-        const start = article.offsetTop;
-        const distance = Math.max(article.offsetHeight - window.innerHeight, 1);
-        const progress = Math.min(Math.max((window.scrollY - start) / distance, 0), 1);
-        progressBar.style.width = `${progress * 100}%`;
-      };
+      for (const control of document.querySelectorAll("[data-rich-command]")) {
+        control.addEventListener("click", () => {
+          const editor = control.closest(".rich-text-editor")?.querySelector("[data-rich-body]");
+          if (!editor) return;
+          editor.focus();
+          const command = control.dataset.richCommand;
+          let value = control.dataset.richValue ?? null;
+          if (control.dataset.richHtml) {
+            document.execCommand("insertHTML", false, control.dataset.richHtml);
+            return;
+          }
+          if (command === "createLink") {
+            value = window.prompt("Enter an HTTPS link");
+            if (!value) return;
+          }
+          document.execCommand(command, false, value);
+        });
+      }
 
-      const updateActiveSection = () => {
-        let activeSection = sections[0];
-        for (const section of sections) {
-          if (section.getBoundingClientRect().top <= 220) activeSection = section;
-        }
+      const emailTarget = "{{OWNER_EMAIL}}";
+      const formConfigs = [
+        {
+          formId: "community-interest-form",
+          statusId: "community-interest-status",
+          subject: (value) => `CodeFox community author interest - ${value("name")}`,
+          intro: "I would like to join the future CodeFox author community.",
+          fields: [
+            ["Name", "name"],
+            ["Primary email ID", "email"],
+            ["Primary interest", "topic"],
+            ["GitHub, profile, or portfolio", "profile", "Not provided"],
+            ["Why I would like to contribute", "motivation"],
+          ],
+          confirmation: "I agree that CodeFox may contact me about future contributor opportunities.",
+        },
+        {
+          formId: "article-submission-form",
+          statusId: "article-submission-status",
+          subject: (value) => `CodeFox article submission - ${value("title")}`,
+          intro: "I would like to submit an article for CodeFox editorial review.",
+          fields: [
+            ["Author name", "name"],
+            ["Primary email ID", "email"],
+            ["Public profile or portfolio", "profile", "Not provided"],
+            ["Article topic", "topic"],
+            ["Other category", "otherCategory", "Not provided"],
+            ["Article title", "title"],
+            ["Article subtitle", "subtitle"],
+            ["Article body", "body", "Provided through the document link or file attachment"],
+            ["Shareable rich-text document", "bodyDocument", "Not provided"],
+            ["Optional images", "images", "None"],
+            ["Optional videos", "videos", "None"],
+          ],
+          confirmation: "I confirm this is my original work and CodeFox may review it for possible publication.",
+        },
+      ];
 
-        for (const link of tocLinks) {
-          if (link.getAttribute("href") === `#${activeSection.id}`) link.setAttribute("aria-current", "true");
-          else link.removeAttribute("aria-current");
-        }
-      };
+      for (const config of formConfigs) {
+        const form = document.querySelector(`#${config.formId}`);
+        const status = document.querySelector(`#${config.statusId}`);
 
-      const updateReadingState = () => {
-        updateProgress();
-        updateActiveSection();
-      };
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+          if (!form.reportValidity()) return;
 
-      window.addEventListener("scroll", updateReadingState, { passive: true });
-      window.addEventListener("resize", updateReadingState);
-      updateReadingState();
+          const richBody = form.querySelector("[data-rich-body]");
+          const bodyField = form.querySelector("[name=\"body\"]");
+          const documentField = form.querySelector("[name=\"bodyDocument\"]");
+          if (richBody && bodyField) {
+            bodyField.value = richBody.innerText.trim();
+            if (!bodyField.value && !documentField?.value.trim()) {
+              status.textContent = "Add article body content or provide a shareable rich-text document link.";
+              richBody.focus();
+              return;
+            }
+            if (bodyField.value.length > 3000 && !documentField?.value.trim()) {
+              status.textContent = "This body is too long for a prepared email. Add a shareable document link or attach the full document manually.";
+              richBody.focus();
+              return;
+            }
+          }
+
+          const data = new FormData(form);
+          const value = (name) => String(data.get(name) ?? "").trim();
+          const fieldLines = config.fields.map(([label, name, fallback]) => `${label}: ${value(name) || fallback || ""}`);
+          const body = [
+            "Hello CodeFox team,",
+            "",
+            config.intro,
+            "",
+            ...fieldLines,
+            "",
+            config.confirmation,
+            "",
+            "Please use my email address as my primary contributor identity and keep this thread for future status updates.",
+          ].join("\n");
+
+          status.textContent = "Your email application should open with the message prepared. Review it, attach a file if needed, then press Send.";
+          window.location.href = `mailto:${emailTarget}?subject=${encodeURIComponent(config.subject(value))}&body=${encodeURIComponent(body)}`;
+        });
+      }
     </script>
   </body>
 </html>

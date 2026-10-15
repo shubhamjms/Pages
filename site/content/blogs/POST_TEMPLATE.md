@@ -1,6 +1,6 @@
 ---
 title: "Article title"
-summary: "One concise sentence describing what the reader will learn."
+subtitle: "One concise sentence describing what the reader will learn."
 layout: "standard"
 contentType: "article"
 breadcrumb: "Short breadcrumb"
@@ -16,13 +16,17 @@ tags:
   - "tag"
 ---
 
-[Opening paragraph: introduce the problem, audience, and practical context in two or three sentences.]
+[Body: write and organize the article in whatever structure best serves the subject. The elements below are optional examples, not a required sequence.]
 
 [Value paragraph: explain what the reader will understand or be able to build by the end.]
 
 Use **bold text** for strong emphasis, *italic text* for a lighter emphasis, and [descriptive links](https://example.com) for supporting sources.
 
-> **Builder warning:** [Add an important warning, prerequisite, limitation, or decision that readers should not miss.]
+##warning [Add an important warning, prerequisite, limitation, or decision that readers should not miss.]
+
+##note [Add optional supporting context.]
+
+##tip [Add an optional practical recommendation.]
 
 ## First major section
 
@@ -56,12 +60,9 @@ Use **bold text** for strong emphasis, *italic text* for a lighter emphasis, and
 
 ## Optional video
 
-Use the `video` fenced block for an allowlisted YouTube or Vimeo URL. Replace the sample URL before publishing.
+Use the optional `##video URL | title` shortcut for an allowlisted YouTube or Vimeo URL. Replace the sample URL before publishing.
 
-```video
-https://www.youtube.com/watch?v=VIDEO_ID
-[Accessible video title or short caption]
-```
+##video https://www.youtube.com/watch?v=VIDEO_ID | [Accessible video title or short caption]
 
 ## Key takeaways
 
