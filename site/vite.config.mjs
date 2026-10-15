@@ -12,9 +12,9 @@ export default defineConfig({
       configureServer(server) {
         let timer;
 
-        server.watcher.add("content/**/*");
+        server.watcher.add(["content/**/*", "../design/blogs-preview.html", "../design/blog-article-preview.html"]);
         server.watcher.on("all", (_event, changedPath) => {
-          if (!changedPath.includes("content")) return;
+          if (!changedPath.includes("content") && !changedPath.includes("design")) return;
 
           clearTimeout(timer);
           timer = setTimeout(() => {

@@ -5,6 +5,7 @@ node_modules/
 dist/
 .vite/
 src/generated/
+public/codefox-blogs/
 
 # Test and tool output
 coverage/

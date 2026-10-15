@@ -1,0 +1,1291 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Building smart Dynamics 365 plugins with GitHub Copilot Agent Mode."
+    />
+    <meta name="theme-color" content="#f3efe7" />
+    <title>Building Smart D365 Plugins | CodeFox Community Hub</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f07848'/%3E%3Ctext x='32' y='38' text-anchor='middle' font-family='monospace' font-size='18' font-weight='700' fill='%2332404f'%3EC/F%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Fraunces:opsz,wght@9..144,600;9..144,700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --night: #51637a;
+        --night-soft: #e4e9f2;
+        --paper: #f3efe7;
+        --paper-bright: #fffdf9;
+        --ink: #32404f;
+        --muted: #707986;
+        --orange: #f07848;
+        --orange-dark: #b76542;
+        --lime: #b9e6a8;
+        --sky: #c7d7ef;
+        --line: rgb(50 64 79 / 14%);
+        --line-dark: rgb(50 64 79 / 10%);
+        --crystal: rgb(255 255 255 / 82%);
+        --orange-gradient: linear-gradient(135deg, #fffdf9 0%, #fff0e7 56%, #f7b18f 100%);
+        --orange-gradient-strong: linear-gradient(135deg, #fffaf5 0%, #ffd9c6 54%, #f38b5d 100%);
+        --radius: 6px;
+        --display: "Fraunces", Georgia, serif;
+        --interface: "DM Sans", "Segoe UI", sans-serif;
+        --mono: "IBM Plex Mono", Consolas, monospace;
+        --page: 1240px;
+        --reading: 720px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 112px;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        color: var(--ink);
+        background:
+          linear-gradient(rgb(81 99 122 / 3%) 1px, transparent 1px),
+          linear-gradient(90deg, rgb(81 99 122 / 3%) 1px, transparent 1px),
+          var(--paper);
+        background-size: 32px 32px;
+        font-family: var(--interface);
+      }
+
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      :focus-visible {
+        outline: 3px solid var(--sky);
+        outline-offset: 4px;
+      }
+
+      .skip-link {
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        z-index: 100;
+        padding: 10px 14px;
+        color: var(--night);
+        background: var(--lime);
+        font-weight: 700;
+        transform: translateY(-180%);
+      }
+
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+
+      .reading-progress {
+        position: fixed;
+        top: 68px;
+        right: 0;
+        left: 0;
+        z-index: 40;
+        height: 3px;
+        background: var(--line-dark);
+      }
+
+      .reading-progress span {
+        width: 0;
+        height: 100%;
+        display: block;
+        background: var(--orange);
+        transform-origin: left;
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        color: var(--ink);
+        border-bottom: 1px solid var(--line);
+        background: linear-gradient(110deg, rgb(255 253 249 / 97%) 0%, rgb(255 244 236 / 97%) 62%, rgb(255 229 213 / 95%) 100%);
+        box-shadow: inset 0 3px 0 rgb(240 120 72 / 78%);
+        backdrop-filter: blur(18px);
+      }
+
+      .header-inner {
+        width: min(calc(100% - 40px), var(--page));
+        min-height: 68px;
+        margin-inline: auto;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 36px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--ink);
+        text-decoration: none;
+      }
+
+      .brand-mark {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        color: var(--ink);
+        background: var(--orange);
+        font: 700 13px/1 var(--mono);
+        transform: rotate(-3deg);
+      }
+
+      .brand-copy {
+        display: grid;
+        gap: 1px;
+      }
+
+      .brand-copy strong {
+        font-size: 16px;
+        letter-spacing: -0.02em;
+      }
+
+      .brand-copy span {
+        color: var(--muted);
+        font: 500 9px/1.4 var(--mono);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .article-label {
+        justify-self: center;
+        color: var(--orange-dark);
+        font: 500 9px/1.5 var(--mono);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .header-link {
+        min-height: 38px;
+        padding: 0 15px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 600;
+        transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+      }
+
+      .header-link:hover {
+        color: var(--ink);
+        border-color: var(--orange);
+        background: var(--orange-gradient);
+      }
+
+      .header-link:active {
+        background: var(--orange-gradient-strong);
+      }
+
+      .header-link--quiet {
+        border-color: transparent;
+        color: var(--muted);
+      }
+
+      .header-link--quiet:hover {
+        color: var(--ink);
+        border-color: var(--line);
+        background: transparent;
+      }
+
+      .article-hero {
+        position: relative;
+        overflow: hidden;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 12% 15%, rgb(240 120 72 / 16%), transparent 29%),
+          radial-gradient(circle at 91% 80%, rgb(199 215 239 / 50%), transparent 27%),
+          var(--paper);
+      }
+
+      .article-hero::after {
+        position: absolute;
+        inset: 0;
+        opacity: 0.08;
+        background-image: radial-gradient(circle, var(--ink) 1px, transparent 1px);
+        background-size: 24px 24px;
+        content: "";
+        mask-image: linear-gradient(90deg, black, transparent 72%);
+      }
+
+      .hero-inner {
+        position: relative;
+        z-index: 1;
+        width: min(calc(100% - 40px), var(--page));
+        margin-inline: auto;
+        padding: 58px 0 54px;
+      }
+
+      .breadcrumb {
+        margin-bottom: 36px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        color: var(--muted);
+        font: 500 10px/1.5 var(--mono);
+        text-transform: uppercase;
+      }
+
+      .breadcrumb a {
+        color: var(--orange-dark);
+        text-decoration: none;
+      }
+
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+
+      .eyebrow {
+        margin: 0 0 20px;
+        color: var(--orange);
+        font: 600 11px/1.5 var(--mono);
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      .article-hero h1 {
+        max-width: 960px;
+        margin: 0;
+        font: 700 clamp(44px, 5.2vw, 68px) / 0.98 var(--display);
+        letter-spacing: -0.05em;
+      }
+
+      .article-deck {
+        max-width: 760px;
+        margin: 24px 0 0;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.65;
+      }
+
+      .article-byline {
+        margin-top: 32px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 22px;
+      }
+
+      .author {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .author-mark {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        color: var(--night);
+        background: var(--lime);
+        border-radius: 50%;
+        font: 700 12px/1 var(--mono);
+      }
+
+      .author-copy {
+        display: grid;
+        gap: 2px;
+      }
+
+      .author-copy strong {
+        font-size: 13px;
+      }
+
+      .author-copy span,
+      .article-meta {
+        color: var(--muted);
+        font: 500 9px/1.5 var(--mono);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .article-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .rail-cover {
+        margin: 0 0 28px;
+      }
+
+      .rail-cover img {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+      }
+
+      .rail-cover figcaption {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font: 500 8px/1.5 var(--mono);
+        text-transform: uppercase;
+      }
+
+      .article-layout {
+        width: min(calc(100% - 40px), 1320px);
+        margin-inline: auto;
+        padding: 72px 0 104px;
+        display: grid;
+        grid-template-columns: 210px minmax(0, var(--reading)) 210px;
+        justify-content: center;
+        gap: 42px;
+      }
+
+      .article-rail,
+      .ad-rail {
+        align-self: start;
+        position: sticky;
+        top: 116px;
+      }
+
+      .ad-rail {
+        display: grid;
+        gap: 18px;
+      }
+
+      .ad-heading {
+        margin: 0;
+        color: var(--orange-dark);
+        font: 600 8px/1.5 var(--mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .ad-slot {
+        min-height: 220px;
+        padding: 20px;
+        display: grid;
+        align-content: center;
+        justify-items: center;
+        gap: 8px;
+        color: var(--muted);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background:
+          linear-gradient(rgb(81 99 122 / 4%) 1px, transparent 1px),
+          linear-gradient(90deg, rgb(81 99 122 / 4%) 1px, transparent 1px),
+          var(--paper-bright);
+        background-size: 18px 18px;
+        text-align: center;
+      }
+
+      .ad-slot--short {
+        min-height: 150px;
+      }
+
+      .ad-slot strong {
+        color: var(--ink);
+        font-size: 12px;
+      }
+
+      .ad-slot span {
+        font: 400 8px/1.5 var(--mono);
+        text-transform: uppercase;
+      }
+
+      .ad-policy {
+        margin: 0;
+        color: var(--muted);
+        font-size: 10px;
+        line-height: 1.5;
+      }
+
+      .rail-label {
+        margin: 0 0 16px;
+        color: var(--orange);
+        font: 600 9px/1.5 var(--mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .toc {
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 5px;
+        list-style: none;
+        border-left: 1px solid var(--line);
+      }
+
+      .toc a {
+        margin-left: -1px;
+        padding: 8px 0 8px 16px;
+        display: block;
+        color: var(--muted);
+        border-left: 2px solid transparent;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1.4;
+        text-decoration: none;
+        transition: color 160ms ease, background 180ms ease, border-color 160ms ease;
+      }
+
+      .toc a:hover,
+      .toc a[aria-current="true"] {
+        color: var(--ink);
+        border-left-color: var(--orange);
+        background: var(--orange-gradient);
+      }
+
+      .article-body {
+        min-width: 0;
+        font: 400 19px/1.75 var(--display);
+      }
+
+      .article-body > p,
+      .article-body > ul,
+      .article-body > ol {
+        margin: 0 0 29px;
+      }
+
+      .article-body .lead {
+        margin-bottom: 42px;
+        font-size: 25px;
+        line-height: 1.55;
+      }
+
+      .article-body h2 {
+        margin: 72px 0 24px;
+        font: 700 42px/1.08 var(--display);
+        letter-spacing: -0.035em;
+      }
+
+      .article-body h3 {
+        margin: 44px 0 17px;
+        font: 700 27px/1.2 var(--display);
+      }
+
+      .article-body a {
+        color: var(--orange-dark);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+      }
+
+      .article-body li {
+        margin-bottom: 10px;
+        padding-left: 7px;
+      }
+
+      .article-body li::marker {
+        color: var(--orange-dark);
+        font-family: var(--mono);
+      }
+
+      .pull-quote {
+        margin: 48px 0;
+        padding: 34px 38px;
+        color: var(--ink);
+        border-left: 4px solid var(--orange);
+        background: var(--sky);
+      }
+
+      .pull-quote p {
+        margin: 0;
+        font: 600 35px/1.25 var(--display);
+      }
+
+      .pull-quote cite {
+        margin-top: 20px;
+        display: block;
+        color: var(--muted);
+        font: 400 9px/1.5 var(--mono);
+        font-style: normal;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .workflow {
+        margin: 40px 0;
+        padding: 0;
+        display: grid;
+        gap: 1px;
+        list-style: none;
+        background: var(--line);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+
+      .workflow li {
+        margin: 0;
+        padding: 24px;
+        display: grid;
+        grid-template-columns: 44px 1fr;
+        gap: 18px;
+        background: var(--crystal);
+        transition: background 180ms ease;
+      }
+
+      .workflow li:hover {
+        background: var(--orange-gradient);
+      }
+
+      .workflow span {
+        color: var(--orange-dark);
+        font: 500 11px/1.5 var(--mono);
+      }
+
+      .workflow div {
+        font-family: var(--interface);
+      }
+
+      .workflow strong {
+        display: block;
+        font-size: 15px;
+      }
+
+      .workflow p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .code-shell {
+        margin: 38px 0;
+        overflow: hidden;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--night-soft);
+      }
+
+      .code-header {
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        color: var(--muted);
+        border-bottom: 1px solid var(--line);
+        background: var(--sky);
+        font: 400 9px/1.5 var(--mono);
+        text-transform: uppercase;
+      }
+
+      pre {
+        margin: 0;
+        padding: 24px;
+        overflow-x: auto;
+        font: 400 13px/1.7 var(--mono);
+      }
+
+      .code-accent {
+        color: var(--orange-dark);
+      }
+
+      .code-type {
+        color: #426c7c;
+      }
+
+      .callout {
+        margin: 42px 0;
+        padding: 28px;
+        border: 1px solid #e3bd4d;
+        border-left: 5px solid #dcae2f;
+        border-radius: var(--radius);
+        background: #fff0ad;
+        font-family: var(--interface);
+      }
+
+      .callout strong {
+        display: block;
+        color: #765714;
+        font-size: 15px;
+      }
+
+      .callout p {
+        margin: 9px 0 0;
+        font-size: 14px;
+        line-height: 1.65;
+      }
+
+      .takeaways {
+        margin-top: 72px;
+        padding: 34px;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--sky);
+      }
+
+      .takeaways .eyebrow {
+        color: var(--orange-dark);
+      }
+
+      .takeaways h2 {
+        margin: 0 0 24px;
+        font-size: 34px;
+      }
+
+      .takeaways ul {
+        margin: 0;
+        padding-left: 20px;
+        color: var(--muted);
+        font-family: var(--interface);
+        font-size: 14px;
+        line-height: 1.65;
+      }
+
+      .takeaways li::marker {
+        color: var(--orange);
+      }
+
+      .author-panel {
+        margin-top: 72px;
+        padding: 30px;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 24px;
+        border: 1px solid var(--ink);
+        border-radius: var(--radius);
+        background: var(--crystal);
+        box-shadow: 6px 6px 0 var(--sky);
+        font-family: var(--interface);
+        backdrop-filter: blur(12px);
+        transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+      }
+
+      .author-panel:hover {
+        border-color: var(--orange);
+        background: var(--orange-gradient);
+        transform: translateY(-2px);
+      }
+
+      .author-panel__mark {
+        width: 72px;
+        height: 72px;
+        display: grid;
+        place-items: center;
+        color: var(--night);
+        background: var(--lime);
+        border-radius: 50%;
+        font: 700 17px/1 var(--mono);
+      }
+
+      .author-panel .eyebrow {
+        margin-bottom: 8px;
+      }
+
+      .author-panel h2 {
+        margin: 0;
+        font: 700 29px/1.1 var(--display);
+      }
+
+      .author-panel p:not(.eyebrow) {
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.65;
+      }
+
+      .author-panel a {
+        margin-top: 16px;
+        display: inline-flex;
+        color: var(--orange-dark);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .article-end {
+        margin-top: 44px;
+        padding-top: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        border-top: 1px solid var(--ink);
+        font-family: var(--interface);
+      }
+
+      .article-end p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .article-end a {
+        min-height: 44px;
+        padding: 0 16px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--ink);
+        border-radius: var(--radius);
+        background: var(--orange);
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .article-end a:hover {
+        color: var(--ink);
+        background: var(--orange-gradient-strong);
+      }
+
+      .site-footer {
+        color: var(--ink);
+        border-top: 1px solid var(--line);
+        background: var(--paper-bright);
+      }
+
+      .footer-inner {
+        width: min(calc(100% - 40px), var(--page));
+        min-height: 116px;
+        margin-inline: auto;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .footer-inner p {
+        margin: 0;
+        color: var(--muted);
+        font: 400 9px/1.5 var(--mono);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .footer-inner .brand {
+        justify-self: center;
+      }
+
+      .footer-inner .header-link {
+        justify-self: end;
+      }
+
+      @media (max-width: 1180px) {
+        .article-layout {
+          grid-template-columns: 210px minmax(0, var(--reading));
+        }
+
+        .ad-rail {
+          display: none;
+        }
+      }
+
+      @media (max-width: 1040px) {
+        .article-layout {
+          grid-template-columns: 1fr;
+          justify-content: center;
+        }
+
+        .article-rail {
+          position: static;
+          max-width: var(--reading);
+          margin-inline: auto;
+        }
+
+        .rail-cover {
+          max-width: 260px;
+        }
+
+        .toc {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          border-top: 1px solid var(--line);
+          border-left: 0;
+        }
+
+        .toc a {
+          margin: -1px 0 0;
+          padding: 12px 0;
+          border-top: 2px solid transparent;
+          border-left: 0;
+        }
+
+        .toc a:hover,
+        .toc a[aria-current="true"] {
+          border-top-color: var(--orange);
+          border-left-color: transparent;
+        }
+
+        .article-body {
+          width: min(100%, var(--reading));
+          margin-inline: auto;
+        }
+
+      }
+
+      @media (max-width: 760px) {
+        .header-inner {
+          grid-template-columns: auto auto;
+        }
+
+        .article-label,
+        .header-link--quiet {
+          display: none;
+        }
+
+        .header-actions {
+          justify-self: end;
+        }
+
+        .article-hero h1 {
+          font-size: clamp(42px, 11vw, 60px);
+        }
+
+        .article-deck {
+          font-size: 18px;
+        }
+
+        .pull-quote {
+          margin-right: 0;
+          margin-left: 0;
+          padding: 34px 28px;
+        }
+
+        .pull-quote p {
+          font-size: 29px;
+        }
+
+      }
+
+      @media (max-width: 560px) {
+        .reading-progress {
+          top: 68px;
+        }
+
+        .header-inner,
+        .hero-inner,
+        .article-layout,
+        .footer-inner {
+          width: min(calc(100% - 28px), var(--page));
+        }
+
+        .header-inner {
+          min-height: 68px;
+          gap: 10px;
+        }
+
+        .brand-copy span {
+          display: none;
+        }
+
+        .brand-mark {
+          width: 38px;
+          height: 38px;
+        }
+
+        .header-link {
+          padding: 0 11px;
+          font-size: 11px;
+        }
+
+        .hero-inner {
+          padding: 46px 0 44px;
+        }
+
+        .breadcrumb {
+          margin-bottom: 38px;
+        }
+
+        .article-byline {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .article-layout {
+          padding: 70px 0 82px;
+          gap: 50px;
+        }
+
+        .toc {
+          grid-template-columns: 1fr;
+        }
+
+        .article-body {
+          font-size: 18px;
+          line-height: 1.7;
+        }
+
+        .article-body .lead {
+          font-size: 22px;
+        }
+
+        .article-body h2 {
+          margin-top: 58px;
+          font-size: 35px;
+        }
+
+        .workflow li {
+          grid-template-columns: 34px 1fr;
+          padding: 20px;
+        }
+
+        .code-shell {
+          box-shadow: 6px 6px 0 var(--orange);
+        }
+
+        .takeaways {
+          padding: 27px;
+        }
+
+        .author-panel {
+          grid-template-columns: 1fr;
+          padding: 25px;
+          box-shadow: 6px 6px 0 var(--orange);
+        }
+
+        .article-end {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .footer-inner {
+          padding: 34px 0;
+          display: flex;
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .footer-inner .brand,
+        .footer-inner .header-link {
+          justify-self: auto;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#article-content">Skip to article</a>
+    <div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>
+
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="blogs-preview.html" aria-label="CodeFox Community Hub home">
+          <span class="brand-mark" aria-hidden="true">C/F</span>
+          <span class="brand-copy"><strong>CodeFox</strong><span>Community Hub</span></span>
+        </a>
+
+        <span class="article-label">CodeFox Community Hub / Article</span>
+
+        <div class="header-actions">
+          <a class="header-link header-link--quiet" href="../site/index.html">
+            The Builder's Fieldnotes
+          </a>
+          <a class="header-link" href="blogs-preview.html">
+            <span aria-hidden="true">&larr;</span> All blogs
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <header class="article-hero">
+        <div class="hero-inner">
+          <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="blogs-preview.html">Blogs</a>
+            <span>/</span>
+            <a href="blogs-preview.html#topics">Dynamics 365</a>
+            <span>/</span>
+            <span aria-current="page">Agent-assisted plugins</span>
+          </nav>
+          <p class="eyebrow">Dynamics 365 / Engineering practice</p>
+          <h1>Building Smart D365 Plugins with GitHub Copilot Agent Mode</h1>
+          <p class="article-deck">
+            Use agent mode to accelerate the routine work around a plugin without giving
+            up the contracts, guardrails, and review points that make server-side code dependable.
+          </p>
+          <div class="article-byline">
+            <div class="author">
+              <span class="author-mark" aria-hidden="true">SJ</span>
+              <span class="author-copy">
+                <strong>Shubhamm Jadhav</strong>
+                <span>AI Developer</span>
+              </span>
+            </div>
+            <div class="article-meta">
+              <time datetime="2025-11-24">24 Nov 2025</time>
+              <span>/</span>
+              <span>8 min read</span>
+              <span>/</span>
+              <span>CodeFox original</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="article-layout">
+        <aside class="article-rail" aria-label="Article navigation">
+          <figure class="rail-cover">
+            <img
+              src="../site/public/article-covers/smart-d365-plugins.jpg"
+              alt="Building Smart D365 Plugins with GitHub Copilot Agent Mode cover"
+            />
+            <figcaption>Optional article cover</figcaption>
+          </figure>
+          <p class="rail-label">In this story</p>
+          <ol class="toc">
+            <li><a href="#contract">Start with the contract</a></li>
+            <li><a href="#context">Give useful context</a></li>
+            <li><a href="#workflow">Use a reviewable workflow</a></li>
+            <li><a href="#draft">Treat output as a draft</a></li>
+            <li><a href="#takeaways">Key takeaways</a></li>
+          </ol>
+        </aside>
+
+        <article class="article-body" id="article-content">
+          <p class="lead">
+            A Dynamics 365 plugin is a compact piece of code with an unusually large
+            responsibility. It runs inside a business process, works with privileged data,
+            and can affect every user who triggers the same operation.
+          </p>
+          <p>
+            That makes it a strong candidate for AI-assisted development - and a poor
+            candidate for unreviewed generation. The useful role for an agent is not to
+            invent the behavior. It is to help us move from a clear contract to a complete,
+            testable implementation with less mechanical effort.
+          </p>
+
+          <h2 id="contract">Start with the contract, not the code</h2>
+          <p>
+            Before opening agent mode, define what the plugin is allowed to assume and what
+            it must guarantee. A useful specification names the message, stage, entity,
+            filtering attributes, expected images, and the conditions that should end execution.
+          </p>
+          <p>
+            This gives the agent a boundary. More importantly, it gives the reviewer a way
+            to decide whether the generated implementation is correct.
+          </p>
+
+          <aside class="pull-quote">
+            <p>An agent can accelerate implementation. It cannot replace the contract that makes implementation reviewable.</p>
+            <cite>CodeFox builder principle / 01</cite>
+          </aside>
+
+          <h3>A minimum plugin brief</h3>
+          <ul>
+            <li>The event and pipeline stage where execution belongs.</li>
+            <li>The exact attributes that should trigger the behavior.</li>
+            <li>The data available in the target, pre-image, and post-image.</li>
+            <li>Expected failure behavior and user-facing error messages.</li>
+            <li>Tracing, recursion, security, and performance constraints.</li>
+          </ul>
+
+          <h2 id="context">Give the agent useful context</h2>
+          <p>
+            Agent mode performs better when it can see the patterns already used by the
+            solution. Include the shared plugin base class, tracing helpers, early-bound
+            entity definitions, and representative tests. Point to the conventions that
+            matter instead of relying on a long generic prompt.
+          </p>
+
+          <div class="callout">
+            <strong>Builder warning</strong>
+            <p>
+              Treat generated plugin code as a starting point. Validate execution depth,
+              registration details, permissions, and data access before deploying it.
+            </p>
+          </div>
+
+          <h2 id="workflow">Use a workflow that stays reviewable</h2>
+          <p>
+            Ask for small, inspectable steps. Each step should produce an artifact you can
+            review before the agent moves on.
+          </p>
+          <ol class="workflow">
+            <li>
+              <span>01</span>
+              <div><strong>Inspect</strong><p>Map the existing project structure, plugin conventions, and available test infrastructure.</p></div>
+            </li>
+            <li>
+              <span>02</span>
+              <div><strong>Plan</strong><p>Describe the registration, guard clauses, data access, and observable outcomes before editing.</p></div>
+            </li>
+            <li>
+              <span>03</span>
+              <div><strong>Implement</strong><p>Create the smallest complete change and keep the business rule separate from pipeline mechanics.</p></div>
+            </li>
+            <li>
+              <span>04</span>
+              <div><strong>Verify</strong><p>Compile, run focused tests, inspect tracing, and verify the registration assumptions.</p></div>
+            </li>
+          </ol>
+
+          <p>
+            Guard clauses are especially important. They make the supported execution path
+            visible and reduce unnecessary organization-service calls.
+          </p>
+
+          <div class="code-shell" aria-label="C sharp plugin guard example">
+            <div class="code-header"><span>Plugin guard example</span><span>C#</span></div>
+            <pre><code><span class="code-accent">public void</span> Execute(<span class="code-type">IServiceProvider</span> services)
+{
+    var context = services.Get&lt;<span class="code-type">IPluginExecutionContext</span>&gt;();
+    var trace = services.Get&lt;<span class="code-type">ITracingService</span>&gt;();
+
+    if (context.Depth &gt; 1 ||
+        context.MessageName != "Update" ||
+        !context.InputParameters.TryGetValue("Target", out var value) ||
+        value is not <span class="code-type">Entity</span> target)
+    {
+        return;
+    }
+
+    trace.Trace("Validated plugin execution contract.");
+    ExecuteBusinessRule(target, context, services);
+}</code></pre>
+          </div>
+
+          <h2 id="draft">Treat generated output as a draft</h2>
+          <p>
+            Compilation is only the first check. Review every service call, column set,
+            exception path, and assumption about the execution context. Confirm that the
+            implementation does not retrieve more data than it needs or trigger recursively.
+          </p>
+          <p>
+            Tests should prove the business outcome as well as the guard behavior. Include
+            missing attributes, unexpected stages, repeated execution, and permission
+            failures. The goal is not to prove the agent produced code. The goal is to prove
+            the plugin behaves correctly inside the platform.
+          </p>
+
+          <section class="takeaways" id="takeaways">
+            <p class="eyebrow">Keep close at hand</p>
+            <h2>Key takeaways</h2>
+            <ul>
+              <li>Write the execution contract before asking for implementation.</li>
+              <li>Ground agent mode in the actual solution patterns and helper APIs.</li>
+              <li>Work in small steps with reviewable outputs and focused validation.</li>
+              <li>Review generated code for platform behavior, not only syntax.</li>
+              <li>Keep human ownership of the business rule and release decision.</li>
+            </ul>
+          </section>
+
+          <section class="author-panel" aria-labelledby="author-panel-title">
+            <span class="author-panel__mark" aria-hidden="true">SJ</span>
+            <div>
+              <p class="eyebrow">About the contributor</p>
+              <h2 id="author-panel-title">Shubhamm Jadhav</h2>
+              <p>
+                AI developer writing about GitHub Copilot, Dynamics 365, agent workflows,
+                and the engineering practices that make automation dependable.
+              </p>
+              <a href="blogs-preview.html#contributors">View contributor details &rarr;</a>
+            </div>
+          </section>
+
+        </article>
+
+        <aside class="ad-rail" aria-label="Sponsored content">
+          <p class="ad-heading">Sponsored</p>
+          <div class="ad-slot" aria-label="Advertisement placeholder">
+            <strong>Advertisement</strong>
+            <span>210 x 220 placement</span>
+          </div>
+          <div class="ad-slot ad-slot--short" aria-label="Advertisement placeholder">
+            <strong>Partner message</strong>
+            <span>210 x 150 placement</span>
+          </div>
+          <p class="ad-policy">Ads should be relevant to builders and clearly separated from editorial content.</p>
+        </aside>
+      </div>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <p>AI / Copilot / Dynamics 365 / Builder practice</p>
+        <a class="brand" href="blogs-preview.html" aria-label="CodeFox Community Hub home">
+          <span class="brand-mark" aria-hidden="true">C/F</span>
+          <span class="brand-copy"><strong>CodeFox</strong><span>Community Hub</span></span>
+        </a>
+        <a class="header-link" href="../site/index.html"><span aria-hidden="true">&larr;</span> Fieldnotes</a>
+      </div>
+    </footer>
+
+    <script>
+      const progressBar = document.querySelector("#reading-progress-bar");
+      const article = document.querySelector("#article-content");
+      const tocLinks = [...document.querySelectorAll(".toc a")];
+      const sections = tocLinks
+        .map((link) => document.querySelector(link.getAttribute("href")))
+        .filter(Boolean);
+
+      const updateProgress = () => {
+        if (!progressBar || !article) return;
+        const start = article.offsetTop;
+        const distance = Math.max(article.offsetHeight - window.innerHeight, 1);
+        const progress = Math.min(Math.max((window.scrollY - start) / distance, 0), 1);
+        progressBar.style.width = `${progress * 100}%`;
+      };
+
+      const updateActiveSection = () => {
+        let activeSection = sections[0];
+        for (const section of sections) {
+          if (section.getBoundingClientRect().top <= 220) activeSection = section;
+        }
+
+        for (const link of tocLinks) {
+          if (link.getAttribute("href") === `#${activeSection.id}`) link.setAttribute("aria-current", "true");
+          else link.removeAttribute("aria-current");
+        }
+      };
+
+      const updateReadingState = () => {
+        updateProgress();
+        updateActiveSection();
+      };
+
+      window.addEventListener("scroll", updateReadingState, { passive: true });
+      window.addEventListener("resize", updateReadingState);
+      updateReadingState();
+    </script>
+  </body>
+</html>

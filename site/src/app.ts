@@ -728,7 +728,7 @@ function renderUnavailable(title = "This page is not available yet.", summary = 
       <p class="kicker">The Builder's Fieldnotes</p>
       <h1 tabindex="-1">${escapeHtml(title)}</h1>
       <p>${escapeHtml(summary)}</p>
-      <a class="button-link" href="#/home">Return home <i data-lucide="arrow-right"></i></a>
+      <a class="button-link" href="./">Return home <i data-lucide="arrow-right"></i></a>
     </section>`;
 }
 
@@ -1160,18 +1160,19 @@ function shellMarkup(): string {
       <a class="skip-link" href="#app-main">Skip to content</a>
       <header id="app-header">
         <div class="header-inner">
-          <a id="app-header-brand" href="#/home" aria-label="The Builder's Fieldnotes home"><span class="brand-fox" aria-hidden="true">🦊</span><span>The Builder's Fieldnotes</span></a>
+          <a id="app-header-brand" href="./" aria-label="The Builder's Fieldnotes home"><span class="brand-fox" aria-hidden="true">🦊</span><span>The Builder's Fieldnotes</span></a>
           <button class="icon-button menu-button" id="menu-toggle" type="button" aria-controls="site-navigation" aria-expanded="false" aria-label="Open navigation"><i data-lucide="menu"></i></button>
           <nav id="site-navigation" aria-label="Primary navigation">
             <a href="#/articles" data-nav-prefix="#/articles"><i data-lucide="newspaper"></i><span>Articles</span></a>
             <a href="#/library" data-nav-prefix="#/library"><i data-lucide="library"></i><span>Library</span></a>
             <a href="#/learn" data-nav-prefix="#/learn"><i data-lucide="book-open"></i><span>Learning</span></a>
             <a href="#/tools" data-nav-prefix="#/tools"><i data-lucide="wrench"></i><span>Tools</span></a>
+            <a class="blogs-nav-link" href="./codefox-blogs/" aria-label="Open CodeFox Blogs"><i data-lucide="users-round"></i><span>Blogs</span></a>
           </nav>
         </div>
       </header>
 
-      <div id="app-floating-navigation"><div id="app-floating-navigation-controls"><a class="icon-button" id="navigation-home" href="#/home" aria-label="Go home"><i data-lucide="home"></i></a><button class="icon-button" id="navigation-back" type="button" aria-label="Go back"><i data-lucide="arrow-left"></i></button></div></div>
+      <div id="app-floating-navigation"><div id="app-floating-navigation-controls"><a class="icon-button" id="navigation-home" href="./" aria-label="Go home"><i data-lucide="home"></i></a><button class="icon-button" id="navigation-back" type="button" aria-label="Go back"><i data-lucide="arrow-left"></i></button></div></div>
 
       <div id="app-main-fox-field" aria-hidden="true"><span class="crystal-fox crystal-fox--primary">🦊</span><span class="crystal-fox crystal-fox--middle">🦊</span><span class="crystal-fox crystal-fox--lower">🦊</span></div>
 
@@ -1215,6 +1216,5 @@ export function startApplication(root: HTMLDivElement): void {
   });
   window.addEventListener("hashchange", () => void renderRoute());
 
-  if (!window.location.hash) window.location.replace("#/home");
-  else void renderRoute();
+  void renderRoute();
 }

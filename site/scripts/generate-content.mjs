@@ -7,9 +7,12 @@ import sanitizeHtml from "sanitize-html";
 import YAML from "yaml";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const workspaceRoot = path.resolve(projectRoot, "..");
 const contentRoot = path.join(projectRoot, "content");
+const designRoot = path.join(workspaceRoot, "design");
 const generatedRoot = path.join(projectRoot, "src", "generated");
 const publicContentRoot = path.join(projectRoot, "public", "content");
+const publicBlogRoot = path.join(projectRoot, "public", "codefox-blogs");
 const recordsRoot = path.join(publicContentRoot, "records");
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -671,11 +674,54 @@ function writeIndex(value) {
   );
 }
 
+function writeStaticBlogPage(sourceName, outputParts, replacements) {
+  const sourcePath = path.join(designRoot, sourceName);
+  if (!fs.existsSync(sourcePath)) throw new Error(`${sourceLabel(sourcePath)}: required blog design source is missing.`);
+
+  let html = fs.readFileSync(sourcePath, "utf8");
+  for (const [from, to] of replacements) {
+    if (!html.includes(from)) {
+      throw new Error(`${sourceLabel(sourcePath)}: expected deployment path "${from}" was not found.`);
+    }
+    html = html.replaceAll(from, to);
+  }
+
+  for (const previewPath of ["../site/", "blogs-preview.html", "blog-article-preview.html"]) {
+    if (html.includes(previewPath)) {
+      throw new Error(`${sourceLabel(sourcePath)}: unresolved preview path "${previewPath}" remains.`);
+    }
+  }
+
+  const outputPath = path.join(publicBlogRoot, ...outputParts);
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  fs.writeFileSync(outputPath, html);
+}
+
+function generateBlogSite() {
+  fs.rmSync(publicBlogRoot, { recursive: true, force: true });
+
+  writeStaticBlogPage("blogs-preview.html", ["index.html"], [
+    ['href="blogs-preview.html"', 'href="./"'],
+    ['href="blog-article-preview.html"', 'href="./building-smart-d365-plugins/"'],
+    ['href="../site/index.html"', 'href="../"'],
+    ['src="../site/public/article-covers/', 'src="../article-covers/'],
+  ]);
+
+  writeStaticBlogPage("blog-article-preview.html", ["building-smart-d365-plugins", "index.html"], [
+    ['href="blogs-preview.html#topics"', 'href="../#topics"'],
+    ['href="blogs-preview.html#contributors"', 'href="../#contributors"'],
+    ['href="blogs-preview.html"', 'href="../"'],
+    ['href="../site/index.html"', 'href="../../"'],
+    ['src="../site/public/article-covers/', 'src="../../article-covers/'],
+  ]);
+}
+
 export function generateContent() {
   fs.rmSync(generatedRoot, { recursive: true, force: true });
   fs.rmSync(publicContentRoot, { recursive: true, force: true });
   fs.mkdirSync(generatedRoot, { recursive: true });
   fs.mkdirSync(recordsRoot, { recursive: true });
+  generateBlogSite();
 
   const homeSource = readPage("home.md");
   const aboutSource = readPage("about.md");
@@ -709,7 +755,7 @@ export function generateContent() {
     toolCategories: toolLibrary.categories,
   });
   const toolCount = toolLibrary.categories.reduce((total, category) => total + category.toolCount, 0);
-  console.log(`Generated ${articles.length} fieldnotes, ${linkedinArticles.length} LinkedIn articles, ${guides.length} guides, and ${toolCount} tools.`);
+  console.log(`Generated ${articles.length} fieldnotes, ${linkedinArticles.length} LinkedIn articles, ${guides.length} guides, ${toolCount} tools, and 2 static blog pages.`);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

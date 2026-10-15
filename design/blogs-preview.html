@@ -1,0 +1,1797 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="CodeFox Community Hub: community-written articles for practical builders."
+    />
+    <meta name="theme-color" content="#f3efe7" />
+    <title>CodeFox Community Hub | Blogs</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f07848'/%3E%3Ctext x='32' y='38' text-anchor='middle' font-family='monospace' font-size='18' font-weight='700' fill='%2332404f'%3EC/F%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Fraunces:opsz,wght@9..144,600;9..144,700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --night: #51637a;
+        --night-soft: #e4e9f2;
+        --paper: #f3efe7;
+        --paper-bright: #fffdf9;
+        --ink: #32404f;
+        --muted: #707986;
+        --orange: #f07848;
+        --orange-dark: #b76542;
+        --lime: #b9e6a8;
+        --sky: #c7d7ef;
+        --line: rgb(50 64 79 / 14%);
+        --line-dark: rgb(50 64 79 / 10%);
+        --crystal: rgb(255 255 255 / 82%);
+        --orange-gradient: linear-gradient(135deg, #fffdf9 0%, #fff0e7 56%, #f7b18f 100%);
+        --orange-gradient-strong: linear-gradient(135deg, #fffaf5 0%, #ffd9c6 54%, #f38b5d 100%);
+        --radius: 6px;
+        --display: "Fraunces", Georgia, serif;
+        --interface: "DM Sans", "Segoe UI", sans-serif;
+        --mono: "IBM Plex Mono", Consolas, monospace;
+        --page: 1240px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 96px;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        color: var(--ink);
+        background:
+          linear-gradient(rgb(81 99 122 / 3%) 1px, transparent 1px),
+          linear-gradient(90deg, rgb(81 99 122 / 3%) 1px, transparent 1px),
+          var(--paper);
+        background-size: 32px 32px;
+        font-family: var(--interface);
+      }
+
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      img {
+        display: block;
+        width: 100%;
+      }
+
+      :focus-visible {
+        outline: 3px solid var(--sky);
+        outline-offset: 4px;
+      }
+
+      .skip-link {
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        z-index: 100;
+        padding: 10px 14px;
+        color: var(--night);
+        background: var(--lime);
+        font-weight: 700;
+        transform: translateY(-180%);
+      }
+
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        color: var(--ink);
+        border-bottom: 1px solid var(--line);
+        background: linear-gradient(110deg, rgb(255 253 249 / 97%) 0%, rgb(255 244 236 / 97%) 62%, rgb(255 229 213 / 95%) 100%);
+        box-shadow: inset 0 3px 0 rgb(240 120 72 / 78%);
+        backdrop-filter: blur(18px);
+      }
+
+      .header-inner {
+        width: min(calc(100% - 40px), var(--page));
+        min-height: 68px;
+        margin-inline: auto;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 36px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--ink);
+        text-decoration: none;
+      }
+
+      .brand-mark {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        color: var(--ink);
+        background: var(--orange);
+        font: 700 13px/1 var(--mono);
+        transform: rotate(-3deg);
+      }
+
+      .brand-copy {
+        display: grid;
+        gap: 1px;
+      }
+
+      .brand-copy strong {
+        font-size: 16px;
+        letter-spacing: -0.02em;
+      }
+
+      .brand-copy span {
+        color: var(--muted);
+        font: 500 9px/1.4 var(--mono);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .primary-nav {
+        justify-self: center;
+        display: flex;
+        gap: 28px;
+      }
+
+      .primary-nav a {
+        position: relative;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .primary-nav a::after {
+        position: absolute;
+        right: 0;
+        bottom: -8px;
+        left: 0;
+        height: 2px;
+        background: var(--orange);
+        content: "";
+        opacity: 0;
+        transform: scaleX(0.5);
+        transition: opacity 160ms ease, transform 160ms ease;
+      }
+
+      .primary-nav a:hover {
+        color: var(--ink);
+      }
+
+      .primary-nav a:hover::after {
+        opacity: 1;
+        transform: scaleX(1);
+      }
+
+      .return-link {
+        min-height: 38px;
+        padding: 0 16px;
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 600;
+        transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+      }
+
+      .return-link:hover {
+        color: var(--ink);
+        border-color: var(--orange);
+        background: var(--orange-gradient);
+      }
+
+      main {
+        overflow: clip;
+      }
+
+      .hero {
+        position: relative;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 8% 14%, rgb(240 120 72 / 17%), transparent 28%),
+          radial-gradient(circle at 88% 82%, rgb(199 215 239 / 50%), transparent 30%),
+          var(--paper);
+      }
+
+      .hero::before {
+        position: absolute;
+        inset: 0;
+        opacity: 0.09;
+        background-image: radial-gradient(circle, var(--ink) 1px, transparent 1px);
+        background-size: 24px 24px;
+        content: "";
+        mask-image: linear-gradient(90deg, black, transparent 62%);
+      }
+
+      .hero-inner {
+        position: relative;
+        width: min(calc(100% - 40px), var(--page));
+        min-height: 0;
+        margin-inline: auto;
+        padding: 48px 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.72fr);
+        align-items: center;
+        gap: 58px;
+      }
+
+      .eyebrow {
+        margin: 0 0 22px;
+        color: var(--orange);
+        font: 600 11px/1.5 var(--mono);
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      .hero h1 {
+        max-width: 720px;
+        margin: 0;
+        font: 700 clamp(46px, 5vw, 68px) / 0.96 var(--display);
+        letter-spacing: -0.055em;
+      }
+
+      .hero h1 span {
+        display: block;
+        color: var(--orange-dark);
+        font-style: italic;
+        font-weight: 600;
+      }
+
+      .hero-deck {
+        max-width: 610px;
+        margin: 24px 0 0;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.65;
+      }
+
+      .hero-actions {
+        margin-top: 28px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .button {
+        min-height: 48px;
+        padding: 0 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border: 1px solid transparent;
+        border-radius: var(--radius);
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: transform 160ms ease, background 180ms ease, border-color 160ms ease, box-shadow 160ms ease;
+      }
+
+      .button:hover {
+        transform: translateY(-2px);
+      }
+
+      .button--primary {
+        color: var(--ink);
+        background: var(--orange);
+      }
+
+      .button--primary:hover {
+        border-color: var(--orange);
+        background: var(--orange-gradient-strong);
+        box-shadow: 0 8px 20px rgb(240 120 72 / 16%);
+      }
+
+      .button--quiet {
+        color: var(--ink);
+        border-color: var(--line);
+      }
+
+      .button--quiet:hover {
+        color: var(--ink);
+        border-color: var(--orange);
+        background: var(--orange-gradient);
+      }
+
+      .button:active {
+        background: var(--orange-gradient-strong);
+        box-shadow: none;
+        transform: translateY(0);
+      }
+
+      .hero-stats {
+        margin: 32px 0 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+      }
+
+      .hero-stats div {
+        min-width: 104px;
+      }
+
+      .hero-stats dt {
+        color: var(--orange-dark);
+        font: 500 9px/1.4 var(--mono);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .hero-stats dd {
+        margin: 5px 0 0;
+        font: 600 20px/1 var(--display);
+      }
+
+      .feature-card {
+        position: relative;
+        color: var(--ink);
+        border: 1px solid var(--ink);
+        border-radius: var(--radius);
+        background: var(--crystal);
+        box-shadow: 7px 7px 0 var(--sky);
+        transform: none;
+        backdrop-filter: blur(14px);
+        transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+      }
+
+      .feature-card:hover,
+      .feature-card:focus-within {
+        border-color: var(--orange);
+        background: var(--orange-gradient);
+        box-shadow: 8px 8px 0 rgb(240 120 72 / 20%);
+        transform: translateY(-3px);
+      }
+
+      .feature-card::before {
+        position: absolute;
+        top: -18px;
+        right: 24px;
+        z-index: 2;
+        padding: 8px 12px;
+        color: var(--night);
+        background: var(--lime);
+        content: "FEATURED";
+        font: 500 9px/1 var(--mono);
+        letter-spacing: 0.12em;
+      }
+
+      .feature-image {
+        aspect-ratio: 16 / 8.5;
+        overflow: hidden;
+        border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
+        background: var(--night-soft);
+      }
+
+      .feature-image img {
+        height: 100%;
+        object-fit: cover;
+        transition: transform 300ms ease;
+      }
+
+      .feature-card:hover .feature-image img {
+        transform: scale(1.025);
+      }
+
+      .feature-body {
+        padding: 22px;
+      }
+
+      .story-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font: 500 9px/1.5 var(--mono);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .story-meta .category {
+        color: var(--orange-dark);
+        font-weight: 500;
+      }
+
+      .feature-body h2 {
+        margin: 14px 0 12px;
+        font: 700 26px/1.1 var(--display);
+        letter-spacing: -0.035em;
+      }
+
+      .feature-body p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.65;
+      }
+
+      .text-link {
+        width: fit-content;
+        margin-top: 22px;
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .text-link::after {
+        width: 24px;
+        height: 1px;
+        background: currentColor;
+        content: "";
+        transition: width 160ms ease;
+      }
+
+      .text-link:hover {
+        color: var(--orange-dark);
+      }
+
+      .text-link:hover::after {
+        width: 38px;
+      }
+
+      .ticker {
+        overflow: hidden;
+        color: var(--night);
+        border-bottom: 1px solid var(--night);
+        background: var(--lime);
+      }
+
+      .ticker-track {
+        width: max-content;
+        padding: 13px 0;
+        display: flex;
+        gap: 34px;
+        font: 600 10px/1 var(--mono);
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        animation: ticker 24s linear infinite;
+      }
+
+      .ticker-track span::after {
+        margin-left: 34px;
+        color: var(--orange-dark);
+        content: "/";
+      }
+
+      @keyframes ticker {
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      .section {
+        width: min(calc(100% - 40px), var(--page));
+        margin-inline: auto;
+        padding: 104px 0;
+      }
+
+      .section-heading {
+        margin-bottom: 42px;
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 32px;
+      }
+
+      .section-heading h2 {
+        max-width: 670px;
+        margin: 0;
+        font: 700 clamp(42px, 5vw, 68px) / 0.98 var(--display);
+        letter-spacing: -0.05em;
+      }
+
+      .section-heading p:last-child {
+        max-width: 430px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.65;
+      }
+
+      .topic-strip {
+        width: min(calc(100% - 40px), var(--page));
+        margin-inline: auto;
+        padding: 72px 0 0;
+      }
+
+      .topic-strip .eyebrow {
+        margin-bottom: 14px;
+      }
+
+      .topic-bar {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .topic-bar > a,
+      .topic-bar > span {
+        min-height: 58px;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--crystal);
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        backdrop-filter: blur(12px);
+        transition: background 180ms ease, border-color 160ms ease, transform 160ms ease;
+      }
+
+      .topic-bar a:hover,
+      .topic-bar a:focus-visible,
+      .topic-bar a[aria-current="true"] {
+        border-color: var(--orange);
+        background: var(--orange-gradient);
+        transform: translateY(-2px);
+      }
+
+      .topic-bar strong {
+        color: var(--orange);
+        font: 600 9px/1 var(--mono);
+        text-transform: uppercase;
+      }
+
+      .topic-bar .topic-coming-soon {
+        color: var(--muted);
+        background: rgb(255 255 255 / 55%);
+      }
+
+      .topic-bar .topic-coming-soon strong {
+        color: var(--muted);
+      }
+
+      .stories-section {
+        width: 100%;
+        padding: 104px max(20px, calc((100% - var(--page)) / 2));
+        color: var(--ink);
+        background: #e8edf5;
+      }
+
+      .stories-section .section-heading {
+        width: min(100%, var(--page));
+        margin-inline: auto;
+      }
+
+      .stories-section .eyebrow {
+        color: var(--orange-dark);
+      }
+
+      .stories-section .section-heading p:last-child {
+        color: var(--muted);
+      }
+
+      .stories-status {
+        width: min(100%, var(--page));
+        margin: -18px auto 26px;
+        color: var(--muted);
+        font: 400 10px/1.5 var(--mono);
+        text-transform: uppercase;
+      }
+
+      .story-grid {
+        width: min(100%, var(--page));
+        margin-inline: auto;
+        display: grid;
+        grid-template-columns: minmax(0, 420px);
+        gap: 18px;
+      }
+
+      .story-card {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--crystal);
+        backdrop-filter: blur(12px);
+        transition: background 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+      }
+
+      .story-card:hover,
+      .story-card:focus-within {
+        z-index: 1;
+        background: var(--orange-gradient);
+        box-shadow: 0 14px 34px rgb(81 99 122 / 12%);
+        transform: translateY(-3px);
+      }
+
+      .story-card[hidden] {
+        display: none;
+      }
+
+      .story-card__image {
+        aspect-ratio: 16 / 10;
+        display: block;
+        overflow: hidden;
+        background: var(--night-soft);
+      }
+
+      .story-card__image img {
+        height: 100%;
+        object-fit: cover;
+        filter: saturate(0.78);
+        transition: filter 200ms ease, transform 240ms ease;
+      }
+
+      .story-card:hover .story-card__image img {
+        filter: saturate(1);
+        transform: scale(1.025);
+      }
+
+      .story-card__body {
+        min-height: 320px;
+        padding: 26px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .story-card .story-meta {
+        color: var(--muted);
+      }
+
+      .story-card .story-meta .category {
+        color: var(--orange);
+        font-weight: 600;
+      }
+
+      .story-card h3 {
+        margin: 18px 0 12px;
+        font: 600 27px/1.1 var(--display);
+        letter-spacing: -0.025em;
+      }
+
+      .story-card h3 a {
+        color: var(--ink);
+        text-decoration: none;
+      }
+
+      .story-card h3 a:hover {
+        color: var(--orange-dark);
+      }
+
+      .story-card p {
+        margin: 0 0 24px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.65;
+      }
+
+      .story-card .text-link {
+        margin-top: auto;
+        color: var(--orange-dark);
+      }
+
+      .contributors {
+        padding: 104px 20px;
+        border-bottom: 1px solid var(--ink);
+        background: var(--paper-bright);
+      }
+
+      .contributors-inner {
+        width: min(100%, var(--page));
+        margin-inline: auto;
+      }
+
+      .publishing-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+        gap: 1px;
+        border: 1px solid var(--ink);
+        border-radius: var(--radius);
+        background: var(--ink);
+        overflow: hidden;
+      }
+
+      .publishing-path,
+      .contributor-promise {
+        background: var(--crystal);
+        backdrop-filter: blur(12px);
+      }
+
+      .publishing-path {
+        padding: 38px;
+      }
+
+      .publishing-path h3,
+      .contributor-promise h3 {
+        margin: 0;
+        font: 700 32px/1.08 var(--display);
+        letter-spacing: -0.035em;
+      }
+
+      .interest-form {
+        margin-top: 32px;
+      }
+
+      .interest-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .interest-field {
+        min-width: 0;
+        display: grid;
+        gap: 8px;
+      }
+
+      .interest-field--wide {
+        grid-column: 1 / -1;
+      }
+
+      .interest-field > span {
+        color: var(--ink);
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .interest-field input,
+      .interest-field select,
+      .interest-field textarea {
+        width: 100%;
+        padding: 0 13px;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgb(255 255 255 / 88%);
+        font: 500 13px/1.5 var(--interface);
+      }
+
+      .interest-field input,
+      .interest-field select {
+        min-height: 44px;
+      }
+
+      .interest-field textarea {
+        min-height: 128px;
+        padding-block: 12px;
+        resize: vertical;
+      }
+
+      .interest-field input:hover,
+      .interest-field select:hover,
+      .interest-field textarea:hover {
+        border-color: var(--orange);
+      }
+
+      .interest-field input:focus,
+      .interest-field select:focus,
+      .interest-field textarea:focus {
+        border-color: var(--orange);
+        background: var(--paper-bright);
+        outline: 3px solid rgb(240 120 72 / 18%);
+        outline-offset: 1px;
+      }
+
+      .interest-consent {
+        margin-top: 18px;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: start;
+        gap: 10px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .interest-consent input {
+        width: 17px;
+        height: 17px;
+        margin: 1px 0 0;
+        accent-color: var(--orange);
+      }
+
+      .interest-actions {
+        margin-top: 22px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .interest-email {
+        color: var(--orange-dark);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .interest-privacy,
+      .interest-status {
+        margin: 16px 0 0;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.55;
+      }
+
+      .interest-status {
+        min-height: 18px;
+        color: var(--orange-dark);
+        font-weight: 600;
+      }
+
+      .contribution-options {
+        margin-bottom: 18px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .contribution-option {
+        min-height: 120px;
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--crystal);
+        text-decoration: none;
+        transition: background 180ms ease, border-color 160ms ease, transform 160ms ease;
+      }
+
+      .contribution-option:hover,
+      .contribution-option:focus-visible {
+        border-color: var(--orange);
+        background: var(--orange-gradient);
+        transform: translateY(-2px);
+      }
+
+      .contribution-option span {
+        color: var(--orange);
+        font: 600 9px/1.5 var(--mono);
+        text-transform: uppercase;
+      }
+
+      .contribution-option strong {
+        margin-top: auto;
+        font: 700 24px/1.12 var(--display);
+      }
+
+      .contribution-option small {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .contribution-forms {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .contribution-form-card {
+        padding: 32px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--crystal);
+        backdrop-filter: blur(12px);
+      }
+
+      .contribution-form-card h3 {
+        margin: 0;
+        font: 700 30px/1.1 var(--display);
+        letter-spacing: -0.035em;
+      }
+
+      .submission-note {
+        margin: 16px 0 0;
+        padding: 12px 14px;
+        color: #765714;
+        border: 1px solid #e3bd4d;
+        border-radius: var(--radius);
+        background: #fff0ad;
+        font-size: 11px;
+        line-height: 1.55;
+      }
+
+      .platform-roadmap {
+        margin-top: 18px;
+        padding: 34px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--sky);
+      }
+
+      .roadmap-heading {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 30px;
+      }
+
+      .roadmap-heading h3 {
+        max-width: 620px;
+        margin: 0;
+        font: 700 34px/1.08 var(--display);
+        letter-spacing: -0.04em;
+      }
+
+      .roadmap-heading > p {
+        max-width: 420px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .roadmap-grid {
+        margin: 30px 0 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        list-style: none;
+      }
+
+      .roadmap-grid li {
+        min-height: 190px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--crystal);
+      }
+
+      .roadmap-grid span {
+        color: var(--orange);
+        font: 600 9px/1.5 var(--mono);
+        text-transform: uppercase;
+      }
+
+      .roadmap-grid strong {
+        margin-top: auto;
+        font-size: 14px;
+      }
+
+      .roadmap-grid p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .publishing-steps {
+        margin: 32px 0 0;
+        padding: 0;
+        display: grid;
+        list-style: none;
+        border-top: 1px solid var(--line);
+      }
+
+      .publishing-steps li {
+        padding: 22px 0;
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr) auto;
+        align-items: start;
+        gap: 18px;
+        border-bottom: 1px solid var(--line);
+        transition: background 180ms ease;
+      }
+
+      .publishing-steps li:hover {
+        background: var(--orange-gradient);
+      }
+
+      .step-number {
+        color: var(--orange);
+        font: 600 10px/1.5 var(--mono);
+      }
+
+      .publishing-steps strong {
+        display: block;
+        font-size: 14px;
+      }
+
+      .publishing-steps p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .step-state {
+        padding: 5px 8px;
+        color: var(--ink);
+        background: var(--lime);
+        font: 500 8px/1 var(--mono);
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+      }
+
+      .contributor-promise {
+        padding: 38px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .contributor-promise .publishing-steps li {
+        grid-template-columns: 32px minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .contributor-promise .step-state {
+        grid-column: 2;
+        width: fit-content;
+      }
+
+      .contributor-promise > p:not(.eyebrow) {
+        margin: 18px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.65;
+      }
+
+      .promise-list {
+        margin: 28px 0 34px;
+        padding: 0;
+        display: grid;
+        gap: 13px;
+        list-style: none;
+      }
+
+      .promise-list li {
+        display: grid;
+        grid-template-columns: 22px minmax(0, 1fr);
+        gap: 10px;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .promise-list li::before {
+        width: 20px;
+        height: 20px;
+        display: grid;
+        place-items: center;
+        color: var(--paper-bright);
+        background: var(--orange-dark);
+        content: "+";
+        font: 500 11px/1 var(--mono);
+      }
+
+      .contributor-card {
+        margin-top: auto;
+        padding: 20px;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+        gap: 14px;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--crystal);
+        transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+      }
+
+      .contributor-card:hover {
+        border-color: var(--orange);
+        background: var(--orange-gradient);
+        transform: translateY(-2px);
+      }
+
+      .contributor-avatar {
+        width: 48px;
+        height: 48px;
+        display: grid;
+        place-items: center;
+        color: var(--night);
+        background: var(--lime);
+        border-radius: 50%;
+        font: 700 12px/1 var(--mono);
+      }
+
+      .contributor-card strong {
+        display: block;
+        font-size: 13px;
+      }
+
+      .contributor-card span:last-child {
+        color: var(--muted);
+        font: 400 9px/1.5 var(--mono);
+        text-transform: uppercase;
+      }
+
+      .community {
+        padding: 108px 20px;
+        background: var(--lime);
+      }
+
+      .community-inner {
+        width: min(100%, 960px);
+        margin-inline: auto;
+        text-align: center;
+      }
+
+      .community .eyebrow {
+        color: var(--night);
+      }
+
+      .community h2 {
+        margin: 0;
+        font: 700 clamp(38px, 5vw, 64px) / 0.98 var(--display);
+        letter-spacing: -0.045em;
+      }
+
+      .community p:not(.eyebrow) {
+        max-width: 620px;
+        margin: 28px auto 0;
+        font-size: 18px;
+        line-height: 1.6;
+      }
+
+      .community-actions {
+        margin-top: 34px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      .community .button--primary {
+        color: var(--ink);
+        background: var(--orange);
+      }
+
+      .community .button--primary:hover {
+        background: var(--orange-gradient-strong);
+      }
+
+      .community .button--quiet {
+        color: var(--night);
+        border-color: var(--line);
+      }
+
+      .site-footer {
+        color: var(--ink);
+        border-top: 1px solid var(--line);
+        background: var(--paper-bright);
+      }
+
+      .footer-inner {
+        width: min(calc(100% - 40px), var(--page));
+        min-height: 128px;
+        margin-inline: auto;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .footer-inner p {
+        margin: 0;
+        color: var(--muted);
+        font: 400 9px/1.5 var(--mono);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .footer-inner .brand {
+        justify-self: center;
+      }
+
+      .footer-inner .return-link {
+        justify-self: end;
+      }
+
+      @media (max-width: 980px) {
+        .header-inner {
+          grid-template-columns: auto auto;
+        }
+
+        .primary-nav {
+          display: none;
+        }
+
+        .return-link {
+          justify-self: end;
+        }
+
+        .hero-inner {
+          grid-template-columns: 1fr;
+          gap: 64px;
+        }
+
+        .hero-copy {
+          max-width: 780px;
+        }
+
+        .feature-card {
+          max-width: 650px;
+          transform: none;
+        }
+
+        .section-heading {
+          align-items: start;
+          flex-direction: column;
+        }
+
+        .publishing-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .contribution-forms {
+          grid-template-columns: 1fr;
+        }
+
+        .roadmap-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .roadmap-heading {
+          align-items: start;
+          flex-direction: column;
+        }
+
+        .topic-bar {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 640px) {
+        .header-inner,
+        .hero-inner,
+        .section,
+        .topic-strip,
+        .footer-inner {
+          width: min(calc(100% - 28px), var(--page));
+        }
+
+        .header-inner {
+          min-height: 68px;
+          gap: 12px;
+        }
+
+        .brand-copy span {
+          display: none;
+        }
+
+        .brand-mark {
+          width: 38px;
+          height: 38px;
+        }
+
+        .return-link {
+          padding: 0 11px;
+          font-size: 0;
+        }
+
+        .return-link::after {
+          content: "Fieldnotes";
+          font-size: 11px;
+        }
+
+        .hero-inner {
+          min-height: 0;
+          padding: 54px 0 50px;
+          gap: 52px;
+        }
+
+        .hero h1 {
+          font-size: clamp(44px, 14vw, 60px);
+        }
+
+        .hero-deck {
+          font-size: 17px;
+        }
+
+        .hero-actions {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .button {
+          width: 100%;
+        }
+
+        .feature-card {
+          box-shadow: 9px 9px 0 var(--orange);
+        }
+
+        .feature-body h2 {
+          font-size: 27px;
+        }
+
+        .ticker-track {
+          animation: none;
+        }
+
+        .section,
+        .stories-section,
+        .contributors {
+          padding-top: 76px;
+          padding-bottom: 76px;
+        }
+
+        .story-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .topic-bar {
+          grid-template-columns: 1fr;
+        }
+
+        .story-card__body {
+          min-height: 290px;
+        }
+
+        .publishing-path,
+        .contributor-promise {
+          padding: 26px;
+        }
+
+        .interest-form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .interest-field--wide {
+          grid-column: auto;
+        }
+
+        .contribution-options,
+        .roadmap-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .contribution-form-card,
+        .platform-roadmap {
+          padding: 24px;
+        }
+
+        .publishing-steps li {
+          grid-template-columns: 34px minmax(0, 1fr);
+        }
+
+        .step-state {
+          grid-column: 2;
+          width: fit-content;
+        }
+
+        .community {
+          padding-block: 78px;
+        }
+
+        .community-actions {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .footer-inner {
+          padding: 36px 0;
+          display: flex;
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .footer-inner .brand,
+        .footer-inner .return-link {
+          justify-self: auto;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to stories</a>
+
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="blogs-preview.html" aria-label="CodeFox Community Hub home">
+          <span class="brand-mark" aria-hidden="true">C/F</span>
+          <span class="brand-copy">
+            <strong>CodeFox</strong>
+            <span>Community Hub</span>
+          </span>
+        </a>
+
+        <nav class="primary-nav" aria-label="Blogs navigation">
+          <a href="#topics">Topics</a>
+          <a href="#contributors">Contributors</a>
+          <a href="#community-interest">Contribute</a>
+        </nav>
+
+        <a class="return-link" href="../site/index.html">
+          <span aria-hidden="true">&larr;</span>
+          The Builder's Fieldnotes
+        </a>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <p class="eyebrow">CodeFox Community Hub / Blogs</p>
+            <h1 id="hero-title">Ideas that move <span>from prompt to production.</span></h1>
+            <p class="hero-deck">
+              A community-led publication for practical perspectives on AI, GitHub
+              Copilot, Dynamics 365, and the craft of building useful software.
+            </p>
+            <div class="hero-actions">
+              <a class="button button--primary" href="#latest">Explore latest stories <span aria-hidden="true">&darr;</span></a>
+              <a class="button button--quiet" href="#community-interest">Become a contributor <span aria-hidden="true">&rarr;</span></a>
+            </div>
+            <dl class="hero-stats" aria-label="Publication details">
+              <div><dt>Stories</dt><dd>01</dd></div>
+              <div><dt>Author interest</dt><dd>Open</dd></div>
+              <div><dt>Identity</dt><dd>Email</dd></div>
+            </dl>
+          </div>
+
+          <article class="feature-card">
+            <a class="feature-image" href="blog-article-preview.html" aria-label="Read Building Smart D365 Plugins with GitHub Copilot Agent Mode">
+              <img
+                src="../site/public/article-covers/smart-d365-plugins.jpg"
+                alt="Building Smart D365 Plugins with GitHub Copilot Agent Mode cover"
+              />
+            </a>
+            <div class="feature-body">
+              <div class="story-meta">
+                <span class="category">Dynamics 365</span>
+                <span>/</span>
+                <time datetime="2025-11-24">24 Nov 2025</time>
+                <span>/</span>
+                <span>By Shubhamm Jadhav</span>
+              </div>
+              <h2>Building Smart D365 Plugins with GitHub Copilot Agent Mode</h2>
+              <p>
+                A practical look at pairing clear plugin contracts with an agent-assisted
+                development workflow.
+              </p>
+              <a class="text-link" href="blog-article-preview.html">Read the feature</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <div class="ticker" aria-hidden="true">
+        <div class="ticker-track">
+          <span>AI that earns trust</span><span>Copilot in practice</span><span>Community-written</span><span>Editor-reviewed</span>
+          <span>AI that earns trust</span><span>Copilot in practice</span><span>Community-written</span><span>Editor-reviewed</span>
+        </div>
+      </div>
+
+      <section class="topic-strip" id="topics" aria-labelledby="topics-label">
+        <p class="eyebrow" id="topics-label">Explore topics</p>
+        <nav class="topic-bar" aria-label="Blog topics">
+          <a href="#latest" aria-current="true"><span>All stories</span><strong>01</strong></a>
+          <a href="#latest"><span>GitHub Copilot</span><strong>01</strong></a>
+          <a href="#latest"><span>Dynamics 365</span><strong>01</strong></a>
+          <span class="topic-coming-soon"><span>AI Fundamentals</span><strong>Coming soon</strong></span>
+          <span class="topic-coming-soon"><span>Others</span><strong>Coming soon</strong></span>
+        </nav>
+      </section>
+
+      <section class="stories-section" id="latest" aria-labelledby="latest-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">The publication</p>
+            <h2 id="latest-title">The first CodeFox story.</h2>
+          </div>
+          <p>
+            The publication is starting small. New community-written stories will appear
+            here after they complete editorial review.
+          </p>
+        </div>
+        <p class="stories-status">1 published story</p>
+
+        <div class="story-grid">
+          <article class="story-card">
+            <a class="story-card__image" href="blog-article-preview.html">
+              <img src="../site/public/article-covers/smart-d365-plugins.jpg" alt="Smart Dynamics 365 plugins article cover" loading="lazy" />
+            </a>
+            <div class="story-card__body">
+              <div class="story-meta"><span class="category">Dynamics 365</span><span>/</span><time datetime="2025-11-24">24 Nov 2025</time><span>/</span><span>Shubhamm Jadhav</span></div>
+              <h3><a href="blog-article-preview.html">Building Smart D365 Plugins with GitHub Copilot Agent Mode</a></h3>
+              <p>A hands-on look at using agent mode to design, reason about, and build smarter Dynamics 365 plugins.</p>
+              <a class="text-link" href="blog-article-preview.html">Read article</a>
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+      <section class="contributors" id="contributors" aria-labelledby="contributors-title">
+        <div class="contributors-inner">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Publish with CodeFox</p>
+              <h2 id="contributors-title">Your experience can become someone else's shortcut.</h2>
+            </div>
+            <p>
+              No CodeFox account is required today. Join the future author community or
+              send an article for editorial review using two separate email workflows.
+            </p>
+          </div>
+
+          <div class="contribution-options">
+            <a class="contribution-option" href="#community-interest">
+              <span>01 / Future contributor</span>
+              <strong>Join the author community</strong>
+              <small>Register your interest in writing and help shape the future contributor platform.</small>
+            </a>
+            <a class="contribution-option" href="#article-submission">
+              <span>02 / Submit now</span>
+              <strong>Send an article for review</strong>
+              <small>Prepare an editorial submission email with your draft link or attachment instructions.</small>
+            </a>
+          </div>
+
+          <div class="contribution-forms">
+            <section class="contribution-form-card" id="community-interest" aria-labelledby="community-interest-title">
+              <p class="eyebrow">Community interest</p>
+              <h3 id="community-interest-title">Join the future author community.</h3>
+              <form class="interest-form" id="community-interest-form">
+                <div class="interest-form-grid">
+                  <label class="interest-field">
+                    <span>Your name *</span>
+                    <input type="text" name="name" autocomplete="name" required />
+                  </label>
+                  <label class="interest-field">
+                    <span>Email - your primary ID *</span>
+                    <input type="email" name="email" autocomplete="email" required />
+                  </label>
+                  <label class="interest-field">
+                    <span>Primary interest *</span>
+                    <select name="topic" required>
+                      <option value="">Choose a topic</option>
+                      <option>GitHub Copilot</option>
+                      <option>Dynamics 365</option>
+                      <option>AI Fundamentals</option>
+                      <option>Others</option>
+                    </select>
+                  </label>
+                  <label class="interest-field">
+                    <span>GitHub, profile, or portfolio</span>
+                    <input type="url" name="profile" inputmode="url" placeholder="https://" />
+                  </label>
+                  <label class="interest-field interest-field--wide">
+                    <span>Why would you like to contribute? *</span>
+                    <textarea name="motivation" required></textarea>
+                  </label>
+                </div>
+                <label class="interest-consent">
+                  <input type="checkbox" name="consent" required />
+                  <span>I agree that CodeFox may contact this email about future contributor opportunities.</span>
+                </label>
+                <div class="interest-actions">
+                  <button class="button button--primary" type="submit">Prepare community interest <span aria-hidden="true">&rarr;</span></button>
+                  <a class="interest-email" href="mailto:you.techconnect@gmail.com?subject=CodeFox%20community%20author%20interest">Email directly</a>
+                </div>
+                <p class="interest-privacy">Your email becomes the primary identifier for future communication. Nothing is stored by this website.</p>
+                <p class="interest-status" id="community-interest-status" aria-live="polite"></p>
+              </form>
+            </section>
+
+            <section class="contribution-form-card" id="article-submission" aria-labelledby="article-submission-title">
+              <p class="eyebrow">Article submission</p>
+              <h3 id="article-submission-title">Send a story for editorial review.</h3>
+              <form class="interest-form" id="article-submission-form">
+                <div class="interest-form-grid">
+                  <label class="interest-field">
+                    <span>Author name *</span>
+                    <input type="text" name="name" autocomplete="name" required />
+                  </label>
+                  <label class="interest-field">
+                    <span>Email - your primary ID *</span>
+                    <input type="email" name="email" autocomplete="email" required />
+                  </label>
+                  <label class="interest-field">
+                    <span>Article topic *</span>
+                    <select name="topic" required>
+                      <option value="">Choose a topic</option>
+                      <option>GitHub Copilot</option>
+                      <option>Dynamics 365</option>
+                      <option>AI Fundamentals</option>
+                      <option>Others</option>
+                    </select>
+                  </label>
+                  <label class="interest-field">
+                    <span>Draft format *</span>
+                    <select name="format" required>
+                      <option value="">Choose a format</option>
+                      <option>Shareable draft link</option>
+                      <option>I will attach a file to the email</option>
+                      <option>Idea and outline only</option>
+                    </select>
+                  </label>
+                  <label class="interest-field interest-field--wide">
+                    <span>Article title *</span>
+                    <input type="text" name="title" required />
+                  </label>
+                  <label class="interest-field interest-field--wide">
+                    <span>Draft or sample link</span>
+                    <input type="url" name="draft" inputmode="url" placeholder="https://" />
+                  </label>
+                  <label class="interest-field interest-field--wide">
+                    <span>Article summary *</span>
+                    <textarea name="summary" required></textarea>
+                  </label>
+                </div>
+                <label class="interest-consent">
+                  <input type="checkbox" name="rights" required />
+                  <span>I confirm this is my original work and CodeFox may review it for possible publication.</span>
+                </label>
+                <p class="submission-note">Email links cannot attach files automatically. If you selected file attachment, add the document after your email application opens.</p>
+                <div class="interest-actions">
+                  <button class="button button--primary" type="submit">Prepare article submission <span aria-hidden="true">&rarr;</span></button>
+                  <a class="interest-email" href="mailto:you.techconnect@gmail.com?subject=CodeFox%20article%20submission">Email directly</a>
+                </div>
+                <p class="interest-privacy">Keep the email thread to ask for review status. Your sender email is the primary submission identity.</p>
+                <p class="interest-status" id="article-submission-status" aria-live="polite"></p>
+              </form>
+            </section>
+          </div>
+
+          <section class="platform-roadmap" aria-labelledby="platform-roadmap-title">
+            <div class="roadmap-heading">
+              <div>
+                <p class="eyebrow">Contributor platform roadmap</p>
+                <h3 id="platform-roadmap-title">From email identity to a complete publishing workspace.</h3>
+              </div>
+              <p>Email is the primary identity now. A future account system can verify that address and connect it to profiles, drafts, reviews, and published stories.</p>
+            </div>
+            <ol class="roadmap-grid">
+              <li><span>Phase 01 / Now</span><strong>Email intake</strong><p>Community interest and article submissions are reviewed manually through email.</p></li>
+              <li><span>Phase 02</span><strong>Accounts and roles</strong><p>Passwordless email sign-in, contributor profiles, and author/editor permissions.</p></li>
+              <li><span>Phase 03</span><strong>Writing workspace</strong><p>Create and edit Markdown drafts, autosave, upload images, and preview articles.</p></li>
+              <li><span>Phase 04</span><strong>Review and publish</strong><p>Submit drafts, receive editor comments, track status, revise, and publish.</p></li>
+            </ol>
+          </section>
+        </div>
+      </section>
+
+      <section class="community" id="community" aria-labelledby="community-title">
+        <div class="community-inner">
+          <p class="eyebrow">Join the publication</p>
+          <h2 id="community-title">Have a lesson worth sharing?</h2>
+          <p>
+            Register your interest in the future contributor platform, or send a complete
+            article now for editorial review. Your email is the primary identity for both.
+          </p>
+          <div class="community-actions">
+            <a class="button button--primary" href="#community-interest">Join the future community <span aria-hidden="true">&uarr;</span></a>
+            <a class="button button--quiet" href="#article-submission">Submit an article <span aria-hidden="true">&uarr;</span></a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <p>AI / Copilot / Dynamics 365 / Builder practice</p>
+        <a class="brand" href="blogs-preview.html" aria-label="CodeFox Community Hub home">
+          <span class="brand-mark" aria-hidden="true">C/F</span>
+          <span class="brand-copy"><strong>CodeFox</strong><span>Community Hub</span></span>
+        </a>
+        <a class="return-link" href="../site/index.html"><span aria-hidden="true">&larr;</span> The Builder's Fieldnotes</a>
+      </div>
+    </footer>
+
+    <script>
+      const emailTarget = "you.techconnect@gmail.com";
+      const formConfigs = [
+        {
+          formId: "community-interest-form",
+          statusId: "community-interest-status",
+          subject: (value) => `CodeFox community author interest - ${value("name")}`,
+          intro: "I would like to join the future CodeFox author community.",
+          fields: [
+            ["Name", "name"],
+            ["Primary email ID", "email"],
+            ["Primary interest", "topic"],
+            ["GitHub, profile, or portfolio", "profile", "Not provided"],
+            ["Why I would like to contribute", "motivation"],
+          ],
+          confirmation: "I agree that CodeFox may contact me about future contributor opportunities.",
+        },
+        {
+          formId: "article-submission-form",
+          statusId: "article-submission-status",
+          subject: (value) => `CodeFox article submission - ${value("title")}`,
+          intro: "I would like to submit an article for CodeFox editorial review.",
+          fields: [
+            ["Author name", "name"],
+            ["Primary email ID", "email"],
+            ["Article topic", "topic"],
+            ["Draft format", "format"],
+            ["Article title", "title"],
+            ["Draft or sample link", "draft", "Not provided - I will attach a file if applicable"],
+            ["Article summary", "summary"],
+          ],
+          confirmation: "I confirm this is my original work and CodeFox may review it for possible publication.",
+        },
+      ];
+
+      for (const config of formConfigs) {
+        const form = document.querySelector(`#${config.formId}`);
+        const status = document.querySelector(`#${config.statusId}`);
+
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+          if (!form.reportValidity()) return;
+
+          const data = new FormData(form);
+          const value = (name) => String(data.get(name) ?? "").trim();
+          const fieldLines = config.fields.map(([label, name, fallback]) => `${label}: ${value(name) || fallback || ""}`);
+          const body = [
+            "Hello CodeFox team,",
+            "",
+            config.intro,
+            "",
+            ...fieldLines,
+            "",
+            config.confirmation,
+            "",
+            "Please use my email address as my primary contributor identity and keep this thread for future status updates.",
+          ].join("\n");
+
+          status.textContent = "Your email application should open with the message prepared. Review it, attach a file if needed, then press Send.";
+          window.location.href = `mailto:${emailTarget}?subject=${encodeURIComponent(config.subject(value))}&body=${encodeURIComponent(body)}`;
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -72,6 +72,10 @@ p { text-wrap: pretty; }
 #site-navigation > a::after { position: absolute; right: 0.8rem; bottom: 6px; left: 0.8rem; height: 1px; background: var(--sky); content: ""; opacity: 0; transform: scaleX(0.3); transition: opacity 160ms ease, transform 160ms ease; }
 #site-navigation > a:hover, #site-navigation > a[aria-current="page"] { color: var(--ink); }
 #site-navigation > a[aria-current="page"]::after { opacity: 1; transform: scaleX(1); }
+#site-navigation > a.blogs-nav-link { min-height: 38px; margin-left: 0.35rem; padding-inline: 0.9rem; color: #71351f; border: 1px solid rgba(240, 120, 72, 0.52); border-radius: 6px; background: linear-gradient(135deg, #fffdf9 0%, #ffe7da 58%, #f7a17a 100%); box-shadow: 0 7px 18px rgba(165, 75, 38, 0.1); font-weight: 600; transition: color 160ms ease, border-color 160ms ease, background 180ms ease, box-shadow 160ms ease, transform 160ms ease; }
+#site-navigation > a.blogs-nav-link::after { display: none; }
+#site-navigation > a.blogs-nav-link:hover { color: #4f2416; border-color: rgba(221, 91, 39, 0.74); background: linear-gradient(135deg, #fffaf5 0%, #ffd5c0 54%, #f07848 100%); box-shadow: 0 10px 24px rgba(165, 75, 38, 0.16); transform: translateY(-1px); }
+#site-navigation > a.blogs-nav-link svg { color: #c65529; }
 .menu-button { display: none; }
 
 .icon-button { width: 44px; height: 44px; padding: 0; display: inline-grid; flex: 0 0 44px; place-items: center; color: #185f7e; border: 1px solid rgba(31, 117, 153, 0.24); border-radius: 6px; background: var(--action-gradient); box-shadow: 0 7px 18px rgba(31, 117, 153, 0.1); cursor: pointer; text-decoration: none; backdrop-filter: blur(20px) saturate(120%); transition: border-color 150ms ease, box-shadow 150ms ease, color 150ms ease, transform 150ms ease; }
@@ -1600,6 +1604,7 @@ p { text-wrap: pretty; }
   #site-navigation[data-open] { display: flex; }
   #site-navigation > a { width: 100%; padding-inline: 0.5rem; }
   #site-navigation > a::after { right: auto; left: 0.5rem; width: 2rem; }
+  #site-navigation > a.blogs-nav-link { min-height: 44px; margin: 0.35rem 0 0; padding-inline: 0.75rem; }
   #app-floating-navigation { width: calc(100% - var(--rail-width) - 1rem); margin-left: 0.5rem; margin-right: auto; }
   #app-content-layout { width: calc(100% - var(--rail-width) - 0.5rem); margin-right: auto; margin-left: 0; display: block; }
   #app-content-layout.app-content-layout--wide { width: calc(100% - var(--rail-width) - 0.5rem); }
