@@ -20,6 +20,12 @@ function sourceLabel(absolutePath) {
   return path.relative(projectRoot, absolutePath).replaceAll("\\", "/");
 }
 
+function assertNoMergeConflictMarkers(value, sourcePath) {
+  if (/^(?:<<<<<<< .+|=======|>>>>>>> .+)$/m.test(value)) {
+    throw new Error(`${sourcePath}: unresolved Git merge-conflict markers were found.`);
+  }
+}
+
 function requireString(value, field, sourcePath) {
   if (typeof value !== "string" || value.trim().length === 0) {
     throw new Error(`${sourcePath}: ${field} must be a non-empty string.`);
@@ -40,7 +46,9 @@ function escapeHtml(value) {
 function readYamlFile(absolutePath) {
   const label = sourceLabel(absolutePath);
   if (!fs.existsSync(absolutePath)) throw new Error(`${label}: required YAML file is missing.`);
-  const value = YAML.parse(fs.readFileSync(absolutePath, "utf8"));
+  const source = fs.readFileSync(absolutePath, "utf8");
+  assertNoMergeConflictMarkers(source, label);
+  const value = YAML.parse(source);
   if (!value || typeof value !== "object") throw new Error(`${label}: expected a YAML object or array.`);
   return { value, sourcePath: label };
 }
@@ -103,7 +111,9 @@ function readMarkdown(relativePath) {
   const absolutePath = path.join(contentRoot, relativePath);
   const sourcePath = sourceLabel(absolutePath);
   if (!fs.existsSync(absolutePath)) throw new Error(`${sourcePath}: required source file is missing.`);
-  const parsed = matter(fs.readFileSync(absolutePath, "utf8"));
+  const source = fs.readFileSync(absolutePath, "utf8");
+  assertNoMergeConflictMarkers(source, sourcePath);
+  const parsed = matter(source);
   return { absolutePath, sourcePath, data: parsed.data, body: parsed.content.trim() };
 }
 
@@ -1045,6 +1055,7 @@ function renderBlogTemplate(templateName, tokens) {
   const templatePath = path.join(blogTemplateRoot, templateName);
   if (!fs.existsSync(templatePath)) throw new Error(`${sourceLabel(templatePath)}: required blog template is missing.`);
   let html = fs.readFileSync(templatePath, "utf8");
+  assertNoMergeConflictMarkers(html, sourceLabel(templatePath));
   for (const [name, value] of Object.entries(tokens)) {
     html = html.replaceAll(`{{${name}}}`, String(value));
   }
@@ -1054,6 +1065,7 @@ function renderBlogTemplate(templateName, tokens) {
 }
 
 function writeBlogPage(outputParts, html) {
+  assertNoMergeConflictMarkers(html, `Generated blog page ${outputParts.join("/")}`);
   for (const previewPath of ["../site/", "blogs-preview.html", "blog-article-preview.html"]) {
     if (html.includes(previewPath)) throw new Error(`Generated blog page contains unresolved template path "${previewPath}".`);
   }
