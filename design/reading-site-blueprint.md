@@ -223,7 +223,7 @@ main-content width                                         sidebar width
 - Each button has its own quiet liquid-glass surface, optical edge, and restrained shadow. There is no shared full-width background.
 - Keep `8 px` between buttons and `12 px` clear space below the header.
 - Back calls browser history when an in-site history entry exists. Disable it on the initial Home state rather than sending the visitor away from the site.
-- Home routes to `#/home`. Mark it with `aria-current="page"` while Home is active.
+- Home routes to the deployment root (`/Pages/` on GitHub Pages). Keep `#/home` compatible for existing bookmarks, and mark Home with `aria-current="page"` while it is active.
 - The cluster stays sticky while reading and must not cover headings when anchor links receive focus.
 
 ### Slim Social and Author Rail
@@ -560,7 +560,7 @@ AppShell
 
 | Route | Container and state |
 | --- | --- |
-| `#/home` | HomeContainer / editorial home |
+| `/` | HomeContainer / editorial home; `#/home` remains a compatibility route |
 | `#/library` | HomeContainer / Library |
 | `#/library?topic={slug}&format={type}&length={range}&year={year}` | HomeContainer / filtered Library; omit unused parameters |
 | `#/topic/{topic-slug}` | HomeContainer / Topic Hub |
