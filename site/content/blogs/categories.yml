@@ -1,0 +1,20 @@
+- slug: "github-copilot"
+  title: "GitHub Copilot"
+  order: 10
+  status: "active"
+
+- slug: "dynamics-365"
+  title: "Dynamics 365"
+  order: 20
+  status: "active"
+
+- slug: "ai-fundamentals"
+  title: "AI Fundamentals"
+  order: 30
+  status: "planned"
+
+- slug: "others"
+  title: "Others"
+  order: 40
+  status: "planned"
+

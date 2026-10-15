@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="CodeFox Community Hub: community-written articles for practical builders."
+      content="{{BLOG_META_DESCRIPTION}}"
     />
     <meta name="theme-color" content="#f3efe7" />
-    <title>CodeFox Community Hub | Blogs</title>
+    <title>{{BLOG_PAGE_TITLE}}</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f07848'/%3E%3Ctext x='32' y='38' text-anchor='middle' font-family='monospace' font-size='18' font-weight='700' fill='%2332404f'%3EC/F%3C/text%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -116,10 +116,11 @@
 
       .blog-floating-navigation {
         position: sticky;
-        top: 80px;
+        top: 68px;
         z-index: 25;
         width: min(calc(100% - 40px), var(--page));
-        height: 0;
+        height: 56px;
+        padding-top: 12px;
         margin-inline: auto;
         pointer-events: none;
       }
@@ -917,7 +918,7 @@
       .contribution-options {
         margin-bottom: 18px;
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 18px;
       }
 
@@ -1348,7 +1349,9 @@
         }
 
         .blog-floating-navigation {
-          top: 76px;
+          top: 68px;
+          height: 52px;
+          padding-top: 8px;
           width: calc(100% - 28px);
         }
 
@@ -1499,11 +1502,11 @@
 
     <header class="site-header">
       <div class="header-inner">
-        <a class="brand" href="blogs-preview.html" aria-label="CodeFox Community Hub home">
+        <a class="brand" href="blogs-preview.html" aria-label="{{BLOG_TITLE}} home">
           <span class="brand-mark" aria-hidden="true">C/F</span>
           <span class="brand-copy">
-            <strong>CodeFox</strong>
-            <span>Community Hub</span>
+            <strong>{{BLOG_BRAND_NAME}}</strong>
+            <span>{{BLOG_BRAND_SUFFIX}}</span>
           </span>
         </a>
 
@@ -1535,44 +1538,38 @@
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-inner">
           <div class="hero-copy">
-            <p class="eyebrow">CodeFox Community Hub / Blogs</p>
-            <h1 id="hero-title">Ideas that move <span>from prompt to production.</span></h1>
-            <p class="hero-deck">
-              A community-led publication for practical perspectives on AI, GitHub
-              Copilot, Dynamics 365, and the craft of building useful software.
-            </p>
+            <p class="eyebrow">{{BLOG_EYEBROW}}</p>
+            <h1 id="hero-title">{{BLOG_HEADLINE}} <span>{{BLOG_HEADLINE_ACCENT}}</span></h1>
+            <p class="hero-deck">{{BLOG_SUMMARY}}</p>
             <div class="hero-actions">
               <a class="button button--primary" href="#latest">Explore latest stories <span aria-hidden="true">&darr;</span></a>
               <a class="button button--quiet" href="#community-interest">Become a contributor <span aria-hidden="true">&rarr;</span></a>
             </div>
             <dl class="hero-stats" aria-label="Publication details">
-              <div><dt>Stories</dt><dd>01</dd></div>
-              <div><dt>Author interest</dt><dd>Open</dd></div>
+              <div><dt>Stories</dt><dd>{{BLOG_POST_COUNT_PADDED}}</dd></div>
+              <div><dt>Author interest</dt><dd>{{AUTHOR_INTEREST_STATUS}}</dd></div>
               <div><dt>Identity</dt><dd>Email</dd></div>
             </dl>
           </div>
 
           <article class="feature-card">
-            <a class="feature-image" href="blog-article-preview.html" aria-label="Read Building Smart D365 Plugins with GitHub Copilot Agent Mode">
+            <a class="feature-image" href="{{FEATURED_ROUTE}}" aria-label="Read {{FEATURED_TITLE}}">
               <img
-                src="../site/public/article-covers/smart-d365-plugins.jpg"
-                alt="Building Smart D365 Plugins with GitHub Copilot Agent Mode cover"
+                src="{{FEATURED_HOME_COVER}}"
+                alt="{{FEATURED_TITLE}} cover"
               />
             </a>
             <div class="feature-body">
               <div class="story-meta">
-                <span class="category">Dynamics 365</span>
+                <span class="category">{{FEATURED_CATEGORY}}</span>
                 <span>/</span>
-                <time datetime="2025-11-24">24 Nov 2025</time>
+                <time datetime="{{FEATURED_PUBLISHED_ISO}}">{{FEATURED_PUBLISHED_DISPLAY}}</time>
                 <span>/</span>
-                <span>By Shubhamm Jadhav</span>
+                <span>By {{FEATURED_AUTHOR}}</span>
               </div>
-              <h2>Building Smart D365 Plugins with GitHub Copilot Agent Mode</h2>
-              <p>
-                A practical look at pairing clear plugin contracts with an agent-assisted
-                development workflow.
-              </p>
-              <a class="text-link" href="blog-article-preview.html">Read the feature</a>
+              <h2>{{FEATURED_TITLE}}</h2>
+              <p>{{FEATURED_SUMMARY}}</p>
+              <a class="text-link" href="{{FEATURED_ROUTE}}">Read the feature</a>
             </div>
           </article>
         </div>
@@ -1587,13 +1584,7 @@
 
       <section class="topic-strip" id="topics" aria-labelledby="topics-label">
         <p class="eyebrow" id="topics-label">Explore topics</p>
-        <nav class="topic-bar" aria-label="Blog topics">
-          <a href="#latest" aria-current="true"><span>All stories</span><strong>01</strong></a>
-          <a href="#latest"><span>GitHub Copilot</span><strong>01</strong></a>
-          <a href="#latest"><span>Dynamics 365</span><strong>01</strong></a>
-          <span class="topic-coming-soon"><span>AI Fundamentals</span><strong>Coming soon</strong></span>
-          <span class="topic-coming-soon"><span>Others</span><strong>Coming soon</strong></span>
-        </nav>
+        <nav class="topic-bar" aria-label="Blog topics">{{BLOG_TOPIC_LINKS}}</nav>
       </section>
 
       <section class="stories-section" id="latest" aria-labelledby="latest-title">
@@ -1607,18 +1598,18 @@
             here after they complete editorial review.
           </p>
         </div>
-        <p class="stories-status">1 published story</p>
+        <p class="stories-status">{{BLOG_POST_COUNT_LABEL}}</p>
 
         <div class="story-grid">
           <article class="story-card">
-            <a class="story-card__image" href="blog-article-preview.html">
-              <img src="../site/public/article-covers/smart-d365-plugins.jpg" alt="Smart Dynamics 365 plugins article cover" loading="lazy" />
+            <a class="story-card__image" href="{{FEATURED_ROUTE}}">
+              <img src="{{FEATURED_HOME_COVER}}" alt="{{FEATURED_TITLE}} cover" loading="lazy" />
             </a>
             <div class="story-card__body">
-              <div class="story-meta"><span class="category">Dynamics 365</span><span>/</span><time datetime="2025-11-24">24 Nov 2025</time><span>/</span><span>Shubhamm Jadhav</span></div>
-              <h3><a href="blog-article-preview.html">Building Smart D365 Plugins with GitHub Copilot Agent Mode</a></h3>
-              <p>A hands-on look at using agent mode to design, reason about, and build smarter Dynamics 365 plugins.</p>
-              <a class="text-link" href="blog-article-preview.html">Read article</a>
+              <div class="story-meta"><span class="category">{{FEATURED_CATEGORY}}</span><span>/</span><time datetime="{{FEATURED_PUBLISHED_ISO}}">{{FEATURED_PUBLISHED_DISPLAY}}</time><span>/</span><span>{{FEATURED_AUTHOR}}</span></div>
+              <h3><a href="{{FEATURED_ROUTE}}">{{FEATURED_TITLE}}</a></h3>
+              <p>{{FEATURED_SUMMARY}}</p>
+              <a class="text-link" href="{{FEATURED_ROUTE}}">Read article</a>
             </div>
           </article>
 
@@ -1649,6 +1640,11 @@
               <strong>Send an article for review</strong>
               <small>Prepare an editorial submission email with your draft link or attachment instructions.</small>
             </a>
+            <a class="contribution-option" href="./article-template/">
+              <span>03 / Page example</span>
+              <strong>View the article template</strong>
+              <small>See a realistic example page showing every field, rich content area, media placement, and shared ad container.</small>
+            </a>
           </div>
 
           <div class="contribution-forms">
@@ -1669,10 +1665,7 @@
                     <span>Primary interest *</span>
                     <select name="topic" required>
                       <option value="">Choose a topic</option>
-                      <option>GitHub Copilot</option>
-                      <option>Dynamics 365</option>
-                      <option>AI Fundamentals</option>
-                      <option>Others</option>
+                      {{BLOG_CATEGORY_OPTIONS}}
                     </select>
                   </label>
                   <label class="interest-field">
@@ -1690,7 +1683,7 @@
                 </label>
                 <div class="interest-actions">
                   <button class="button button--primary" type="submit">Prepare community interest <span aria-hidden="true">&rarr;</span></button>
-                  <a class="interest-email" href="mailto:you.techconnect@gmail.com?subject=CodeFox%20community%20author%20interest">Email directly</a>
+                  <a class="interest-email" href="mailto:{{OWNER_EMAIL}}?subject=CodeFox%20community%20author%20interest">Email directly</a>
                 </div>
                 <p class="interest-privacy">Your email becomes the primary identifier for future communication. Nothing is stored by this website.</p>
                 <p class="interest-status" id="community-interest-status" aria-live="polite"></p>
@@ -1711,14 +1704,31 @@
                     <input type="email" name="email" autocomplete="email" required />
                   </label>
                   <label class="interest-field">
+                    <span>Existing author key</span>
+                    <input type="text" name="authorKey" pattern="cf-author-[0-9]{4}" placeholder="cf-author-1000" />
+                  </label>
+                  <label class="interest-field">
+                    <span>Author role or expertise *</span>
+                    <input type="text" name="authorRole" required />
+                  </label>
+                  <label class="interest-field interest-field--wide">
+                    <span>Short public author biography *</span>
+                    <textarea name="authorBio" maxlength="600" required></textarea>
+                  </label>
+                  <label class="interest-field">
+                    <span>Public profile or portfolio</span>
+                    <input type="url" name="profile" inputmode="url" placeholder="https://" />
+                  </label>
+                  <label class="interest-field">
                     <span>Article topic *</span>
                     <select name="topic" required>
                       <option value="">Choose a topic</option>
-                      <option>GitHub Copilot</option>
-                      <option>Dynamics 365</option>
-                      <option>AI Fundamentals</option>
-                      <option>Others</option>
+                      {{BLOG_CATEGORY_OPTIONS}}
                     </select>
+                  </label>
+                  <label class="interest-field">
+                    <span>Other category, if selected</span>
+                    <input type="text" name="otherCategory" />
                   </label>
                   <label class="interest-field">
                     <span>Draft format *</span>
@@ -1739,17 +1749,33 @@
                   </label>
                   <label class="interest-field interest-field--wide">
                     <span>Article summary *</span>
-                    <textarea name="summary" required></textarea>
+                    <textarea name="summary" maxlength="1000" required></textarea>
+                  </label>
+                  <label class="interest-field interest-field--wide">
+                    <span>Article content, detailed outline, or key sections *</span>
+                    <textarea name="contentOutline" maxlength="2500" required></textarea>
+                  </label>
+                  <label class="interest-field">
+                    <span>Cover image link or attachment name</span>
+                    <input type="text" name="coverImage" />
+                  </label>
+                  <label class="interest-field">
+                    <span>Video links and titles</span>
+                    <textarea name="videos" maxlength="1000"></textarea>
+                  </label>
+                  <label class="interest-field interest-field--wide">
+                    <span>Supporting image links, alternative text, and credits</span>
+                    <textarea name="supportingImages" maxlength="1500"></textarea>
                   </label>
                 </div>
                 <label class="interest-consent">
                   <input type="checkbox" name="rights" required />
                   <span>I confirm this is my original work and CodeFox may review it for possible publication.</span>
                 </label>
-                <p class="submission-note">Email links cannot attach files automatically. If you selected file attachment, add the document after your email application opens.</p>
+                <p class="submission-note">Email links cannot attach files automatically. Add the article document and image files after your email application opens. Videos must use HTTPS YouTube or Vimeo links.</p>
                 <div class="interest-actions">
                   <button class="button button--primary" type="submit">Prepare article submission <span aria-hidden="true">&rarr;</span></button>
-                  <a class="interest-email" href="mailto:you.techconnect@gmail.com?subject=CodeFox%20article%20submission">Email directly</a>
+                  <a class="interest-email" href="mailto:{{OWNER_EMAIL}}?subject=CodeFox%20article%20submission">Email directly</a>
                 </div>
                 <p class="interest-privacy">Keep the email thread to ask for review status. Your sender email is the primary submission identity.</p>
                 <p class="interest-status" id="article-submission-status" aria-live="polite"></p>
@@ -1794,9 +1820,9 @@
     <footer class="site-footer">
       <div class="footer-inner">
         <p>AI / Copilot / Dynamics 365 / Builder practice</p>
-        <a class="brand" href="blogs-preview.html" aria-label="CodeFox Community Hub home">
+        <a class="brand" href="blogs-preview.html" aria-label="{{BLOG_TITLE}} home">
           <span class="brand-mark" aria-hidden="true">C/F</span>
-          <span class="brand-copy"><strong>CodeFox</strong><span>Community Hub</span></span>
+          <span class="brand-copy"><strong>{{BLOG_BRAND_NAME}}</strong><span>{{BLOG_BRAND_SUFFIX}}</span></span>
         </a>
         <a class="return-link" href="../site/index.html"><span aria-hidden="true">&larr;</span> The Builder's Fieldnotes</a>
       </div>
@@ -1805,7 +1831,7 @@
     <script>
       document.querySelector("[data-blog-back]").addEventListener("click", () => window.history.back());
 
-      const emailTarget = "you.techconnect@gmail.com";
+      const emailTarget = "{{OWNER_EMAIL}}";
       const formConfigs = [
         {
           formId: "community-interest-form",
@@ -1824,16 +1850,25 @@
         {
           formId: "article-submission-form",
           statusId: "article-submission-status",
-          subject: (value) => `CodeFox article submission - ${value("title")}`,
+          subject: (value) => `CodeFox article submission${value("authorKey") ? ` [${value("authorKey")}]` : ""} - ${value("title")}`,
           intro: "I would like to submit an article for CodeFox editorial review.",
           fields: [
             ["Author name", "name"],
             ["Primary email ID", "email"],
+            ["Existing author key", "authorKey", "Not assigned"],
+            ["Author role or expertise", "authorRole"],
+            ["Public author biography", "authorBio"],
+            ["Public profile or portfolio", "profile", "Not provided"],
             ["Article topic", "topic"],
+            ["Other category", "otherCategory", "Not provided"],
             ["Draft format", "format"],
             ["Article title", "title"],
             ["Draft or sample link", "draft", "Not provided - I will attach a file if applicable"],
             ["Article summary", "summary"],
+            ["Article content, outline, or key sections", "contentOutline"],
+            ["Cover image link or attachment name", "coverImage", "Not provided"],
+            ["Supporting images, alternative text, and credits", "supportingImages", "Not provided"],
+            ["Video links and titles", "videos", "Not provided"],
           ],
           confirmation: "I confirm this is my original work and CodeFox may review it for possible publication.",
         },

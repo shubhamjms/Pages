@@ -6,6 +6,13 @@ dist/
 .vite/
 src/generated/
 public/codefox-blogs/
+public/content/blogs/
+
+# Private author ownership data must never be committed
+content/blogs/private/
+content/blogs/**/private/
+content/blogs/**/contact.*
+content/blogs/**/owner-map.*
 
 # Test and tool output
 coverage/

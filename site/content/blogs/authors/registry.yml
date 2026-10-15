@@ -1,0 +1,9 @@
+schemaVersion: 1
+ownerAuthorId: "cf-author-0001"
+externalAuthorStart: 1000
+nextAuthorNumber: 1000
+authors:
+  - id: "cf-author-0001"
+    status: "active"
+    assignedAt: "2026-10-15"
+    ownershipReference: "CF-AUTH-0001"
