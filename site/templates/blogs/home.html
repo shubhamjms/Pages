@@ -1945,26 +1945,7 @@
     </footer>
 
     <script>
-      document.querySelector("[data-blog-back]")?.addEventListener("click", () => window.history.back());
-
-      for (const control of document.querySelectorAll("[data-rich-command]")) {
-        control.addEventListener("click", () => {
-          const editor = control.closest(".rich-text-editor")?.querySelector("[data-rich-body]");
-          if (!editor) return;
-          editor.focus();
-          const command = control.dataset.richCommand;
-          let value = control.dataset.richValue ?? null;
-          if (control.dataset.richHtml) {
-            document.execCommand("insertHTML", false, control.dataset.richHtml);
-            return;
-          }
-          if (command === "createLink") {
-            value = window.prompt("Enter an HTTPS link");
-            if (!value) return;
-          }
-          document.execCommand(command, false, value);
-        });
-      }
+      document.querySelector("[data-blog-back]").addEventListener("click", () => window.history.back());
 
       const emailTarget = "{{OWNER_EMAIL}}";
       const formConfigs = [
