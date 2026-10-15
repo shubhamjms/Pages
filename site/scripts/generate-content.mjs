@@ -206,7 +206,39 @@ function normalizeVideoEmbedUrl(value, sourcePath) {
   throw new Error(`${sourcePath}: video embeds are limited to YouTube and Vimeo.`);
 }
 
-function renderDocument(document, rewriteLink = (href) => href) {
+function expandContentShortcuts(body) {
+  let insideFence = false;
+  const output = [];
+  for (const line of body.split(/\r?\n/)) {
+    if (/^```/.test(line.trim())) {
+      insideFence = !insideFence;
+      output.push(line);
+      continue;
+    }
+    if (insideFence) {
+      output.push(line);
+      continue;
+    }
+
+    const callout = /^##(note|warning|tip)\s+(.+)$/i.exec(line);
+    if (callout) {
+      const label = callout[1][0].toUpperCase() + callout[1].slice(1).toLowerCase();
+      output.push(`> **${label}:** ${callout[2]}`);
+      continue;
+    }
+
+    const video = /^##video\s+(\S+)(?:\s*\|\s*(.+))?$/i.exec(line);
+    if (video) {
+      output.push("```video", video[1], video[2] ?? "Embedded video", "```");
+      continue;
+    }
+
+    output.push(line);
+  }
+  return output.join("\n");
+}
+
+function renderDocument(document, rewriteLink = (href) => href, options = {}) {
   const headings = collectHeadings(document.body, document.sourcePath);
   const headingQueue = [...headings];
   const markdown = new MarkdownIt({ html: false, linkify: true, typographer: true });
@@ -261,7 +293,8 @@ function renderDocument(document, rewriteLink = (href) => href) {
     return rendered.replace("<pre>", `<pre aria-label="${language ? `${language} code sample` : "Code sample"}">`);
   };
 
-  const html = sanitizeHtml(markdown.render(document.body), {
+  const sourceBody = options.contentShortcuts ? expandContentShortcuts(document.body) : document.body;
+  let html = sanitizeHtml(markdown.render(sourceBody), {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "figure", "figcaption", "iframe"]),
     allowedAttributes: {
       "*": ["id", "class", "role", "aria-label", "tabindex"],
@@ -272,6 +305,12 @@ function renderDocument(document, rewriteLink = (href) => href) {
     allowedSchemes: ["http", "https", "mailto"],
     allowedIframeHostnames: ["www.youtube-nocookie.com", "player.vimeo.com"],
   });
+  if (options.contentShortcuts) {
+    html = html.replace(
+      /<blockquote>\s*<p><strong>(Note|Warning|Tip):<\/strong>/gi,
+      (_match, type) => `<blockquote class="content-callout content-callout--${type.toLowerCase()}"><p><strong>${type}:<\/strong>`,
+    );
+  }
   return {
     html,
     headings,
@@ -978,7 +1017,7 @@ function buildBlogContent() {
         if (!categorySlugs.has(categorySlug)) throw new Error(`${document.sourcePath}: category "${categorySlug}" does not exist.`);
       }
 
-      const rendered = renderDocument(document);
+      const rendered = renderDocument(document, undefined, { contentShortcuts: true });
       const layout = requireString(document.data.layout, "layout", document.sourcePath);
       if (layout !== "standard") throw new Error(`${document.sourcePath}: unsupported layout "${layout}".`);
       const contentType = requireString(document.data.contentType, "contentType", document.sourcePath);
@@ -988,7 +1027,7 @@ function buildBlogContent() {
         layout,
         contentType,
         title: requireString(document.data.title, "title", document.sourcePath),
-        summary: requireString(document.data.summary, "summary", document.sourcePath),
+        subtitle: requireString(document.data.subtitle, "subtitle", document.sourcePath),
         breadcrumb: requireString(document.data.breadcrumb, "breadcrumb", document.sourcePath),
         eyebrow: requireString(document.data.eyebrow, "eyebrow", document.sourcePath),
         author,
@@ -1019,13 +1058,15 @@ function buildBlogContent() {
   if (exampleLayout !== "standard" || exampleContentType !== "article") {
     throw new Error(`${exampleDocument.sourcePath}: contributor example must use the standard article layout.`);
   }
-  const renderedExample = renderDocument(exampleDocument);
+  const renderedExample = renderDocument(exampleDocument, undefined, { contentShortcuts: true });
+  const rulesDocument = readMarkdown("blogs/CONTENT_RULES.md");
+  const renderedRules = renderDocument(rulesDocument);
   const articleExample = {
     slug: "article-template",
     layout: exampleLayout,
     contentType: exampleContentType,
     title: requireString(exampleDocument.data.title, "title", exampleDocument.sourcePath),
-    summary: requireString(exampleDocument.data.summary, "summary", exampleDocument.sourcePath),
+    subtitle: requireString(exampleDocument.data.subtitle, "subtitle", exampleDocument.sourcePath),
     breadcrumb: requireString(exampleDocument.data.breadcrumb, "breadcrumb", exampleDocument.sourcePath),
     eyebrow: requireString(exampleDocument.data.eyebrow, "eyebrow", exampleDocument.sourcePath),
     author: {
@@ -1040,11 +1081,10 @@ function buildBlogContent() {
     }],
     published: requireDate(exampleDocument.data.published, "published", exampleDocument.sourcePath),
     coverImage: requireBlogCover(exampleDocument.data.coverImage, "coverImage", exampleDocument.sourcePath),
-    html: renderedExample.html
-      .replace("<p>", '<p class="lead">')
+    html: `${renderedExample.html.replace("<p>", '<p class="lead">')}<section class="component-rulebook">${renderedRules.html}</section>`
       .replaceAll('src="./content/', 'src="../../content/'),
-    headings: renderedExample.headings,
-    readingTime: renderedExample.readingTime,
+    headings: [...renderedExample.headings, ...renderedRules.headings],
+    readingTime: renderedExample.readingTime + renderedRules.readingTime,
     sourceLabel: "Example structure",
   };
 
@@ -1118,7 +1158,7 @@ function generateBlogSite(blog) {
     FEATURED_ROUTE: `./${featured.slug}/`,
     FEATURED_HOME_COVER: `.${featured.coverImage}`,
     FEATURED_TITLE: escapeHtml(featured.title),
-    FEATURED_SUMMARY: escapeHtml(featured.summary),
+    FEATURED_SUMMARY: escapeHtml(featured.subtitle),
     FEATURED_CATEGORY: escapeHtml(featuredCategory.title),
     FEATURED_PUBLISHED_ISO: featured.published,
     FEATURED_PUBLISHED_DISPLAY: formatBlogDate(featured.published),
@@ -1139,13 +1179,13 @@ function generateBlogSite(blog) {
       BLOG_TITLE: escapeHtml(publication.title),
       BLOG_BRAND_NAME: escapeHtml(publication.brandName),
       BLOG_BRAND_SUFFIX: escapeHtml(publication.brandSuffix),
-      ARTICLE_META_DESCRIPTION: escapeHtml(post.summary),
+      ARTICLE_META_DESCRIPTION: escapeHtml(post.subtitle),
       ARTICLE_PAGE_TITLE: escapeHtml(`${post.title} | ${publication.title}`),
       ARTICLE_PRIMARY_CATEGORY: escapeHtml(primaryCategory.title),
       ARTICLE_BREADCRUMB: escapeHtml(post.breadcrumb),
       ARTICLE_CATEGORY_LABEL: escapeHtml(post.eyebrow),
       ARTICLE_TITLE: escapeHtml(post.title),
-      ARTICLE_SUMMARY: escapeHtml(post.summary),
+      ARTICLE_SUMMARY: escapeHtml(post.subtitle),
       ARTICLE_PUBLISHED_ISO: post.published,
       ARTICLE_PUBLISHED_DISPLAY: formatBlogDate(post.published),
       ARTICLE_READING_TIME: post.readingTime,

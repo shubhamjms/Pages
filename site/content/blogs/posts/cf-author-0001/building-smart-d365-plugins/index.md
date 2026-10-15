@@ -1,6 +1,6 @@
 ---
 title: "Building Smart D365 Plugins with GitHub Copilot Agent Mode"
-summary: "Use agent mode to accelerate plugin development without giving up the contracts, guardrails, and review points that make server-side code dependable."
+subtitle: "Use agent mode to accelerate plugin development without giving up the contracts, guardrails, and review points that make server-side code dependable."
 layout: "standard"
 contentType: "article"
 breadcrumb: "Agent-assisted plugins"

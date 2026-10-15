@@ -11,6 +11,7 @@ blogs/
 ├── ads.yml
 ├── POST_TEMPLATE.md
 ├── ARTICLE_EXAMPLE.md
+├── CONTENT_RULES.md
 ├── authors/
     ├── registry.yml
     └── profiles/
@@ -28,6 +29,7 @@ blogs/
 - `ads.yml` defines the shared sponsored sidebar used by every standard article.
 - `POST_TEMPLATE.md` is the internal maintainer starting format for new posts and is not published directly.
 - `ARTICLE_EXAMPLE.md` powers the rendered contributor-facing example at `/codefox-blogs/article-template/`.
+- `CONTENT_RULES.md` maintains the contributor-facing component rulebook included in the rendered example.
 - `authors/registry.yml` assigns stable non-personal author keys and ownership references.
 - `authors/profiles/<cf-author-id>.yml` contains an approved public contributor profile.
 - `posts/<cf-author-id>/<post-slug>/index.md` contains that author's article frontmatter and Markdown content.
@@ -82,7 +84,7 @@ Required frontmatter:
 ```yaml
 ---
 title: "Post title"
-summary: "Post summary."
+subtitle: "Post subtitle or concise reader outcome."
 layout: "standard"
 contentType: "article"
 breadcrumb: "Short breadcrumb"
@@ -113,7 +115,7 @@ Post bodies use Markdown and support:
 - Bold and italic emphasis
 - External links
 - Ordered and unordered lists
-- Warning or note blockquotes
+- Note, warning, and tip callouts
 - Local images stored beside the post
 - Tables
 - Fenced code blocks
@@ -121,14 +123,14 @@ Post bodies use Markdown and support:
 
 Raw HTML is intentionally disabled. This keeps contributor input portable and prevents unsafe markup.
 
-Embed an allowlisted video with:
+Optional contributor shortcuts:
 
-````markdown
-```video
-https://www.youtube.com/watch?v=VIDEO_ID
-Accessible video title or short caption
-```
-````
+- `## Section title`
+- `### Subheading`
+- `##note Supporting context`
+- `##warning Important limitation`
+- `##tip Practical recommendation`
+- `##video HTTPS_URL | Accessible title`
 
 YouTube embeds are converted to the privacy-enhanced `youtube-nocookie.com` host. Vimeo embeds use `player.vimeo.com`. Other video hosts and non-HTTPS URLs fail the build.
 

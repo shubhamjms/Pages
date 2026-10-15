@@ -853,6 +853,127 @@
         resize: vertical;
       }
 
+      .rich-text-editor {
+        display: block;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgb(255 255 255 / 88%);
+      }
+
+      .rich-text-toolbar {
+        padding: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        border-bottom: 1px solid var(--line);
+        background: var(--sky);
+      }
+
+      .rich-text-toolbar button {
+        min-width: 34px;
+        min-height: 32px;
+        padding: 0 9px;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--paper-bright);
+        cursor: pointer;
+        font: 700 11px/1 var(--interface);
+      }
+
+      .rich-text-toolbar button:hover {
+        border-color: var(--orange);
+        background: var(--orange-gradient);
+      }
+
+      .rich-text-input {
+        min-height: 240px;
+        padding: 16px;
+        display: block;
+        color: var(--ink);
+        font: 500 14px/1.65 var(--interface);
+        outline: none;
+      }
+
+      .rich-text-input:empty::before {
+        color: var(--muted);
+        content: attr(data-placeholder);
+        pointer-events: none;
+      }
+
+      .rich-text-input h2,
+      .rich-text-input h3,
+      .rich-text-input p {
+        margin: 0 0 12px;
+      }
+
+      .rich-text-input h2 {
+        font: 700 24px/1.2 var(--display);
+      }
+
+      .rich-text-input h3 {
+        font: 700 19px/1.25 var(--display);
+      }
+
+      .rich-text-input ul,
+      .rich-text-input ol {
+        margin: 0 0 14px;
+        padding-left: 24px;
+      }
+
+      .rich-text-input blockquote {
+        margin: 14px 0;
+        padding: 12px 16px;
+        border-left: 4px solid var(--orange);
+        background: #fff0ad;
+      }
+
+      .rich-text-input pre {
+        margin: 14px 0;
+        padding: 14px;
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--night-soft);
+        font: 400 12px/1.6 var(--mono);
+      }
+
+      .rich-text-input table {
+        width: 100%;
+        margin: 14px 0;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+
+      .rich-text-input th,
+      .rich-text-input td {
+        padding: 9px;
+        border: 1px solid var(--line);
+        text-align: left;
+      }
+
+      .rich-text-input th {
+        background: var(--sky);
+      }
+
+      .rich-text-input a {
+        color: var(--orange-dark);
+        text-decoration: underline;
+      }
+
+      .rich-text-editor:focus-within {
+        border-color: var(--orange);
+        outline: 3px solid rgb(240 120 72 / 18%);
+        outline-offset: 1px;
+      }
+
+      .interest-help {
+        color: var(--muted);
+        font-size: 10px;
+        line-height: 1.5;
+      }
+
       .interest-field input:hover,
       .interest-field select:hover,
       .interest-field textarea:hover {
@@ -1703,14 +1824,6 @@
                     <input type="email" name="email" autocomplete="email" required />
                   </label>
                   <label class="interest-field">
-                    <span>Author role or expertise *</span>
-                    <input type="text" name="authorRole" required />
-                  </label>
-                  <label class="interest-field interest-field--wide">
-                    <span>Short public author biography *</span>
-                    <textarea name="authorBio" maxlength="600" required></textarea>
-                  </label>
-                  <label class="interest-field">
                     <span>Public profile or portfolio</span>
                     <input type="url" name="profile" inputmode="url" placeholder="https://" />
                   </label>
@@ -1725,49 +1838,57 @@
                     <span>Other category, if selected</span>
                     <input type="text" name="otherCategory" />
                   </label>
-                  <label class="interest-field">
-                    <span>Draft format *</span>
-                    <select name="format" required>
-                      <option value="">Choose a format</option>
-                      <option>Shareable draft link</option>
-                      <option>I will attach a file to the email</option>
-                      <option>Idea and outline only</option>
-                    </select>
-                  </label>
                   <label class="interest-field interest-field--wide">
                     <span>Article title *</span>
                     <input type="text" name="title" required />
                   </label>
                   <label class="interest-field interest-field--wide">
-                    <span>Draft or sample link</span>
-                    <input type="url" name="draft" inputmode="url" placeholder="https://" />
+                    <span>Article subtitle *</span>
+                    <input type="text" name="subtitle" required />
                   </label>
                   <label class="interest-field interest-field--wide">
-                    <span>Article summary *</span>
-                    <textarea name="summary" maxlength="1000" required></textarea>
+                    <span>Article body *</span>
+                    <span class="interest-help">The body is free-form. Use any structure, headings, lists, links, or pasted rich text that suits the article.</span>
+                    <span class="interest-help">Use the formatting buttons as needed. The Article Page Example shows every supported component and its rendered HTML result.</span>
+                    <span class="rich-text-editor">
+                      <span class="rich-text-toolbar" role="toolbar" aria-label="Body formatting">
+                        <button type="button" data-rich-command="bold" aria-label="Bold">Bold</button>
+                        <button type="button" data-rich-command="italic" aria-label="Italic">Italic</button>
+                        <button type="button" data-rich-command="formatBlock" data-rich-value="h2" aria-label="Main heading">H2</button>
+                        <button type="button" data-rich-command="formatBlock" data-rich-value="h3" aria-label="Subheading">H3</button>
+                        <button type="button" data-rich-command="formatBlock" data-rich-value="blockquote" aria-label="Quote">Quote</button>
+                        <button type="button" data-rich-command="insertUnorderedList" aria-label="Bulleted list">Bullets</button>
+                        <button type="button" data-rich-command="insertOrderedList" aria-label="Numbered list">Numbered</button>
+                        <button type="button" data-rich-command="createLink" aria-label="Add link">Link</button>
+                        <button type="button" data-rich-command="insertHTML" data-rich-html="&lt;pre&gt;&lt;code&gt;[Add code or command]&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;" aria-label="Insert code block">Code</button>
+                        <button type="button" data-rich-command="insertHTML" data-rich-html="&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Heading&lt;/th&gt;&lt;th&gt;Heading&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Value&lt;/td&gt;&lt;td&gt;Value&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;" aria-label="Insert table">Table</button>
+                        <button type="button" data-rich-command="insertText" data-rich-value="##note " aria-label="Insert note">Note</button>
+                        <button type="button" data-rich-command="insertText" data-rich-value="##warning " aria-label="Insert warning">Warning</button>
+                        <button type="button" data-rich-command="insertText" data-rich-value="##tip " aria-label="Insert tip">Tip</button>
+                        <button type="button" data-rich-command="removeFormat" aria-label="Clear formatting">Clear</button>
+                      </span>
+                      <span class="rich-text-input" contenteditable="true" role="textbox" aria-multiline="true" data-rich-body data-placeholder="Write or paste the article body here."></span>
+                    </span>
+                    <input type="hidden" name="body" />
                   </label>
                   <label class="interest-field interest-field--wide">
-                    <span>Article content, detailed outline, or key sections *</span>
-                    <textarea name="contentOutline" maxlength="2500" required></textarea>
-                  </label>
-                  <label class="interest-field">
-                    <span>Cover image link or attachment name</span>
-                    <input type="text" name="coverImage" />
-                  </label>
-                  <label class="interest-field">
-                    <span>Video links and titles</span>
-                    <textarea name="videos" maxlength="1000"></textarea>
+                    <span>Shareable rich-text document link</span>
+                    <input type="url" name="bodyDocument" inputmode="url" placeholder="https://" />
                   </label>
                   <label class="interest-field interest-field--wide">
-                    <span>Supporting image links, alternative text, and credits</span>
-                    <textarea name="supportingImages" maxlength="1500"></textarea>
+                    <span>Optional images</span>
+                    <textarea name="images" placeholder="Image links, attachment names, alternative text, and credits"></textarea>
+                  </label>
+                  <label class="interest-field interest-field--wide">
+                    <span>Optional videos</span>
+                    <textarea name="videos" placeholder="HTTPS YouTube or Vimeo links with titles"></textarea>
                   </label>
                 </div>
                 <label class="interest-consent">
                   <input type="checkbox" name="rights" required />
                   <span>I confirm this is my original work and CodeFox may review it for possible publication.</span>
                 </label>
-                <p class="submission-note">Email links cannot attach files automatically. Add the article document and image files after your email application opens. Videos must use HTTPS YouTube or Vimeo links.</p>
+                <p class="submission-note">For a long or heavily formatted body, provide a shareable document link or attach the document after the email opens. Images and videos are optional.</p>
                 <div class="interest-actions">
                   <button class="button button--primary" type="submit">Prepare article submission <span aria-hidden="true">&rarr;</span></button>
                   <a class="interest-email" href="mailto:{{OWNER_EMAIL}}?subject=CodeFox%20article%20submission">Email directly</a>
@@ -1789,7 +1910,7 @@
             <ol class="roadmap-grid">
               <li><span>Phase 01 / Now</span><strong>Email intake</strong><p>Community interest and article submissions are reviewed manually through email.</p></li>
               <li><span>Phase 02</span><strong>Accounts and roles</strong><p>Passwordless email sign-in, contributor profiles, and author/editor permissions.</p></li>
-              <li><span>Phase 03</span><strong>Writing workspace</strong><p>Create and edit Markdown drafts, autosave, upload images, and preview articles.</p></li>
+              <li><span>Phase 03</span><strong>Writing workspace</strong><p>Create and edit rich drafts, autosave, add images or videos, and preview articles.</p></li>
               <li><span>Phase 04</span><strong>Review and publish</strong><p>Submit drafts, receive editor comments, track status, revise, and publish.</p></li>
             </ol>
           </section>
@@ -1826,6 +1947,25 @@
     <script>
       document.querySelector("[data-blog-back]")?.addEventListener("click", () => window.history.back());
 
+      for (const control of document.querySelectorAll("[data-rich-command]")) {
+        control.addEventListener("click", () => {
+          const editor = control.closest(".rich-text-editor")?.querySelector("[data-rich-body]");
+          if (!editor) return;
+          editor.focus();
+          const command = control.dataset.richCommand;
+          let value = control.dataset.richValue ?? null;
+          if (control.dataset.richHtml) {
+            document.execCommand("insertHTML", false, control.dataset.richHtml);
+            return;
+          }
+          if (command === "createLink") {
+            value = window.prompt("Enter an HTTPS link");
+            if (!value) return;
+          }
+          document.execCommand(command, false, value);
+        });
+      }
+
       const emailTarget = "{{OWNER_EMAIL}}";
       const formConfigs = [
         {
@@ -1850,19 +1990,15 @@
           fields: [
             ["Author name", "name"],
             ["Primary email ID", "email"],
-            ["Author role or expertise", "authorRole"],
-            ["Public author biography", "authorBio"],
             ["Public profile or portfolio", "profile", "Not provided"],
             ["Article topic", "topic"],
             ["Other category", "otherCategory", "Not provided"],
-            ["Draft format", "format"],
             ["Article title", "title"],
-            ["Draft or sample link", "draft", "Not provided - I will attach a file if applicable"],
-            ["Article summary", "summary"],
-            ["Article content, outline, or key sections", "contentOutline"],
-            ["Cover image link or attachment name", "coverImage", "Not provided"],
-            ["Supporting images, alternative text, and credits", "supportingImages", "Not provided"],
-            ["Video links and titles", "videos", "Not provided"],
+            ["Article subtitle", "subtitle"],
+            ["Article body", "body", "Provided through the document link or file attachment"],
+            ["Shareable rich-text document", "bodyDocument", "Not provided"],
+            ["Optional images", "images", "None"],
+            ["Optional videos", "videos", "None"],
           ],
           confirmation: "I confirm this is my original work and CodeFox may review it for possible publication.",
         },
@@ -1875,6 +2011,23 @@
         form.addEventListener("submit", (event) => {
           event.preventDefault();
           if (!form.reportValidity()) return;
+
+          const richBody = form.querySelector("[data-rich-body]");
+          const bodyField = form.querySelector("[name=\"body\"]");
+          const documentField = form.querySelector("[name=\"bodyDocument\"]");
+          if (richBody && bodyField) {
+            bodyField.value = richBody.innerText.trim();
+            if (!bodyField.value && !documentField?.value.trim()) {
+              status.textContent = "Add article body content or provide a shareable rich-text document link.";
+              richBody.focus();
+              return;
+            }
+            if (bodyField.value.length > 3000 && !documentField?.value.trim()) {
+              status.textContent = "This body is too long for a prepared email. Add a shareable document link or attach the full document manually.";
+              richBody.focus();
+              return;
+            }
+          }
 
           const data = new FormData(form);
           const value = (name) => String(data.get(name) ?? "").trim();

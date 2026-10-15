@@ -1,6 +1,6 @@
 ---
 title: "Example article title: a clear outcome for the reader"
-summary: "This area contains a concise summary explaining the problem, intended audience, and practical outcome."
+subtitle: "This area contains a concise subtitle explaining the problem, intended audience, and practical outcome."
 layout: "standard"
 contentType: "article"
 breadcrumb: "Article page example"
@@ -14,11 +14,25 @@ authorRole: "Role or area of expertise"
 authorBio: "A short public biography describing the contributor's experience and the subjects they write about."
 ---
 
-This opening area introduces the subject, establishes the problem, and tells the reader why the article is useful.
+This opening area demonstrates one possible body. Contributors may structure the body in any way that best explains their subject; these sections are examples, not required fields.
 
 A second introductory paragraph can clarify the expected outcome, required background, or intended audience. Use **bold text** for strong emphasis, *italic text* for supporting emphasis, and descriptive links for sources.
 
-> **Important note or warning:** Use this highlighted container for prerequisites, limitations, security concerns, or decisions that readers should not miss.
+## Content components
+
+Use `## Section title` for a main content heading and `### Subheading` for supporting detail. These are optional helpers; the body does not require a fixed section sequence.
+
+Use `##note Your note` for useful context:
+
+##note This is an informational note that supports the surrounding content.
+
+Use `##warning Your warning` for prerequisites, limitations, or security concerns:
+
+##warning This is an important warning that readers should not miss.
+
+Use `##tip Your tip` for a practical recommendation:
+
+##tip This is a reusable tip or recommended next step.
 
 ## First main section
 
@@ -40,7 +54,7 @@ Images should include useful alternative text, captions when needed, and credits
 
 ## Optional video
 
-Use an approved YouTube or Vimeo URL when a demonstration is more useful than text.
+Use `##video HTTPS_URL | Descriptive title` with an approved YouTube or Vimeo URL when a demonstration is more useful than text.
 
 ```video-placeholder
 Responsive video embed appears here
