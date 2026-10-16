@@ -14,6 +14,7 @@ const generatedRoot = path.join(projectRoot, "src", "generated");
 const publicContentRoot = path.join(projectRoot, "public", "content");
 const publicBlogRoot = path.join(projectRoot, "public", "codefox-blogs");
 const recordsRoot = path.join(publicContentRoot, "records");
+const publicSiteUrl = "https://shubhamjms.github.io/Pages";
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 function sourceLabel(absolutePath) {
@@ -41,6 +42,19 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function escapeXml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&apos;");
+}
+
+function stringifyStructuredData(value) {
+  return JSON.stringify(value).replaceAll("<", "\\u003c");
 }
 
 function readYamlFile(absolutePath) {
@@ -1024,6 +1038,7 @@ function buildBlogContent() {
       if (contentType !== "article") throw new Error(`${document.sourcePath}: unsupported contentType "${contentType}".`);
       posts.push({
         slug,
+        isExample: false,
         layout,
         contentType,
         title: requireString(document.data.title, "title", document.sourcePath),
@@ -1080,12 +1095,14 @@ function buildBlogContent() {
       title: requireString(exampleDocument.data.primaryCategory, "primaryCategory", exampleDocument.sourcePath),
     }],
     published: requireDate(exampleDocument.data.published, "published", exampleDocument.sourcePath),
+    updated: requireDate(exampleDocument.data.published, "published", exampleDocument.sourcePath),
     coverImage: requireBlogCover(exampleDocument.data.coverImage, "coverImage", exampleDocument.sourcePath),
     html: `${renderedExample.html.replace("<p>", '<p class="lead">')}<section class="component-rulebook">${renderedRules.html}</section>`
       .replaceAll('src="./content/', 'src="../../content/'),
     headings: [...renderedExample.headings, ...renderedRules.headings],
     readingTime: renderedExample.readingTime + renderedRules.readingTime,
     sourceLabel: "Example structure",
+    isExample: true,
   };
 
   return { publication, categories, authors, posts, featured, ads, articleExample };
@@ -1138,6 +1155,34 @@ function generateBlogSite(blog) {
   const adSlots = ads.slots
     .map((slot) => `<div class="ad-slot${slot.variant === "short" ? " ad-slot--short" : ""}" data-ad-slot="${escapeHtml(slot.id)}" aria-label="${escapeHtml(slot.title)} placeholder"><strong>${escapeHtml(slot.title)}</strong><span>${escapeHtml(slot.size)}</span></div>`)
     .join("");
+  const sitemapUrl = `${publicSiteUrl}/sitemap.xml`;
+  const blogCanonicalUrl = `${publicSiteUrl}/codefox-blogs/`;
+  const absoluteCoverUrl = (post) => `${publicSiteUrl}/${post.coverImage.slice(2)}`;
+  const blogStructuredData = stringifyStructuredData({
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: publication.title,
+    description: publication.metaDescription,
+    url: blogCanonicalUrl,
+    inLanguage: "en",
+    publisher: {
+      "@type": "Person",
+      name: featured.author.name,
+      url: featured.author.profileUrl,
+    },
+    blogPost: posts.map((post) => ({
+      "@type": "BlogPosting",
+      headline: post.title,
+      description: post.subtitle,
+      url: `${blogCanonicalUrl}${post.slug}/`,
+      datePublished: post.published,
+      dateModified: post.updated,
+      author: {
+        "@type": "Person",
+        name: post.author.name,
+      },
+    })),
+  });
 
   let homeHtml = renderBlogTemplate("home.html", {
     BLOG_META_DESCRIPTION: escapeHtml(publication.metaDescription),
@@ -1155,6 +1200,10 @@ function generateBlogSite(blog) {
     BLOG_TOPIC_LINKS: topicLinks,
     BLOG_CATEGORY_OPTIONS: categoryOptions,
     OWNER_EMAIL: escapeHtml(publication.ownerEmail),
+    BLOG_CANONICAL_URL: blogCanonicalUrl,
+    BLOG_OG_IMAGE: absoluteCoverUrl(featured),
+    BLOG_STRUCTURED_DATA: blogStructuredData,
+    SITEMAP_URL: sitemapUrl,
     FEATURED_ROUTE: `./${featured.slug}/`,
     FEATURED_HOME_COVER: `.${featured.coverImage}`,
     FEATURED_TITLE: escapeHtml(featured.title),
@@ -1171,6 +1220,68 @@ function generateBlogSite(blog) {
 
   for (const post of [...posts, articleExample]) {
     const primaryCategory = post.categoryRecords[0];
+    const articleCanonicalUrl = `${blogCanonicalUrl}${post.slug}/`;
+    const articleImageUrl = absoluteCoverUrl(post);
+    const articleStructuredData = post.isExample
+      ? stringifyStructuredData({
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          name: post.title,
+          description: post.subtitle,
+          url: articleCanonicalUrl,
+          isPartOf: {
+            "@type": "Blog",
+            name: publication.title,
+            url: blogCanonicalUrl,
+          },
+        })
+      : stringifyStructuredData({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "BlogPosting",
+              headline: post.title,
+              description: post.subtitle,
+              image: [articleImageUrl],
+              datePublished: post.published,
+              dateModified: post.updated,
+              mainEntityOfPage: articleCanonicalUrl,
+              inLanguage: "en",
+              author: {
+                "@type": "Person",
+                name: post.author.name,
+                url: post.author.profileUrl,
+              },
+              publisher: {
+                "@type": "Person",
+                name: featured.author.name,
+                url: featured.author.profileUrl,
+              },
+              isPartOf: {
+                "@type": "Blog",
+                name: publication.title,
+                url: blogCanonicalUrl,
+              },
+            },
+            {
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                {
+                  "@type": "ListItem",
+                  position: 1,
+                  name: publication.title,
+                  item: blogCanonicalUrl,
+                },
+                {
+                  "@type": "ListItem",
+                  position: 2,
+                  name: post.title,
+                  item: articleCanonicalUrl,
+                },
+              ],
+            },
+          ],
+        });
     const toc = post.headings
       .filter((heading) => heading.level === 2)
       .map((heading) => `<li><a href="#${escapeHtml(heading.id)}">${escapeHtml(heading.text)}</a></li>`)
@@ -1190,6 +1301,13 @@ function generateBlogSite(blog) {
       ARTICLE_PUBLISHED_DISPLAY: formatBlogDate(post.published),
       ARTICLE_READING_TIME: post.readingTime,
       ARTICLE_SOURCE_LABEL: escapeHtml(post.sourceLabel ?? "CodeFox original"),
+      ARTICLE_ROBOTS: post.isExample ? "noindex, follow" : "index, follow, max-image-preview:large",
+      ARTICLE_CANONICAL_URL: articleCanonicalUrl,
+      ARTICLE_OG_TYPE: post.isExample ? "website" : "article",
+      ARTICLE_OG_IMAGE: articleImageUrl,
+      ARTICLE_UPDATED_ISO: post.updated,
+      ARTICLE_STRUCTURED_DATA: articleStructuredData,
+      SITEMAP_URL: sitemapUrl,
       ARTICLE_COVER: `../.${post.coverImage}`,
       ARTICLE_TOC: toc,
       ADS_HIDDEN_ATTRIBUTE: ads.enabled ? "" : " hidden",
@@ -1215,6 +1333,42 @@ function generateBlogSite(blog) {
   }
 }
 
+function generateSeoFiles(blog) {
+  const latestPostDate = blog.posts
+    .map((post) => post.updated)
+    .sort()
+    .at(-1);
+  const urls = [
+    { loc: `${publicSiteUrl}/` },
+    { loc: `${publicSiteUrl}/codefox-blogs/`, lastmod: latestPostDate },
+    ...blog.posts.map((post) => ({
+      loc: `${publicSiteUrl}/codefox-blogs/${post.slug}/`,
+      lastmod: post.updated,
+    })),
+  ];
+  for (const entry of urls) {
+    if (!entry.loc.startsWith(`${publicSiteUrl}/`) || entry.loc.includes("#") || entry.loc.includes("?")) {
+      throw new Error(`Invalid canonical sitemap URL "${entry.loc}".`);
+    }
+  }
+  const urlEntries = urls
+    .map((entry) => [
+      "  <url>",
+      `    <loc>${escapeXml(entry.loc)}</loc>`,
+      ...(entry.lastmod ? [`    <lastmod>${escapeXml(entry.lastmod)}</lastmod>`] : []),
+      "  </url>",
+    ].join("\n"))
+    .join("\n");
+  const sitemap = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    urlEntries,
+    "</urlset>",
+    "",
+  ].join("\n");
+  fs.writeFileSync(path.join(projectRoot, "public", "sitemap.xml"), sitemap);
+}
+
 export function generateContent() {
   fs.rmSync(generatedRoot, { recursive: true, force: true });
   fs.rmSync(publicContentRoot, { recursive: true, force: true });
@@ -1222,6 +1376,7 @@ export function generateContent() {
   fs.mkdirSync(recordsRoot, { recursive: true });
   const blog = buildBlogContent();
   generateBlogSite(blog);
+  generateSeoFiles(blog);
 
   const homeSource = readPage("home.md");
   const aboutSource = readPage("about.md");
