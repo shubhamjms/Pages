@@ -1,0 +1,6 @@
+# GitHub Pages project-site policy.
+# The authoritative host-level robots.txt requires a user-site or custom domain.
+User-agent: *
+Allow: /
+
+Sitemap: https://shubhamjms.github.io/Pages/sitemap.xml

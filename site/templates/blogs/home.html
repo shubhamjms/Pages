@@ -7,8 +7,22 @@
       name="description"
       content="{{BLOG_META_DESCRIPTION}}"
     />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="theme-color" content="#f3efe7" />
     <title>{{BLOG_PAGE_TITLE}}</title>
+    <link rel="canonical" href="{{BLOG_CANONICAL_URL}}" />
+    <link rel="sitemap" type="application/xml" href="{{SITEMAP_URL}}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="{{BLOG_TITLE}}" />
+    <meta property="og:title" content="{{BLOG_PAGE_TITLE}}" />
+    <meta property="og:description" content="{{BLOG_META_DESCRIPTION}}" />
+    <meta property="og:url" content="{{BLOG_CANONICAL_URL}}" />
+    <meta property="og:image" content="{{BLOG_OG_IMAGE}}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{BLOG_PAGE_TITLE}}" />
+    <meta name="twitter:description" content="{{BLOG_META_DESCRIPTION}}" />
+    <meta name="twitter:image" content="{{BLOG_OG_IMAGE}}" />
+    <script type="application/ld+json">{{BLOG_STRUCTURED_DATA}}</script>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f07848'/%3E%3Ctext x='32' y='38' text-anchor='middle' font-family='monospace' font-size='18' font-weight='700' fill='%2332404f'%3EC/F%3C/text%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
