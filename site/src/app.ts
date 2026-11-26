@@ -49,6 +49,7 @@ let menuButton: HTMLButtonElement;
 let siteNavigation: HTMLElement;
 let hasRendered = false;
 let renderVersion = 0;
+const codeFoxBlogsUrl = `${import.meta.env.BASE_URL}codefox-blogs/`;
 
 interface HomeCarouselItem {
   title: string;
@@ -225,7 +226,7 @@ function renderHome(): string {
     {
       title: "CodeFox Community Hub",
       summary: "Community-written articles on AI, GitHub Copilot, Dynamics 365, and practical builder workflows.",
-      route: "./codefox-blogs/",
+      route: codeFoxBlogsUrl,
       label: "Blogs · Community publication",
       detail: "1 story · Author interest open",
       action: "Open blogs",
@@ -1177,7 +1178,7 @@ function shellMarkup(): string {
             <a href="#/library" data-nav-prefix="#/library"><i data-lucide="library"></i><span>Library</span></a>
             <a href="#/learn" data-nav-prefix="#/learn"><i data-lucide="book-open"></i><span>Learning</span></a>
             <a href="#/tools" data-nav-prefix="#/tools"><i data-lucide="wrench"></i><span>Tools</span></a>
-            <a class="blogs-nav-link" href="./codefox-blogs/" aria-label="Open CodeFox Blogs"><i data-lucide="users-round"></i><span>Blogs</span></a>
+            <a class="blogs-nav-link" href="${codeFoxBlogsUrl}" aria-label="Open CodeFox Blogs"><i data-lucide="users-round"></i><span>Blogs</span></a>
           </nav>
         </div>
       </header>

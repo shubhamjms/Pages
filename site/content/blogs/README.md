@@ -103,6 +103,8 @@ tags:
 
 Place cover images under `site/public/article-covers/`. Set `draft: true` to keep a post out of the generated site.
 
+Set `featured: true` to include a post in the randomized top featured deck. The deck shows at most six featured posts and displays one at a time with Previous/Next controls. `publication.yml` still uses `featuredPost` to identify the primary publication, social-image, and structured-data lead; that post must also set `featured: true`.
+
 The `standard` layout provides the common article masthead, cover rail, generated table of contents, Markdown content area, author panel, sponsored sidebar, Home/Back controls, and responsive behavior. Posts should contain content only and must not duplicate those containers.
 
 The shared ad configuration supports `standard` and `short` sidebar slots. Disable all article ads with `enabled: false` in `ads.yml`.

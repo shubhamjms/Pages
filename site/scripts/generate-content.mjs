@@ -301,7 +301,7 @@ function renderDocument(document, rewriteLink = (href) => href, options = {}) {
       if (!rawUrl) throw new Error(`${document.sourcePath}: video fence must include a URL.`);
       const embedUrl = normalizeVideoEmbedUrl(rawUrl, document.sourcePath);
       const caption = captionLines.join(" ") || "Embedded video";
-      return `<figure class="video-embed"><div class="video-embed__frame"><iframe src="${embedUrl}" title="${markdown.utils.escapeHtml(caption)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div><figcaption>${markdown.utils.escapeHtml(caption)}</figcaption></figure>`;
+      return `<figure class="video-embed"><div class="video-embed__frame"><iframe src="${embedUrl}" title="${markdown.utils.escapeHtml(caption)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><figcaption>${markdown.utils.escapeHtml(caption)}</figcaption></figure>`;
     }
     const rendered = defaultFence(tokens, index, options, environment, renderer);
     return rendered.replace("<pre>", `<pre aria-label="${language ? `${language} code sample` : "Code sample"}">`);
@@ -1066,6 +1066,9 @@ function buildBlogContent() {
 
   const featured = posts.find((post) => post.slug === publication.featuredPost);
   if (!featured) throw new Error(`${publicationSource.sourcePath}: featuredPost "${publication.featuredPost}" is not published.`);
+  if (!featured.featured) throw new Error(`${publicationSource.sourcePath}: featuredPost "${publication.featuredPost}" must set featured: true.`);
+  const featuredPosts = posts.filter((post) => post.featured);
+  if (featuredPosts.length === 0) throw new Error("content/blogs/posts: at least one post must set featured: true.");
 
   const exampleDocument = readMarkdown("blogs/ARTICLE_EXAMPLE.md");
   const exampleLayout = requireString(exampleDocument.data.layout, "layout", exampleDocument.sourcePath);
@@ -1105,7 +1108,7 @@ function buildBlogContent() {
     isExample: true,
   };
 
-  return { publication, categories, authors, posts, featured, ads, articleExample };
+  return { publication, categories, authors, posts, featured, featuredPosts, ads, articleExample };
 }
 
 function renderBlogTemplate(templateName, tokens) {
@@ -1133,7 +1136,7 @@ function writeBlogPage(outputParts, html) {
 
 function generateBlogSite(blog) {
   fs.rmSync(publicBlogRoot, { recursive: true, force: true });
-  const { publication, categories, posts, featured, ads, articleExample } = blog;
+  const { publication, categories, posts, featured, featuredPosts, ads, articleExample } = blog;
   const featuredCategory = featured.categoryRecords[0];
   const categoryCounts = new Map(categories.map((category) => [
     category.slug,
@@ -1151,6 +1154,22 @@ function generateBlogSite(blog) {
   ].join("");
   const categoryOptions = categories
     .map((category) => `<option value="${escapeHtml(category.slug)}">${escapeHtml(category.title)}</option>`)
+    .join("");
+  const storyCards = posts
+    .map((post) => {
+      const category = post.categoryRecords[0];
+      const route = `./${post.slug}/`;
+      const cover = `.${post.coverImage}`;
+      return `<article class="story-card" data-category="${escapeHtml(category.slug)}"><a class="story-card__image" href="${route}"><img src="${cover}" alt="${escapeHtml(post.title)} cover" loading="lazy" /></a><div class="story-card__body"><div class="story-meta"><span class="category">${escapeHtml(category.title)}</span><span>/</span><time datetime="${post.published}">${formatBlogDate(post.published)}</time><span>/</span><span>${escapeHtml(post.author.name)}</span></div><h3><a href="${route}">${escapeHtml(post.title)}</a></h3><p>${escapeHtml(post.subtitle)}</p><a class="text-link" href="${route}">Read article</a></div></article>`;
+    })
+    .join("");
+  const featuredDeckCards = featuredPosts
+    .map((post, index) => {
+      const category = post.categoryRecords[0];
+      const route = `./${post.slug}/`;
+      const cover = `.${post.coverImage}`;
+      return `<article class="feature-card" data-feature-card data-position="${index === 0 ? "active" : "inactive"}" aria-hidden="${index === 0 ? "false" : "true"}"><a class="feature-image" href="${route}" aria-label="Read ${escapeHtml(post.title)}"><img src="${cover}" alt="${escapeHtml(post.title)} cover" /></a><div class="feature-body"><div class="story-meta"><span class="category">${escapeHtml(category.title)}</span><span>/</span><time datetime="${post.published}">${formatBlogDate(post.published)}</time><span>/</span><span>By ${escapeHtml(post.author.name)}</span></div><h2>${escapeHtml(post.title)}</h2><p>${escapeHtml(post.subtitle)}</p><a class="text-link" href="${route}">Read the feature</a></div></article>`;
+    })
     .join("");
   const adSlots = ads.slots
     .map((slot) => `<div class="ad-slot${slot.variant === "short" ? " ad-slot--short" : ""}" data-ad-slot="${escapeHtml(slot.id)}" aria-label="${escapeHtml(slot.title)} placeholder"><strong>${escapeHtml(slot.title)}</strong><span>${escapeHtml(slot.size)}</span></div>`)
@@ -1196,6 +1215,8 @@ function generateBlogSite(blog) {
     BLOG_SUMMARY: escapeHtml(publication.summary),
     BLOG_POST_COUNT_PADDED: String(posts.length).padStart(2, "0"),
     BLOG_POST_COUNT_LABEL: `${posts.length} published ${posts.length === 1 ? "story" : "stories"}`,
+    BLOG_STORY_CARDS: storyCards,
+    BLOG_FEATURED_CARDS: featuredDeckCards,
     AUTHOR_INTEREST_STATUS: publication.authorInterestOpen ? "Open" : "Closed",
     BLOG_TOPIC_LINKS: topicLinks,
     BLOG_CATEGORY_OPTIONS: categoryOptions,
