@@ -9,7 +9,7 @@ categories:
   - "dynamics-365"
 published: "2026-10-16"
 updated: "2026-10-16"
-coverImage: "./article-covers/eagle-eye.png"
+coverImage: "./article-covers/eagle-eye-cover-latest.png"
 featured: true
 draft: false
 tags:
