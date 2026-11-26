@@ -862,28 +862,55 @@ function setMobileSocialRail(open: boolean): void {
 }
 
 function closeReaderContents(): void {
-  const button = document.querySelector<HTMLButtonElement>("#navigation-contents");
+  const button = mainElement?.querySelector<HTMLButtonElement>("#reader-contents-toggle");
   const sidebar = mainElement?.querySelector<HTMLElement>(".reader-sidebar");
   sidebar?.removeAttribute("data-mobile-open");
   button?.setAttribute("aria-expanded", "false");
   button?.setAttribute("aria-label", "Open page contents");
 }
 
+function positionReaderContents(button: HTMLButtonElement, sidebar: HTMLElement): void {
+  const buttonBounds = button.getBoundingClientRect();
+  const readerBounds = sidebar.closest<HTMLElement>(".reader-view")?.getBoundingClientRect();
+  const mobile = window.matchMedia("(max-width: 47.99rem)").matches;
+  const rightAllowance = mobile ? 28 : 16;
+  const panelWidth = Math.min(340, window.innerWidth - rightAllowance - 16);
+  const left = Math.max(8, Math.min(buttonBounds.left, window.innerWidth - panelWidth - rightAllowance));
+  const viewportTop = buttonBounds.bottom + 12;
+  sidebar.style.setProperty("--reader-contents-top", `${Math.round(viewportTop - (readerBounds?.top ?? 0))}px`);
+  sidebar.style.setProperty("--reader-contents-left", `${Math.round(left - (readerBounds?.left ?? 0))}px`);
+  sidebar.style.setProperty("--reader-contents-viewport-top", `${Math.round(viewportTop)}px`);
+}
+
 function setupReaderContents(): void {
-  const button = document.querySelector<HTMLButtonElement>("#navigation-contents");
   const sidebar = mainElement.querySelector<HTMLElement>(".reader-sidebar");
   const hasContents = Boolean(sidebar?.querySelector(".reader-toc"));
-  if (!button) return;
-
-  closeReaderContents();
-  button.hidden = !hasContents;
-  if (!sidebar || !hasContents) {
-    button.removeAttribute("aria-controls");
-    return;
-  }
+  const heading = mainElement.querySelector<HTMLHeadingElement>(".reader-header h1");
+  if (!sidebar || !hasContents || !heading) return;
 
   sidebar.id = "reader-contents-panel";
+  const titleRow = document.createElement("div");
+  titleRow.className = "reader-title-row";
+  const button = document.createElement("button");
+  button.id = "reader-contents-toggle";
+  button.className = "icon-button reader-contents-toggle";
+  button.type = "button";
+  button.setAttribute("aria-expanded", "false");
+  button.setAttribute("aria-label", "Open page contents");
   button.setAttribute("aria-controls", sidebar.id);
+  button.innerHTML = '<i data-lucide="book-open"></i>';
+  heading.before(titleRow);
+  titleRow.append(button, heading);
+  button.addEventListener("click", () => {
+    const isOpen = !sidebar.hasAttribute("data-mobile-open");
+    closeReaderContents();
+    if (isOpen) {
+      positionReaderContents(button, sidebar);
+      sidebar.setAttribute("data-mobile-open", "");
+      button.setAttribute("aria-expanded", "true");
+      button.setAttribute("aria-label", "Close page contents");
+    }
+  });
   sidebar.addEventListener("click", (event) => {
     if ((event.target as Element).closest("a")) closeReaderContents();
   });
@@ -1333,8 +1360,6 @@ async function renderRoute(): Promise<void> {
   closeReaderContents();
   closeReaderImageViewer();
   setMobileSocialRail(false);
-  const contentsButton = document.querySelector<HTMLButtonElement>("#navigation-contents");
-  if (contentsButton) contentsButton.hidden = true;
   mainElement.setAttribute("aria-busy", "true");
   mainElement.innerHTML = resolved.html;
   if (mainElement.querySelector(".guide-view")) contentLayout?.classList.add("app-content-layout--wide");
@@ -1423,7 +1448,7 @@ function shellMarkup(): string {
         </div>
       </header>
 
-      <div id="app-floating-navigation"><div id="app-floating-navigation-controls"><a class="icon-button" id="navigation-home" href="./" aria-label="Go home"><i data-lucide="home"></i></a><button class="icon-button" id="navigation-back" type="button" aria-label="Go back"><i data-lucide="arrow-left"></i></button><button class="icon-button" id="navigation-contents" type="button" aria-expanded="false" aria-label="Open page contents" hidden><i data-lucide="book-open"></i></button></div></div>
+      <div id="app-floating-navigation"><div id="app-floating-navigation-controls"><a class="icon-button" id="navigation-home" href="./" aria-label="Go home"><i data-lucide="home"></i></a><button class="icon-button" id="navigation-back" type="button" aria-label="Go back"><i data-lucide="arrow-left"></i></button></div></div>
 
       <div id="app-main-fox-field" aria-hidden="true"><span class="crystal-fox crystal-fox--primary">🦊</span><span class="crystal-fox crystal-fox--middle">🦊</span><span class="crystal-fox crystal-fox--lower">🦊</span></div>
 
@@ -1483,14 +1508,6 @@ export function startApplication(root: HTMLDivElement): void {
     menuButton.setAttribute("aria-label", open ? "Open navigation" : "Close navigation");
   });
   root.querySelector<HTMLButtonElement>("#navigation-back")?.addEventListener("click", () => window.history.back());
-  root.querySelector<HTMLButtonElement>("#navigation-contents")?.addEventListener("click", (event) => {
-    const button = event.currentTarget as HTMLButtonElement;
-    const sidebar = mainElement.querySelector<HTMLElement>(".reader-sidebar");
-    if (!sidebar) return;
-    const isOpen = sidebar.toggleAttribute("data-mobile-open");
-    button.setAttribute("aria-expanded", String(isOpen));
-    button.setAttribute("aria-label", isOpen ? "Close page contents" : "Open page contents");
-  });
   root.querySelector<HTMLButtonElement>("#social-author-rail-toggle")?.addEventListener("click", (event) => {
     const toggle = event.currentTarget as HTMLButtonElement;
     setMobileSocialRail(toggle.getAttribute("aria-expanded") !== "true");
