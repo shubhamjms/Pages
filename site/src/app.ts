@@ -2,16 +2,22 @@ import {
   ArrowLeft,
   ArrowRight,
   BookOpen,
+  ChevronLeft,
+  ChevronRight,
   ExternalLink,
   Home,
   LayoutGrid,
   Library,
+  Maximize2,
   Menu,
   Newspaper,
+  RotateCcw,
   UserRound,
   UsersRound,
   Wrench,
   X,
+  ZoomIn,
+  ZoomOut,
   createIcons,
 } from "lucide";
 import { contentIndex } from "./generated/content-index";
@@ -32,21 +38,37 @@ const icons = {
   ArrowLeft,
   ArrowRight,
   BookOpen,
+  ChevronLeft,
+  ChevronRight,
   ExternalLink,
   Home,
   LayoutGrid,
   Library,
+  Maximize2,
   Menu,
   Newspaper,
+  RotateCcw,
   UserRound,
   UsersRound,
   Wrench,
   X,
+  ZoomIn,
+  ZoomOut,
 };
 
 let mainElement: HTMLElement;
 let menuButton: HTMLButtonElement;
 let siteNavigation: HTMLElement;
+let readerImageDialog: HTMLDialogElement | null = null;
+let readerImageViewport: HTMLElement | null = null;
+let readerImageElement: HTMLImageElement | null = null;
+let readerImageStatus: HTMLElement | null = null;
+let readerImageTrigger: HTMLElement | null = null;
+let readerImageScale = 1;
+let readerImageFitScale = 1;
+let readerImagePinchDistance = 0;
+let readerImagePinchScale = 1;
+const readerImagePointers = new Map<number, { x: number; y: number }>();
 let hasRendered = false;
 let renderVersion = 0;
 const codeFoxBlogsUrl = `${import.meta.env.BASE_URL}codefox-blogs/`;
@@ -827,6 +849,217 @@ function closeMenu(): void {
   siteNavigation.removeAttribute("data-open");
 }
 
+function setMobileSocialRail(open: boolean): void {
+  const rail = document.querySelector<HTMLElement>("#app-social-author-rail");
+  const toggle = document.querySelector<HTMLButtonElement>("#social-author-rail-toggle");
+  const content = document.querySelector<HTMLElement>("#social-author-rail-content");
+  if (!rail || !toggle || !content) return;
+
+  rail.toggleAttribute("data-mobile-open", open);
+  toggle.setAttribute("aria-expanded", String(open));
+  toggle.setAttribute("aria-label", open ? "Close social sidebar" : "Open social sidebar");
+  content.toggleAttribute("inert", !open && window.matchMedia("(max-width: 47.99rem)").matches);
+}
+
+function closeReaderContents(): void {
+  const button = document.querySelector<HTMLButtonElement>("#navigation-contents");
+  const sidebar = mainElement?.querySelector<HTMLElement>(".reader-sidebar");
+  sidebar?.removeAttribute("data-mobile-open");
+  button?.setAttribute("aria-expanded", "false");
+  button?.setAttribute("aria-label", "Open page contents");
+}
+
+function setupReaderContents(): void {
+  const button = document.querySelector<HTMLButtonElement>("#navigation-contents");
+  const sidebar = mainElement.querySelector<HTMLElement>(".reader-sidebar");
+  const hasContents = Boolean(sidebar?.querySelector(".reader-toc"));
+  if (!button) return;
+
+  closeReaderContents();
+  button.hidden = !hasContents;
+  if (!sidebar || !hasContents) {
+    button.removeAttribute("aria-controls");
+    return;
+  }
+
+  sidebar.id = "reader-contents-panel";
+  button.setAttribute("aria-controls", sidebar.id);
+  sidebar.addEventListener("click", (event) => {
+    if ((event.target as Element).closest("a")) closeReaderContents();
+  });
+}
+
+function updateReaderImageScale(nextScale: number, focus?: { x: number; y: number }): void {
+  if (!readerImageViewport || !readerImageElement || !readerImageElement.naturalWidth || !readerImageElement.naturalHeight) return;
+
+  const minimumScale = Math.min(0.25, readerImageFitScale * 0.5);
+  const previousScale = readerImageScale;
+  const scale = Math.min(4, Math.max(minimumScale, nextScale));
+  const focusX = focus?.x ?? readerImageViewport.clientWidth / 2;
+  const focusY = focus?.y ?? readerImageViewport.clientHeight / 2;
+  const contentX = readerImageViewport.scrollLeft + focusX;
+  const contentY = readerImageViewport.scrollTop + focusY;
+
+  readerImageScale = scale;
+  readerImageElement.style.width = `${Math.round(readerImageElement.naturalWidth * scale)}px`;
+  readerImageElement.style.height = `${Math.round(readerImageElement.naturalHeight * scale)}px`;
+  readerImageStatus!.textContent = `${Math.round(scale * 100)}%`;
+
+  const zoomOut = readerImageDialog?.querySelector<HTMLButtonElement>('[data-image-action="zoom-out"]');
+  const zoomIn = readerImageDialog?.querySelector<HTMLButtonElement>('[data-image-action="zoom-in"]');
+  if (zoomOut) zoomOut.disabled = scale <= minimumScale + 0.001;
+  if (zoomIn) zoomIn.disabled = scale >= 3.999;
+
+  requestAnimationFrame(() => {
+    if (!readerImageViewport || previousScale <= 0) return;
+    const ratio = scale / previousScale;
+    readerImageViewport.scrollLeft = contentX * ratio - focusX;
+    readerImageViewport.scrollTop = contentY * ratio - focusY;
+  });
+}
+
+function fitReaderImage(): void {
+  if (!readerImageViewport || !readerImageElement || !readerImageElement.naturalWidth || !readerImageElement.naturalHeight) return;
+  const availableWidth = Math.max(1, readerImageViewport.clientWidth - 32);
+  const availableHeight = Math.max(1, readerImageViewport.clientHeight - 32);
+  readerImageFitScale = Math.min(1, availableWidth / readerImageElement.naturalWidth, availableHeight / readerImageElement.naturalHeight);
+  updateReaderImageScale(readerImageFitScale);
+  requestAnimationFrame(() => {
+    if (!readerImageViewport) return;
+    readerImageViewport.scrollLeft = Math.max(0, (readerImageViewport.scrollWidth - readerImageViewport.clientWidth) / 2);
+    readerImageViewport.scrollTop = Math.max(0, (readerImageViewport.scrollHeight - readerImageViewport.clientHeight) / 2);
+  });
+}
+
+function closeReaderImageViewer(): void {
+  if (readerImageDialog?.open) readerImageDialog.close();
+}
+
+function openReaderImageViewer(source: HTMLImageElement, trigger: HTMLElement): void {
+  if (!readerImageDialog || !readerImageElement || !readerImageStatus) return;
+  const imageSource = source.currentSrc || source.src;
+  if (!imageSource) return;
+
+  readerImageTrigger = trigger;
+  readerImageStatus.textContent = "Loading image";
+  readerImageElement.alt = source.alt || "Expanded article image";
+  const title = readerImageDialog.querySelector<HTMLElement>("#reader-image-viewer-title");
+  if (title) title.textContent = source.alt || "Article image";
+  readerImageElement.onload = () => fitReaderImage();
+  readerImageElement.onerror = () => {
+    if (readerImageStatus) readerImageStatus.textContent = "Unable to load image";
+  };
+  readerImageElement.src = imageSource;
+  readerImageDialog.showModal();
+  if (readerImageElement.complete && readerImageElement.naturalWidth) requestAnimationFrame(fitReaderImage);
+}
+
+function setupReaderImages(): void {
+  const images = [...mainElement.querySelectorAll<HTMLImageElement>(".reader-prose img")];
+  for (const image of images) {
+    image.loading = "lazy";
+    image.decoding = "async";
+    image.setAttribute("fetchpriority", "low");
+
+    const recordDimensions = (): void => {
+      if (!image.naturalWidth || !image.naturalHeight) return;
+      if (!image.hasAttribute("width")) image.width = image.naturalWidth;
+      if (!image.hasAttribute("height")) image.height = image.naturalHeight;
+    };
+    if (image.complete) recordDimensions();
+    else image.addEventListener("load", recordDimensions, { once: true });
+
+    if (image.closest(".reader-image")) continue;
+    const wrapper = document.createElement("span");
+    wrapper.className = "reader-image";
+    image.before(wrapper);
+    wrapper.append(image);
+
+    const expandButton = document.createElement("button");
+    expandButton.className = "reader-image__expand";
+    expandButton.type = "button";
+    expandButton.setAttribute("aria-label", image.alt ? `View full-size image: ${image.alt}` : "View full-size image");
+    expandButton.title = "View full-size image";
+    expandButton.innerHTML = '<i data-lucide="maximize-2"></i>';
+    expandButton.addEventListener("click", () => openReaderImageViewer(image, expandButton));
+    wrapper.append(expandButton);
+  }
+}
+
+function setupReaderImageViewer(root: HTMLElement): void {
+  readerImageDialog = root.querySelector<HTMLDialogElement>("#reader-image-viewer");
+  readerImageViewport = root.querySelector<HTMLElement>("#reader-image-viewer-viewport");
+  readerImageElement = root.querySelector<HTMLImageElement>("#reader-image-viewer-image");
+  readerImageStatus = root.querySelector<HTMLElement>("#reader-image-viewer-status");
+  if (!readerImageDialog || !readerImageViewport || !readerImageElement || !readerImageStatus) return;
+
+  readerImageDialog.querySelector<HTMLButtonElement>('[data-image-action="close"]')?.addEventListener("click", closeReaderImageViewer);
+  readerImageDialog.querySelector<HTMLButtonElement>('[data-image-action="zoom-out"]')?.addEventListener("click", () => updateReaderImageScale(readerImageScale / 1.2));
+  readerImageDialog.querySelector<HTMLButtonElement>('[data-image-action="zoom-in"]')?.addEventListener("click", () => updateReaderImageScale(readerImageScale * 1.2));
+  readerImageDialog.querySelector<HTMLButtonElement>('[data-image-action="actual"]')?.addEventListener("click", () => updateReaderImageScale(1));
+  readerImageDialog.querySelector<HTMLButtonElement>('[data-image-action="fit"]')?.addEventListener("click", fitReaderImage);
+  readerImageDialog.addEventListener("close", () => {
+    readerImagePointers.clear();
+    readerImagePinchDistance = 0;
+    readerImageElement?.removeAttribute("src");
+    readerImageElement?.removeAttribute("style");
+    if (readerImageTrigger?.isConnected) readerImageTrigger.focus();
+    readerImageTrigger = null;
+  });
+
+  readerImageViewport.addEventListener("wheel", (event) => {
+    event.preventDefault();
+    const bounds = readerImageViewport!.getBoundingClientRect();
+    updateReaderImageScale(readerImageScale * (event.deltaY < 0 ? 1.15 : 1 / 1.15), {
+      x: event.clientX - bounds.left,
+      y: event.clientY - bounds.top,
+    });
+  }, { passive: false });
+
+  readerImageViewport.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    readerImageViewport?.setPointerCapture(event.pointerId);
+    readerImagePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (readerImagePointers.size === 2) {
+      const [first, second] = [...readerImagePointers.values()];
+      readerImagePinchDistance = Math.hypot(second.x - first.x, second.y - first.y);
+      readerImagePinchScale = readerImageScale;
+    }
+  });
+
+  readerImageViewport.addEventListener("pointermove", (event) => {
+    const previous = readerImagePointers.get(event.pointerId);
+    if (!previous) return;
+    readerImagePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+    if (readerImagePointers.size === 1) {
+      readerImageViewport!.scrollLeft -= event.clientX - previous.x;
+      readerImageViewport!.scrollTop -= event.clientY - previous.y;
+      return;
+    }
+
+    if (readerImagePointers.size === 2 && readerImagePinchDistance > 0) {
+      const [first, second] = [...readerImagePointers.values()];
+      const distance = Math.hypot(second.x - first.x, second.y - first.y);
+      const bounds = readerImageViewport!.getBoundingClientRect();
+      updateReaderImageScale(readerImagePinchScale * distance / readerImagePinchDistance, {
+        x: (first.x + second.x) / 2 - bounds.left,
+        y: (first.y + second.y) / 2 - bounds.top,
+      });
+    }
+  });
+
+  const releasePointer = (event: PointerEvent): void => {
+    readerImagePointers.delete(event.pointerId);
+    if (readerImagePointers.size < 2) readerImagePinchDistance = 0;
+  };
+  readerImageViewport.addEventListener("pointerup", releasePointer);
+  readerImageViewport.addEventListener("pointercancel", releasePointer);
+  window.addEventListener("resize", () => {
+    if (readerImageDialog?.open) fitReaderImage();
+  });
+}
+
 function setupHomeCarousel(): void {
   const carousel = mainElement.querySelector<HTMLElement>("[data-home-carousel]");
   if (!carousel) return;
@@ -1079,6 +1312,8 @@ function setupToolProductTabs(anchor?: string): void {
 }
 
 function finishRoute(route: RouteState): void {
+  setupReaderContents();
+  setupReaderImages();
   refreshIcons(mainElement);
   if (route.anchor) {
     requestAnimationFrame(() => document.getElementById(route.anchor)?.scrollIntoView());
@@ -1095,14 +1330,21 @@ async function renderRoute(): Promise<void> {
   const resolved = resolveRoute(route);
   const contentLayout = mainElement.parentElement;
   contentLayout?.classList.remove("app-content-layout--wide");
+  closeReaderContents();
+  closeReaderImageViewer();
+  setMobileSocialRail(false);
+  const contentsButton = document.querySelector<HTMLButtonElement>("#navigation-contents");
+  if (contentsButton) contentsButton.hidden = true;
   mainElement.setAttribute("aria-busy", "true");
   mainElement.innerHTML = resolved.html;
+  if (mainElement.querySelector(".guide-view")) contentLayout?.classList.add("app-content-layout--wide");
   updateNavigation(route.path);
   closeMenu();
   refreshIcons(mainElement);
   document.title = resolved.title;
 
   if (resolved.reader) {
+    contentLayout?.classList.add("app-content-layout--wide");
     try {
       let html: string;
       let hasMermaid: boolean;
@@ -1124,10 +1366,7 @@ async function renderRoute(): Promise<void> {
       if (version !== renderVersion) return;
       mainElement.innerHTML = html;
       mainElement.setAttribute("aria-busy", "false");
-      if (hasToolProductTabs) {
-        contentLayout?.classList.add("app-content-layout--wide");
-        setupToolProductTabs(route.anchor);
-      }
+      if (hasToolProductTabs) setupToolProductTabs(route.anchor);
       finishRoute(route);
       if (hasMermaid) {
         try {
@@ -1142,6 +1381,7 @@ async function renderRoute(): Promise<void> {
       console.error("Unable to load content record.", error);
       mainElement.innerHTML = renderReaderError(resolved.reader.summary.title);
       mainElement.setAttribute("aria-busy", "false");
+      setupReaderContents();
       refreshIcons(mainElement);
       mainElement.querySelector<HTMLButtonElement>("#reader-retry")?.addEventListener("click", () => void renderRoute());
       hasRendered = true;
@@ -1183,28 +1423,47 @@ function shellMarkup(): string {
         </div>
       </header>
 
-      <div id="app-floating-navigation"><div id="app-floating-navigation-controls"><a class="icon-button" id="navigation-home" href="./" aria-label="Go home"><i data-lucide="home"></i></a><button class="icon-button" id="navigation-back" type="button" aria-label="Go back"><i data-lucide="arrow-left"></i></button></div></div>
+      <div id="app-floating-navigation"><div id="app-floating-navigation-controls"><a class="icon-button" id="navigation-home" href="./" aria-label="Go home"><i data-lucide="home"></i></a><button class="icon-button" id="navigation-back" type="button" aria-label="Go back"><i data-lucide="arrow-left"></i></button><button class="icon-button" id="navigation-contents" type="button" aria-expanded="false" aria-label="Open page contents" hidden><i data-lucide="book-open"></i></button></div></div>
 
       <div id="app-main-fox-field" aria-hidden="true"><span class="crystal-fox crystal-fox--primary">🦊</span><span class="crystal-fox crystal-fox--middle">🦊</span><span class="crystal-fox crystal-fox--lower">🦊</span></div>
 
       <div id="app-content-layout">
         <main id="app-main" tabindex="-1"></main>
         <aside id="app-social-author-rail" aria-label="Shubhamm Jadhav, AI Dev">
-          <div class="social-actions">
-            <a id="social-linkedin-profile" class="social-button" href="https://www.linkedin.com/in/shubhamm-j-64285ab3" target="_blank" rel="noopener noreferrer" aria-label="Open LinkedIn profile" data-tooltip="LinkedIn profile"><span class="linkedin-mark" aria-hidden="true">in</span><span class="social-badge"><i data-lucide="user-round"></i></span></a>
-            <a id="social-linkedin-group" class="social-button" href="https://www.linkedin.com/groups/14634066/" target="_blank" rel="noopener noreferrer" aria-label="Open LinkedIn group" data-tooltip="LinkedIn group"><span class="linkedin-mark" aria-hidden="true">in</span><span class="social-badge"><i data-lucide="users-round"></i></span></a>
+          <button id="social-author-rail-toggle" class="social-author-rail__toggle" type="button" aria-controls="social-author-rail-content" aria-expanded="false" aria-label="Open social sidebar"><i class="social-author-rail__open-icon" data-lucide="chevron-left"></i><i class="social-author-rail__close-icon" data-lucide="chevron-right"></i></button>
+          <div id="social-author-rail-content" class="social-author-rail__content">
+            <div class="social-actions">
+              <a id="social-linkedin-profile" class="social-button" href="https://www.linkedin.com/in/shubhamm-j-64285ab3" target="_blank" rel="noopener noreferrer" aria-label="Open LinkedIn profile" data-tooltip="LinkedIn profile"><span class="linkedin-mark" aria-hidden="true">in</span><span class="social-badge"><i data-lucide="user-round"></i></span></a>
+              <a id="social-linkedin-group" class="social-button" href="https://www.linkedin.com/groups/14634066/" target="_blank" rel="noopener noreferrer" aria-label="Open LinkedIn group" data-tooltip="LinkedIn group"><span class="linkedin-mark" aria-hidden="true">in</span><span class="social-badge"><i data-lucide="users-round"></i></span></a>
+            </div>
+            <div class="author-identity">
+              <p class="author-stack">Shubhamm Jadhav</p>
+              <p class="author-role"><span>AI</span><span>DEV</span></p>
+            </div>
+            <span class="rail-eagle" aria-hidden="true">🦅</span>
           </div>
-          <div class="author-identity">
-            <p class="author-stack">Shubhamm Jadhav</p>
-            <p class="author-role"><span>AI</span><span>DEV</span></p>
-          </div>
-          <span class="rail-eagle" aria-hidden="true">🦅</span>
         </aside>
       </div>
 
       <footer id="app-footer"><p class="footer-note">Notes on AI, systems, and useful software.</p><p class="footer-author">Shubhamm Jadhav</p><span class="footer-focus">AI | Copilot | Dynamics 365 | CRM</span></footer>
 
       <dialog id="app-info-ad-dialog" aria-labelledby="app-info-ad-title"><button class="icon-button dialog-close" type="button" aria-label="Close dialog"><i data-lucide="x"></i></button><p class="kicker">Fieldnote</p><h2 id="app-info-ad-title">A small update</h2><p>Announcements will appear here only when there is something useful to say.</p></dialog>
+      <dialog id="reader-image-viewer" aria-labelledby="reader-image-viewer-title">
+        <header class="reader-image-viewer__toolbar">
+          <p id="reader-image-viewer-title">Article image</p>
+          <div class="reader-image-viewer__actions" role="toolbar" aria-label="Image controls">
+            <button class="icon-button" type="button" data-image-action="zoom-out" aria-label="Zoom out"><i data-lucide="zoom-out"></i></button>
+            <button class="icon-button" type="button" data-image-action="actual" aria-label="Show image at full size"><i data-lucide="maximize-2"></i></button>
+            <button class="icon-button" type="button" data-image-action="fit" aria-label="Fit image to screen"><i data-lucide="rotate-ccw"></i></button>
+            <button class="icon-button" type="button" data-image-action="zoom-in" aria-label="Zoom in"><i data-lucide="zoom-in"></i></button>
+            <button class="icon-button" type="button" data-image-action="close" aria-label="Close image viewer"><i data-lucide="x"></i></button>
+          </div>
+          <output id="reader-image-viewer-status" aria-live="polite">100%</output>
+        </header>
+        <div id="reader-image-viewer-viewport" class="reader-image-viewer__viewport">
+          <div class="reader-image-viewer__canvas"><img id="reader-image-viewer-image" alt=""></div>
+        </div>
+      </dialog>
     </div>`;
 }
 
@@ -1214,7 +1473,9 @@ export function startApplication(root: HTMLDivElement): void {
   menuButton = root.querySelector<HTMLButtonElement>("#menu-toggle")!;
   siteNavigation = root.querySelector<HTMLElement>("#site-navigation")!;
 
+  setupReaderImageViewer(root);
   refreshIcons(root);
+  setMobileSocialRail(false);
   menuButton.addEventListener("click", () => {
     const open = menuButton.getAttribute("aria-expanded") === "true";
     menuButton.setAttribute("aria-expanded", String(!open));
@@ -1222,10 +1483,29 @@ export function startApplication(root: HTMLDivElement): void {
     menuButton.setAttribute("aria-label", open ? "Open navigation" : "Close navigation");
   });
   root.querySelector<HTMLButtonElement>("#navigation-back")?.addEventListener("click", () => window.history.back());
+  root.querySelector<HTMLButtonElement>("#navigation-contents")?.addEventListener("click", (event) => {
+    const button = event.currentTarget as HTMLButtonElement;
+    const sidebar = mainElement.querySelector<HTMLElement>(".reader-sidebar");
+    if (!sidebar) return;
+    const isOpen = sidebar.toggleAttribute("data-mobile-open");
+    button.setAttribute("aria-expanded", String(isOpen));
+    button.setAttribute("aria-label", isOpen ? "Close page contents" : "Open page contents");
+  });
+  root.querySelector<HTMLButtonElement>("#social-author-rail-toggle")?.addEventListener("click", (event) => {
+    const toggle = event.currentTarget as HTMLButtonElement;
+    setMobileSocialRail(toggle.getAttribute("aria-expanded") !== "true");
+  });
   siteNavigation.addEventListener("click", (event) => {
     if ((event.target as Element).closest("a")) closeMenu();
   });
   window.addEventListener("hashchange", () => void renderRoute());
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeReaderContents();
+      setMobileSocialRail(false);
+    }
+  });
+  window.matchMedia("(max-width: 47.99rem)").addEventListener("change", () => setMobileSocialRail(false));
 
   void renderRoute();
 }
