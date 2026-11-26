@@ -430,16 +430,38 @@
         font: 600 20px/1 var(--display);
       }
 
-      .feature-card {
+      .featured-deck {
+        min-width: 0;
+      }
+
+      .featured-deck__stage {
         position: relative;
+        min-height: 535px;
+        perspective: 1100px;
+      }
+
+      .feature-card {
+        position: absolute;
+        inset: 0;
         color: var(--ink);
         border: 1px solid var(--ink);
         border-radius: var(--radius);
         background: var(--crystal);
         box-shadow: 7px 7px 0 var(--sky);
-        transform: none;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateX(20px) rotateY(12deg) scale(0.97);
+        transform-origin: left center;
         backdrop-filter: blur(14px);
-        transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+        transition: opacity 220ms ease, visibility 220ms ease, background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .feature-card[data-position="active"] {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateX(0) rotateY(0) scale(1);
       }
 
       .feature-card:hover,
@@ -448,6 +470,43 @@
         background: var(--orange-gradient);
         box-shadow: 8px 8px 0 rgb(240 120 72 / 20%);
         transform: translateY(-3px);
+      }
+
+      .featured-deck__controls {
+        margin-top: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      .featured-deck__controls button {
+        width: 40px;
+        height: 40px;
+        display: grid;
+        place-items: center;
+        color: #71351f;
+        border: 1px solid rgba(240, 120, 72, 0.52);
+        border-radius: var(--radius);
+        background: var(--orange-gradient);
+        cursor: pointer;
+        font: 700 16px/1 var(--interface);
+      }
+
+      .featured-deck__controls button:hover {
+        background: var(--orange-gradient-strong);
+      }
+
+      .featured-deck__controls button:disabled {
+        cursor: default;
+        opacity: 0.45;
+      }
+
+      .featured-deck__controls span {
+        min-width: 54px;
+        color: var(--muted);
+        font: 500 10px/1 var(--mono);
+        text-align: center;
       }
 
       .feature-card::before {
@@ -690,14 +749,14 @@
         width: min(100%, var(--page));
         margin-inline: auto;
         display: grid;
-        grid-template-columns: minmax(0, 420px);
+        grid-template-columns: 1fr;
         gap: 18px;
       }
 
       .story-card {
         min-width: 0;
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: minmax(280px, 0.82fr) minmax(0, 1.18fr);
         overflow: hidden;
         border: 1px solid var(--line);
         border-radius: var(--radius);
@@ -719,15 +778,16 @@
       }
 
       .story-card__image {
-        aspect-ratio: 16 / 10;
+        min-height: 300px;
         display: block;
         overflow: hidden;
-        background: var(--night-soft);
+        background: var(--paper-bright);
       }
 
       .story-card__image img {
+        width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         filter: saturate(0.78);
         transition: filter 200ms ease, transform 240ms ease;
       }
@@ -738,7 +798,7 @@
       }
 
       .story-card__body {
-        min-height: 320px;
+        min-height: 300px;
         padding: 26px;
         display: flex;
         flex-direction: column;
@@ -1436,9 +1496,8 @@
           max-width: 780px;
         }
 
-        .feature-card {
+        .featured-deck {
           max-width: 650px;
-          transform: none;
         }
 
         .section-heading {
@@ -1535,6 +1594,10 @@
           box-shadow: 9px 9px 0 var(--orange);
         }
 
+        .featured-deck__stage {
+          min-height: 555px;
+        }
+
         .feature-body h2 {
           font-size: 27px;
         }
@@ -1559,7 +1622,17 @@
         }
 
         .story-card__body {
-          min-height: 290px;
+          min-height: 0;
+        }
+
+        .story-card {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .story-card__image {
+          min-height: 0;
+          aspect-ratio: 16 / 10;
         }
 
         .publishing-path,
@@ -1686,26 +1759,14 @@
             </dl>
           </div>
 
-          <article class="feature-card">
-            <a class="feature-image" href="{{FEATURED_ROUTE}}" aria-label="Read {{FEATURED_TITLE}}">
-              <img
-                src="{{FEATURED_HOME_COVER}}"
-                alt="{{FEATURED_TITLE}} cover"
-              />
-            </a>
-            <div class="feature-body">
-              <div class="story-meta">
-                <span class="category">{{FEATURED_CATEGORY}}</span>
-                <span>/</span>
-                <time datetime="{{FEATURED_PUBLISHED_ISO}}">{{FEATURED_PUBLISHED_DISPLAY}}</time>
-                <span>/</span>
-                <span>By {{FEATURED_AUTHOR}}</span>
-              </div>
-              <h2>{{FEATURED_TITLE}}</h2>
-              <p>{{FEATURED_SUMMARY}}</p>
-              <a class="text-link" href="{{FEATURED_ROUTE}}">Read the feature</a>
+          <section class="featured-deck" data-featured-deck aria-label="Featured stories">
+            <div class="featured-deck__stage" data-featured-stage>{{BLOG_FEATURED_CARDS}}</div>
+            <div class="featured-deck__controls">
+              <button type="button" data-featured-previous aria-label="Show previous featured story">&larr;</button>
+              <span data-featured-status aria-live="polite">1 / 1</span>
+              <button type="button" data-featured-next aria-label="Show next featured story">&rarr;</button>
             </div>
-          </article>
+          </section>
         </div>
       </section>
 
@@ -1725,29 +1786,15 @@
         <div class="section-heading">
           <div>
             <p class="eyebrow">The publication</p>
-            <h2 id="latest-title">The first CodeFox story.</h2>
+            <h2 id="latest-title">Latest stories.</h2>
           </div>
           <p>
-            The publication is starting small. New community-written stories will appear
-            here after they complete editorial review.
+            Community-written articles appear here after they complete editorial review.
           </p>
         </div>
         <p class="stories-status">{{BLOG_POST_COUNT_LABEL}}</p>
 
-        <div class="story-grid">
-          <article class="story-card">
-            <a class="story-card__image" href="{{FEATURED_ROUTE}}">
-              <img src="{{FEATURED_HOME_COVER}}" alt="{{FEATURED_TITLE}} cover" loading="lazy" />
-            </a>
-            <div class="story-card__body">
-              <div class="story-meta"><span class="category">{{FEATURED_CATEGORY}}</span><span>/</span><time datetime="{{FEATURED_PUBLISHED_ISO}}">{{FEATURED_PUBLISHED_DISPLAY}}</time><span>/</span><span>{{FEATURED_AUTHOR}}</span></div>
-              <h3><a href="{{FEATURED_ROUTE}}">{{FEATURED_TITLE}}</a></h3>
-              <p>{{FEATURED_SUMMARY}}</p>
-              <a class="text-link" href="{{FEATURED_ROUTE}}">Read article</a>
-            </div>
-          </article>
-
-        </div>
+        <div class="story-grid">{{BLOG_STORY_CARDS}}</div>
       </section>
 
       <section class="contributors" id="contributors" aria-labelledby="contributors-title">
@@ -1960,6 +2007,48 @@
 
     <script>
       document.querySelector("[data-blog-back]").addEventListener("click", () => window.history.back());
+
+      const featuredDeck = document.querySelector("[data-featured-deck]");
+      if (featuredDeck) {
+        const maximumFeaturedStories = 6;
+        const featuredStage = featuredDeck.querySelector("[data-featured-stage]");
+        const featuredCards = [...featuredDeck.querySelectorAll("[data-feature-card]")];
+        for (let index = featuredCards.length - 1; index > 0; index -= 1) {
+          const randomIndex = Math.floor(Math.random() * (index + 1));
+          [featuredCards[index], featuredCards[randomIndex]] = [featuredCards[randomIndex], featuredCards[index]];
+        }
+        const visibleFeaturedCards = featuredCards.slice(0, maximumFeaturedStories);
+        featuredCards.slice(maximumFeaturedStories).forEach((card) => card.remove());
+        visibleFeaturedCards.forEach((card) => featuredStage.append(card));
+
+        const previousButton = featuredDeck.querySelector("[data-featured-previous]");
+        const nextButton = featuredDeck.querySelector("[data-featured-next]");
+        const featuredStatus = featuredDeck.querySelector("[data-featured-status]");
+        let activeFeaturedIndex = 0;
+
+        const updateFeaturedDeck = () => {
+          visibleFeaturedCards.forEach((card, index) => {
+            const isActive = index === activeFeaturedIndex;
+            card.dataset.position = isActive ? "active" : "inactive";
+            card.setAttribute("aria-hidden", String(!isActive));
+            card.toggleAttribute("inert", !isActive);
+          });
+          if (featuredStatus) featuredStatus.textContent = `${activeFeaturedIndex + 1} / ${visibleFeaturedCards.length}`;
+          const hasMultipleCards = visibleFeaturedCards.length > 1;
+          if (previousButton) previousButton.disabled = !hasMultipleCards;
+          if (nextButton) nextButton.disabled = !hasMultipleCards;
+        };
+
+        previousButton?.addEventListener("click", () => {
+          activeFeaturedIndex = (activeFeaturedIndex - 1 + visibleFeaturedCards.length) % visibleFeaturedCards.length;
+          updateFeaturedDeck();
+        });
+        nextButton?.addEventListener("click", () => {
+          activeFeaturedIndex = (activeFeaturedIndex + 1) % visibleFeaturedCards.length;
+          updateFeaturedDeck();
+        });
+        updateFeaturedDeck();
+      }
 
       const emailTarget = "{{OWNER_EMAIL}}";
       const formConfigs = [

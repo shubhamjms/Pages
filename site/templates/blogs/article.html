@@ -435,9 +435,10 @@
       .rail-cover img {
         width: 100%;
         aspect-ratio: 16 / 9;
-        object-fit: cover;
+        object-fit: contain;
         border: 1px solid var(--line);
         border-radius: var(--radius);
+        background: var(--paper-bright);
       }
 
       .rail-cover figcaption {
@@ -685,6 +686,17 @@
         margin: 34px 0;
         border: 1px solid var(--line);
         border-radius: var(--radius);
+      }
+
+      .article-body img[src$="home-features-audit-history-latest.png"] {
+        width: auto;
+        height: 500px;
+        max-width: 100%;
+        aspect-ratio: 562 / 1411;
+        object-fit: contain;
+        margin-right: auto;
+        margin-left: auto;
+        display: block;
       }
 
       .article-body .table-scroll {
@@ -1217,6 +1229,10 @@
         .article-body {
           font-size: 18px;
           line-height: 1.7;
+        }
+
+        .article-body img[src$="home-features-audit-history-latest.png"] {
+          height: 420px;
         }
 
         .article-body .lead {
