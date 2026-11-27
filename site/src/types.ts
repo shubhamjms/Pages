@@ -72,6 +72,7 @@ export interface GuideSummary {
   title: string;
   summary: string;
   level: string;
+  presentation: "guide" | "roadmap";
   featured: boolean;
   route: string;
   chapterCount: number;
@@ -79,6 +80,7 @@ export interface GuideSummary {
   readingTime: number;
   updated: string;
   introductionHtml: string;
+  headings: HeadingRecord[];
   parts: GuidePart[];
 }
 

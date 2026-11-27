@@ -1,0 +1,67 @@
+title: "Microsoft Dynamics 365"
+summary: "A beginner-to-advanced roadmap for Dynamics 365 CRM, Dataverse, and Power Platform: configure, customize, develop, integrate, and deploy."
+level: "beginner-to-advanced"
+presentation: "roadmap"
+featured: true
+draft: false
+updated: "2026-11-27"
+parts: []
+anchorAliases:
+  01-crm-concepts-and-environment-setup: 01-what-is-crm
+  02-working-with-crm-records: 07-application-components
+  03-solutions-and-customization-foundations: 08-solutions-and-customization-foundations
+  04-dataverse-data-modeling: 09-dataverse-data-modeling
+  05-model-driven-application-configuration: 10-model-driven-application-configuration
+  06-security-and-administration: 11-security-and-administration
+  07-business-processes-and-automation: 12-business-rules-and-validation
+  08-programming-foundations: 15-programming-foundations
+  09-client-side-customization: 16-client-side-customization
+  10-plug-ins-and-custom-apis: 17-plug-ins-and-server-side-logic
+  11-apis-and-external-integration: 19-dataverse-apis-and-external-integration
+  12-pcf-and-additional-app-experiences: 20-pcf-components
+  13-data-migration-and-reporting: 23-data-migration-and-data-quality
+  14-testing-alm-and-deployment: 25-testing-and-quality-assurance
+  15-architecture-operations-and-capstone: 22-solution-architecture-and-design
+  11-business-processes-and-automation: 12-business-rules-and-validation
+  12-programming-foundations: 15-programming-foundations
+  13-client-side-customization: 16-client-side-customization
+  14-plug-ins-and-custom-apis: 17-plug-ins-and-server-side-logic
+  15-apis-and-external-integration: 19-dataverse-apis-and-external-integration
+  16-pcf-and-additional-app-experiences: 20-pcf-components
+  17-data-migration-and-reporting: 23-data-migration-and-data-quality
+  18-testing-alm-and-deployment: 25-testing-and-quality-assurance
+  19-architecture-operations-and-capstone: 22-solution-architecture-and-design
+  16-plug-ins-and-custom-apis: 17-plug-ins-and-server-side-logic
+  17-apis-and-external-integration: 19-dataverse-apis-and-external-integration
+  18-pcf-and-additional-app-experiences: 20-pcf-components
+  19-data-migration-and-reporting: 23-data-migration-and-data-quality
+  20-testing-alm-and-deployment: 25-testing-and-quality-assurance
+  21-architecture-operations-and-capstone: 22-solution-architecture-and-design
+  21-data-migration-and-reporting: 23-data-migration-and-data-quality
+  22-testing-alm-and-deployment: 25-testing-and-quality-assurance
+  23-architecture-operations-and-capstone: 22-solution-architecture-and-design
+  03-accounts-and-environments: 04-accounts-and-environments
+  04-what-is-dataverse: 05-what-is-dataverse
+  05-data-components: 06-data-components
+  06-application-components: 07-application-components
+  07-solutions-and-customization-foundations: 08-solutions-and-customization-foundations
+  08-dataverse-data-modeling: 09-dataverse-data-modeling
+  09-model-driven-application-configuration: 10-model-driven-application-configuration
+  10-security-and-administration: 11-security-and-administration
+  11-business-rules-and-validation: 12-business-rules-and-validation
+  12-business-process-flows: 13-business-process-flows
+  13-power-automate-cloud-flows: 14-power-automate-cloud-flows
+  14-programming-foundations: 15-programming-foundations
+  15-client-side-customization: 16-client-side-customization
+  16-plug-ins-and-server-side-logic: 17-plug-ins-and-server-side-logic
+  17-custom-apis-and-business-operations: 18-custom-apis-and-business-operations
+  18-dataverse-apis-and-external-integration: 19-dataverse-apis-and-external-integration
+  19-pcf-components: 20-pcf-components
+  20-canvas-apps-and-custom-pages: 21-canvas-apps-and-custom-pages
+  21-solution-architecture-and-design: 22-solution-architecture-and-design
+  22-data-migration-and-data-quality: 23-data-migration-and-data-quality
+  23-reporting-and-analytics: 24-reporting-and-analytics
+  24-testing-and-quality-assurance: 25-testing-and-quality-assurance
+  25-alm-deployment-and-releases: 26-alm-deployment-and-releases
+  26-operations-monitoring-and-support: 27-operations-monitoring-and-support
+  27-capstone-documentation-and-handover: 28-capstone-documentation-and-handover

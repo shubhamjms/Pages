@@ -254,6 +254,17 @@ function expandContentShortcuts(body) {
 
 function renderDocument(document, rewriteLink = (href) => href, options = {}) {
   const headings = collectHeadings(document.body, document.sourcePath);
+  const anchorAliases = options.anchorAliases ?? {};
+  if (!anchorAliases || typeof anchorAliases !== "object" || Array.isArray(anchorAliases)) {
+    throw new Error(`${document.sourcePath}: anchorAliases must be an object.`);
+  }
+  for (const [alias, value] of Object.entries(anchorAliases)) {
+    assertSlug(alias, document.sourcePath);
+    const target = requireString(value, "anchor alias target", document.sourcePath);
+    if (headings.some((heading) => heading.id === alias) || !headings.some((heading) => heading.id === target)) {
+      throw new Error(`${document.sourcePath}: anchor alias "${alias}" must name a new alias for an existing heading.`);
+    }
+  }
   const headingQueue = [...headings];
   const markdown = new MarkdownIt({ html: false, linkify: true, typographer: true });
   const defaultFence = markdown.renderer.rules.fence.bind(markdown.renderer.rules);
@@ -262,7 +273,11 @@ function renderDocument(document, rewriteLink = (href) => href, options = {}) {
   markdown.renderer.rules.heading_open = (tokens, index, options, environment, renderer) => {
     const heading = headingQueue.shift();
     if (heading) tokens[index].attrSet("id", heading.id);
-    return renderer.renderToken(tokens, index, options);
+    const aliases = heading
+      ? Object.entries(anchorAliases).filter(([, target]) => target === heading.id)
+        .map(([alias]) => `<span id="${markdown.utils.escapeHtml(alias)}" class="roadmap-stage-anchor" aria-hidden="true"></span>`).join("")
+      : "";
+    return renderer.renderToken(tokens, index, options) + aliases;
   };
   markdown.renderer.rules.link_open = (tokens, index, options, environment, renderer) => {
     const hrefIndex = tokens[index].attrIndex("href");
@@ -463,10 +478,18 @@ function readGuideConfig(guideSlug) {
   const sourcePath = sourceLabel(configPath);
   const config = YAML.parse(fs.readFileSync(configPath, "utf8"));
   if (!config || typeof config !== "object") throw new Error(`${sourcePath}: guide config must be a YAML object.`);
-  if (!Array.isArray(config.parts) || config.parts.length === 0) {
-    throw new Error(`${sourcePath}: parts must be a non-empty array.`);
+  const presentation = config.presentation === undefined ? "guide" : requireString(config.presentation, "presentation", sourcePath);
+  if (!["guide", "roadmap"].includes(presentation)) {
+    throw new Error(`${sourcePath}: presentation must be guide or roadmap.`);
   }
-  return { config, sourcePath };
+  if (!Array.isArray(config.parts)) throw new Error(`${sourcePath}: parts must be an array.`);
+  if (presentation === "guide" && config.parts.length === 0) {
+    throw new Error(`${sourcePath}: guide parts must be a non-empty array.`);
+  }
+  if (presentation === "roadmap" && config.parts.length !== 0) {
+    throw new Error(`${sourcePath}: roadmap-only guides must use empty parts; lessons are not published yet.`);
+  }
+  return { config, sourcePath, presentation };
 }
 
 function rewriteChapterLink(href, guideSlug, chapterSlugs, sourcePath) {
@@ -483,7 +506,7 @@ function rewriteChapterLink(href, guideSlug, chapterSlugs, sourcePath) {
 
 function buildGuide(guideSlug) {
   assertSlug(guideSlug, `content/learning/${guideSlug}`);
-  const { config, sourcePath } = readGuideConfig(guideSlug);
+  const { config, sourcePath, presentation } = readGuideConfig(guideSlug);
   const title = requireString(config.title, "title", sourcePath);
   const summary = requireString(config.summary, "summary", sourcePath);
   const level = requireString(config.level, "level", sourcePath);
@@ -588,9 +611,27 @@ function buildGuide(guideSlug) {
   });
 
   const introductionPath = path.join(contentRoot, "learning", guideSlug, "index.md");
-  const introductionHtml = fs.existsSync(introductionPath)
-    ? renderDocument(readMarkdown(`learning/${guideSlug}/index.md`)).html
-    : "";
+  const introduction = fs.existsSync(introductionPath)
+    ? renderDocument(readMarkdown(`learning/${guideSlug}/index.md`), undefined, { anchorAliases: config.anchorAliases })
+    : null;
+  if (presentation === "roadmap" && !introduction?.html.trim()) {
+    throw new Error(`${sourcePath}: a roadmap requires a non-empty index.md.`);
+  }
+  if (presentation === "roadmap") {
+    const sections = introduction.headings.filter((heading) => heading.level === 2 && /^\d+\s*-\s+/.test(heading.text));
+    if (!sections.length) throw new Error(`${sourcePath}: a roadmap requires numbered level-two section headings.`);
+    sections.forEach((section, index) => {
+      if (Number.parseInt(section.text, 10) !== index + 1) {
+        throw new Error(`${sourcePath}: roadmap sections must be numbered consecutively from 1.`);
+      }
+      const following = introduction.headings.slice(introduction.headings.indexOf(section) + 1);
+      const nextSection = following.findIndex((heading) => heading.level === 2);
+      const children = nextSection < 0 ? following : following.slice(0, nextSection);
+      if (!children.some((heading) => heading.level === 3)) {
+        throw new Error(`${sourcePath}: roadmap section "${section.text}" requires level-three part headings.`);
+      }
+    });
+  }
   const parts = partDefinitions.map((part) => {
     const chapters = summaries.filter((chapter) => part.chapterSlugs.includes(chapter.slug));
     return {
@@ -606,13 +647,19 @@ function buildGuide(guideSlug) {
     title,
     summary,
     level,
+    presentation,
     featured,
     route: `#/learn/${guideSlug}`,
     chapterCount: summaries.length,
     partCount: parts.length,
-    readingTime: summaries.reduce((total, chapter) => total + chapter.readingTime, 0),
-    updated: summaries.reduce((latest, chapter) => chapter.updated > latest ? chapter.updated : latest, "0000-00-00"),
-    introductionHtml,
+    readingTime: presentation === "roadmap"
+      ? introduction.readingTime
+      : summaries.reduce((total, chapter) => total + chapter.readingTime, 0),
+    updated: presentation === "roadmap"
+      ? requireDate(config.updated, "updated", sourcePath)
+      : summaries.reduce((latest, chapter) => chapter.updated > latest ? chapter.updated : latest, "0000-00-00"),
+    introductionHtml: introduction?.html ?? "",
+    headings: introduction?.headings ?? [],
     parts,
   };
 }

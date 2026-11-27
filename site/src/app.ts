@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   ArrowRight,
+  ArrowUp,
   BookOpen,
   ChevronLeft,
   ChevronRight,
@@ -37,6 +38,7 @@ import type {
 const icons = {
   ArrowLeft,
   ArrowRight,
+  ArrowUp,
   BookOpen,
   ChevronLeft,
   ChevronRight,
@@ -71,6 +73,11 @@ let readerImagePinchScale = 1;
 const readerImagePointers = new Map<number, { x: number; y: number }>();
 let hasRendered = false;
 let renderVersion = 0;
+let roadmapDiagramObserver: ResizeObserver | null = null;
+let roadmapDiagramRefresh: (() => void) | null = null;
+let roadmapPartObserver: IntersectionObserver | null = null;
+let roadmapNavigation: { path: string; moveTo: (anchor: string) => boolean } | null = null;
+const roadmapPartRenders = new WeakMap<HTMLElement, Promise<void>>();
 const codeFoxBlogsUrl = `${import.meta.env.BASE_URL}codefox-blogs/`;
 
 interface HomeCarouselItem {
@@ -82,6 +89,13 @@ interface HomeCarouselItem {
   action: string;
   kind: "general" | "tool" | "learning" | "blogs";
   icon: "book-open" | "layout-grid" | "users-round" | "wrench";
+}
+
+interface RoadmapPartView {
+  heading: HTMLHeadingElement;
+  panel: HTMLElement;
+  trigger: HTMLButtonElement;
+  core: boolean;
 }
 
 function escapeHtml(value: string): string {
@@ -127,23 +141,29 @@ function articleCard(article: ArticleSummary, position?: number): string {
     </article>`;
 }
 
+function guideStats(guide: GuideSummary): string {
+  return `
+    <dl class="stat-line" aria-label="Guide details">
+      ${guide.presentation === "roadmap"
+        ? "<div><dt>Content</dt><dd>Roadmap</dd></div><div><dt>Lessons</dt><dd>Planned</dd></div>"
+        : `<div><dt>Parts</dt><dd>${guide.partCount}</dd></div><div><dt>Chapters</dt><dd>${guide.chapterCount}</dd></div>`}
+      <div><dt>Reading</dt><dd>${guide.readingTime} min</dd></div>
+    </dl>`;
+}
+
 function guideFeature(guide: GuideSummary): string {
   const firstChapter = guide.parts[0]?.chapters[0];
   return `
     <article class="learning-feature">
       <div>
-        <p class="kicker">Structured learning</p>
+        <p class="kicker">${guide.presentation === "roadmap" ? "Learning roadmap" : "Structured learning"}</p>
         <h3><a href="${guide.route}">${escapeHtml(guide.title)}</a></h3>
         <p>${escapeHtml(guide.summary)}</p>
       </div>
-      <dl class="stat-line" aria-label="Guide details">
-        <div><dt>Parts</dt><dd>${guide.partCount}</dd></div>
-        <div><dt>Chapters</dt><dd>${guide.chapterCount}</dd></div>
-        <div><dt>Reading</dt><dd>${guide.readingTime} min</dd></div>
-      </dl>
+      ${guideStats(guide)}
       <div class="action-row">
         ${firstChapter ? `<a class="button-link" href="${firstChapter.route}">Start guide <i data-lucide="arrow-right"></i></a>` : ""}
-        <a class="quiet-link" href="${guide.route}">View contents</a>
+        <a class="quiet-link" href="${guide.route}">${guide.presentation === "roadmap" ? "Explore roadmap" : "View contents"}</a>
       </div>
     </article>`;
 }
@@ -239,9 +259,9 @@ function renderHome(): string {
       title: guide.title,
       summary: guide.summary,
       route: guide.route,
-      label: "Learning course",
-      detail: `${guide.chapterCount} chapters · ${guide.readingTime} min`,
-      action: "Open course",
+      label: guide.presentation === "roadmap" ? "Learning roadmap" : "Learning course",
+      detail: guide.presentation === "roadmap" ? "Roadmap only · Lessons planned" : `${guide.chapterCount} chapters · ${guide.readingTime} min`,
+      action: guide.presentation === "roadmap" ? "Explore roadmap" : "Open course",
       kind: "learning" as const,
       icon: "book-open" as const,
     })),
@@ -404,18 +424,18 @@ function renderTopic(topic: TopicRecord): string {
 function guideCard(guide: GuideSummary): string {
   const firstChapter = guide.parts[0]?.chapters[0];
   return `
-    <article class="guide-card">
-      <p class="metadata">${escapeHtml(displayLabel(guide.level))}</p>
+    <article class="guide-card${guide.presentation === "roadmap" ? " guide-card--roadmap" : ""}">
+      <p class="metadata">${escapeHtml(displayLabel(guide.level))}${guide.presentation === "roadmap" ? " · Roadmap only" : ""}</p>
       <h2><a href="${guide.route}">${escapeHtml(guide.title)}</a></h2>
       <p>${escapeHtml(guide.summary)}</p>
-      <dl class="stat-line"><div><dt>Parts</dt><dd>${guide.partCount}</dd></div><div><dt>Chapters</dt><dd>${guide.chapterCount}</dd></div><div><dt>Reading</dt><dd>${guide.readingTime} min</dd></div></dl>
-      <div class="action-row"><a class="button-link" href="${guide.route}">View guide <i data-lucide="arrow-right"></i></a>${firstChapter ? `<a class="quiet-link" href="${firstChapter.route}">Start reading</a>` : ""}</div>
+      ${guideStats(guide)}
+      <div class="action-row"><a class="button-link" href="${guide.route}">${guide.presentation === "roadmap" ? "Explore roadmap" : "View guide"} <i data-lucide="arrow-right"></i></a>${firstChapter ? `<a class="quiet-link" href="${firstChapter.route}">Start reading</a>` : ""}</div>
     </article>`;
 }
 
 function renderLearning(): string {
   const guides = [...contentIndex.guides].sort((left, right) => Number(right.featured) - Number(left.featured) || left.title.localeCompare(right.title));
-  return `<div class="view collection-view" id="view-learning">${pageHeader("Learning", "Guides for building with judgment", "Move from first principles to working patterns through complete, inspectable learning paths.", `${guides.length} published ${guides.length === 1 ? "guide" : "guides"}`)}<section class="content-section guide-grid" aria-label="Published guides">${guides.map(guideCard).join("")}</section></div>`;
+  return `<div class="view collection-view" id="view-learning">${pageHeader("Learning", "Guides for building with judgment", "Explore structured guides and roadmaps, from first principles to working patterns.", `${guides.length} published learning ${guides.length === 1 ? "path" : "paths"}`)}<section class="content-section guide-grid" aria-label="Published learning paths">${guides.map(guideCard).join("")}</section></div>`;
 }
 
 function chapterCard(chapter: ChapterSummary, position: number): string {
@@ -430,6 +450,17 @@ function chapterCard(chapter: ChapterSummary, position: number): string {
 }
 
 function renderGuide(guide: GuideSummary): string {
+  if (guide.presentation === "roadmap") {
+    return `
+      <div class="view guide-view roadmap-view" id="view-learning-${guide.slug}">
+        ${pageHeader("Learning roadmap", guide.title, guide.summary, `Roadmap only · Updated ${formatDate(guide.updated)}`)}
+        <section class="roadmap-notice" aria-label="Learning path availability">
+          <span class="roadmap-badge">Roadmap available</span>
+          <p>Lessons and labs are planned, not published yet. Choose a small part box to see its topic points below.</p>
+        </section>
+        ${readerLayout(guide.route, guide.headings, guide.introductionHtml)}
+      </div>`;
+  }
   let position = 0;
   const firstChapter = guide.parts[0]?.chapters[0];
   return `
@@ -736,9 +767,16 @@ async function loadRecord<T>(recordFile: string): Promise<T> {
 }
 
 async function renderDiagrams(root: HTMLElement): Promise<void> {
-  const nodes = Array.from(root.querySelectorAll<HTMLElement>(".mermaid"));
+  const available = (node: HTMLElement): boolean =>
+    node.isConnected && node.dataset.processed !== "true" && node.dataset.roadmapDeferred !== "true" &&
+    node.dataset.diagramRendering !== "true" && !node.closest(".roadmap-details[hidden]");
+  const nodes = Array.from(root.querySelectorAll<HTMLElement>(".mermaid")).filter(available);
   if (!nodes.length) return;
+  const version = renderVersion;
   const { default: mermaid } = await import("mermaid");
+  if (version !== renderVersion) return;
+  const activeNodes = nodes.filter(available);
+  if (!activeNodes.length) return;
   mermaid.initialize({
     startOnLoad: false,
     securityLevel: "strict",
@@ -752,7 +790,478 @@ async function renderDiagrams(root: HTMLElement): Promise<void> {
       fontFamily: "Space Grotesk",
     },
   });
-  await mermaid.run({ nodes, suppressErrors: true });
+  const sources = activeNodes.map((node) => ({ node, code: node.textContent ?? "" }));
+  activeNodes.forEach((node) => { node.dataset.diagramRendering = "true"; });
+  const restoreHidden = (): void => {
+    for (const { node, code } of sources) {
+      if (node.closest(".roadmap-details[hidden]")) {
+        node.textContent = code;
+        node.removeAttribute("data-processed");
+      }
+    }
+  };
+  try {
+    await mermaid.run({ nodes: activeNodes });
+  } catch (error) {
+    restoreHidden();
+    if (version !== renderVersion || !activeNodes.some((node) => node.isConnected && !node.closest(".roadmap-details[hidden]"))) return;
+    throw error;
+  } finally {
+    activeNodes.forEach((node) => { delete node.dataset.diagramRendering; });
+    if (version === renderVersion) roadmapDiagramRefresh?.();
+  }
+  restoreHidden();
+  if (version === renderVersion) setupRoadmapDiagramTargets(root);
+}
+
+function renderRoadmapPart(panel: HTMLElement): Promise<void> {
+  const pending = roadmapPartRenders.get(panel);
+  if (pending) return pending;
+  panel.querySelectorAll<HTMLElement>(".mermaid").forEach((node) => { delete node.dataset.roadmapDeferred; });
+  roadmapPartObserver?.unobserve(panel);
+  const rendering = renderDiagrams(panel).catch((error) => {
+    if (panel.isConnected && !panel.hidden) showDiagramError(panel, error);
+  }).finally(() => {
+    roadmapPartRenders.delete(panel);
+  });
+  roadmapPartRenders.set(panel, rendering);
+  return rendering;
+}
+
+function setupRoadmapPartObserver(): void {
+  const panels = mainElement.querySelectorAll<HTMLElement>(".roadmap-details--core");
+  if (!panels.length) return;
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting && entry.target instanceof HTMLElement) void renderRoadmapPart(entry.target);
+    }
+  }, { rootMargin: "400px 0px" });
+  roadmapPartObserver = observer;
+  panels.forEach((panel) => {
+    if (panel.querySelector('[data-roadmap-deferred="true"]')) observer.observe(panel);
+  });
+}
+
+function setupRoadmapOverview(anchor: string): ((anchor: string) => boolean) | undefined {
+  const view = mainElement.querySelector<HTMLElement>(".roadmap-view");
+  if (!view) return;
+  const prose = view.querySelector<HTMLElement>(".reader-prose");
+  const title = view.querySelector("h1")?.textContent?.trim();
+  const diagram = prose?.querySelector<HTMLElement>(".mermaid-shell");
+  if (!prose || !title || !diagram) throw new Error("The roadmap is missing its title, content, or diagram.");
+  const headings = [...prose.children].filter((element): element is HTMLHeadingElement =>
+    element instanceof HTMLHeadingElement && element.tagName === "H2",
+  );
+  const firstStageTitle = headings.find((heading) => /^\d+\s*-\s+/.test(heading.textContent ?? ""))?.textContent?.trim();
+  if (!firstStageTitle) {
+    throw new Error("The roadmap requires numbered section headings.");
+  }
+
+  const sections = headings.map((heading) => {
+    const content: Element[] = [];
+    for (let node = heading.nextElementSibling; node && !(node instanceof HTMLHeadingElement && node.tagName === "H2"); node = node.nextElementSibling) {
+      content.push(node);
+    }
+    return { heading, content };
+  });
+  const areas = sections.flatMap(({ heading, content }) => {
+    const partHeadings = content.filter((element): element is HTMLHeadingElement =>
+      element instanceof HTMLHeadingElement && element.tagName === "H3",
+    );
+    if (!partHeadings.length) {
+      if (/^\d+\s*-\s+/.test(heading.textContent ?? "")) {
+        throw new Error(`Roadmap section "${heading.textContent}" has no parts.`);
+      }
+      return [];
+    }
+    const parts = partHeadings.map((partHeading) => {
+      const partContent: Element[] = [];
+      for (let node = partHeading.nextElementSibling; node && !(node instanceof HTMLHeadingElement && ["H2", "H3"].includes(node.tagName)); node = node.nextElementSibling) {
+        partContent.push(node);
+      }
+      const partTitle = partHeading.textContent?.trim();
+      if (!partTitle || !partHeading.id || !partContent.some((element) => element instanceof HTMLUListElement || element instanceof HTMLOListElement)) {
+        throw new Error("Each roadmap part requires a title, an anchor, and topic points.");
+      }
+      return { heading: partHeading, title: partTitle, content: partContent };
+    });
+    return [{ heading, core: /^\d+\s*-\s+/.test(heading.textContent ?? ""), intro: content.slice(0, content.indexOf(partHeadings[0])), parts }];
+  });
+
+  const overview = document.createElement("div");
+  overview.id = "roadmap-overview";
+  overview.className = "roadmap-overview";
+  overview.tabIndex = -1;
+  overview.setAttribute("role", "group");
+  overview.setAttribute("aria-label", "Roadmap part overview");
+  overview.dataset.roadmapStartStage = firstStageTitle.replace(/\s+/g, "");
+  const controls = document.createElement("div");
+  controls.className = "roadmap-diagram-controls";
+  controls.setAttribute("role", "group");
+  controls.setAttribute("aria-label", "Main diagram controls");
+  controls.innerHTML = `
+    <button class="icon-button" type="button" data-roadmap-action="zoom-out" aria-label="Zoom out main diagram" title="Zoom out" disabled><i data-lucide="zoom-out"></i></button>
+    <output class="roadmap-zoom-status" aria-label="Main diagram zoom level" aria-live="polite">100%</output>
+    <button class="icon-button" type="button" data-roadmap-action="zoom-in" aria-label="Zoom in main diagram" title="Zoom in" disabled><i data-lucide="zoom-in"></i></button>
+    <button class="button-link" type="button" data-roadmap-action="reset" title="Reset zoom and center Stage 1" disabled>Reset view</button>`;
+  diagram.before(overview);
+  overview.append(controls, diagram);
+  const details = document.createElement("div");
+  details.className = "roadmap-details-container roadmap-optional-details";
+  overview.after(details);
+  const partViews: RoadmapPartView[] = [];
+
+  const routePath = parseRoute().path;
+  const routePrefix = `#${routePath}`;
+  let navigationVersion = 0;
+  const selectOptionalPart = (selected: RoadmapPartView | null): void => {
+    for (const part of partViews.filter((part) => !part.core)) {
+      part.panel.hidden = part !== selected;
+      part.trigger.setAttribute("aria-expanded", String(part === selected));
+    }
+  };
+  const closePart = (part: RoadmapPartView): void => {
+    selectOptionalPart(null);
+    if (part.trigger.hidden) overview.focus();
+    else part.trigger.focus();
+  };
+  const moveTo = (id: string): boolean => {
+    const target = id ? document.getElementById(id) : view.querySelector<HTMLElement>("h1");
+    if (!(target instanceof HTMLElement) || !view.contains(target)) return false;
+    const part = partViews.find((part) => part.panel.contains(target));
+    selectOptionalPart(part && !part.core ? part : null);
+    for (const item of partViews.filter((item) => item.core)) {
+      if (item === part) item.trigger.setAttribute("aria-current", "location");
+      else item.trigger.removeAttribute("aria-current");
+    }
+    const destination = part && target.classList.contains("roadmap-stage-anchor") ? part.heading : target;
+    const version = ++navigationVersion;
+    destination.tabIndex = -1;
+    destination.focus({ preventScroll: true });
+    destination.scrollIntoView({ behavior: "instant", block: "start" });
+    if (part) {
+      void renderRoadmapPart(part.panel).then(() => {
+        if (view.isConnected && version === navigationVersion && document.activeElement === destination) {
+          destination.scrollIntoView({ behavior: "instant", block: "start" });
+        }
+      });
+    }
+    return true;
+  };
+  const visitAnchor = (id: string): void => {
+    if (!moveTo(id)) throw new Error(`Roadmap destination "${id}" is missing.`);
+    const hash = `${routePrefix}#${encodeURIComponent(id)}`;
+    if (window.location.hash !== hash) window.history.pushState(null, "", hash);
+  };
+  const backFooter = (): HTMLElement => {
+    const footer = document.createElement("footer");
+    footer.className = "roadmap-details-footer";
+    const link = document.createElement("a");
+    link.className = "button-link roadmap-back-link";
+    link.href = `${routePrefix}#${overview.id}`;
+    link.innerHTML = '<i data-lucide="arrow-up"></i> Back to roadmap';
+    footer.append(link);
+    return footer;
+  };
+
+  areas.forEach((area) => {
+    let stage: HTMLElement | null = null;
+    if (area.core) {
+      stage = document.createElement("section");
+      stage.className = "roadmap-stage";
+      stage.dataset.roadmapStage = area.heading.textContent?.match(/^\d+/)?.[0];
+      stage.setAttribute("aria-labelledby", area.heading.id);
+      area.heading.before(stage);
+      const header = document.createElement("header");
+      header.className = "roadmap-stage-header";
+      const range = document.createElement("p");
+      range.className = "kicker";
+      range.textContent = `${area.parts.length} planned parts | ${area.parts[0].title.match(/^\d+/)?.[0]}-${area.parts.at(-1)?.title.match(/^\d+/)?.[0]}`;
+      area.heading.prepend("Stage ");
+      area.heading.tabIndex = -1;
+      header.append(range, area.heading, ...area.intro);
+      stage.append(header);
+    } else {
+      area.heading.remove();
+    }
+    area.parts.forEach((part, partIndex) => {
+      const panel = document.createElement("section");
+      panel.id = `roadmap-details-${part.heading.id}`;
+      panel.className = `roadmap-details${area.core ? " roadmap-details--core" : ""}`;
+      panel.hidden = !area.core;
+      panel.setAttribute("role", "region");
+      panel.setAttribute("aria-labelledby", part.heading.id);
+      const trigger = document.createElement("button");
+      trigger.type = "button";
+      trigger.className = "roadmap-part-button";
+      trigger.hidden = true;
+      trigger.dataset.roadmapPart = part.heading.id;
+      if (!area.core) trigger.setAttribute("aria-expanded", "false");
+      trigger.setAttribute("aria-controls", panel.id);
+      trigger.setAttribute("aria-label", `${part.title}: ${area.core ? "go to part" : "view topic points"}`);
+      const number = part.title.match(/^(\d+)\s*-\s+/)?.[1];
+      if (number) trigger.dataset.roadmapNumber = number;
+      trigger.dataset.roadmapLabel = part.title.replace(/\s+/g, "");
+      trigger.title = part.title;
+      overview.append(trigger);
+      if (!area.core && partIndex === 0) {
+        const stageAnchor = document.createElement("span");
+        stageAnchor.id = area.heading.id;
+        stageAnchor.className = "roadmap-stage-anchor";
+        stageAnchor.setAttribute("aria-hidden", "true");
+        panel.append(stageAnchor);
+      }
+      const header = document.createElement("div");
+      header.className = "roadmap-details-header";
+      part.heading.tabIndex = -1;
+      header.append(part.heading);
+      const close = area.core ? null : document.createElement("button");
+      if (close) {
+        close.type = "button";
+        close.className = "quiet-link roadmap-close";
+        close.textContent = "Close";
+        close.setAttribute("aria-label", "Close topic points");
+        header.append(close);
+      }
+      const body = document.createElement("div");
+      body.className = "roadmap-details-body";
+      const visual = document.createElement("div");
+      visual.className = "roadmap-details-visual";
+      visual.setAttribute("role", "group");
+      visual.setAttribute("aria-label", "Part concept diagram");
+      const points = document.createElement("div");
+      points.className = "roadmap-details-points";
+      const notes = document.createElement("div");
+      notes.className = "roadmap-details-notes";
+      const content = !area.core && partIndex === 0 ? [...area.intro, ...part.content] : part.content;
+      for (const node of content) {
+        if (node.classList.contains("mermaid-shell")) {
+          if (area.core) {
+            node.querySelectorAll<HTMLElement>(".mermaid").forEach((diagram) => { diagram.dataset.roadmapDeferred = "true"; });
+          }
+          visual.append(node);
+        } else if (node instanceof HTMLParagraphElement) {
+          if (node.textContent?.trim() === "Planned topics:") {
+            node.remove();
+          } else {
+            const label = node.textContent?.trim().match(/^(Prerequisites|Practice goal|Readiness check):/)?.[1];
+            if (label) {
+              const note = document.createElement("div");
+              note.className = "roadmap-note";
+              note.dataset.roadmapNote = label.toLowerCase().replace(/\s+/g, "-");
+              note.append(node);
+              notes.append(note);
+            } else {
+              points.append(node);
+            }
+          }
+        } else {
+          points.append(node);
+        }
+      }
+      if (!visual.children.length) {
+        visual.hidden = true;
+        body.classList.add("roadmap-details-body--text-only");
+      }
+      body.append(visual, points);
+      panel.append(header, body, notes);
+      if (area.core) panel.append(backFooter());
+      (stage ?? details).append(panel);
+      const partView = { heading: part.heading, panel, trigger, core: area.core };
+      partViews.push(partView);
+      trigger.addEventListener("click", () => {
+        if (area.core) visitAnchor(part.heading.id);
+        else if (panel.hidden) moveTo(part.heading.id);
+        else closePart(partView);
+      });
+      close?.addEventListener("click", () => closePart(partView));
+    });
+    if (stage) {
+      const sectionIndex = sections.findIndex((section) => section.heading === area.heading);
+      for (const reference of sections.slice(sectionIndex + 1)) {
+        if (areas.some((area) => area.heading === reference.heading)) break;
+        const block = document.createElement("section");
+        block.className = "roadmap-stage-reference";
+        block.setAttribute("aria-labelledby", reference.heading.id);
+        reference.heading.tabIndex = -1;
+        block.append(reference.heading, ...reference.content);
+        if (/completion exercise/i.test(reference.heading.textContent ?? "")) block.append(backFooter());
+        stage.append(block);
+      }
+    }
+  });
+  details.addEventListener("keydown", (event) => {
+    const selected = partViews.find((part) => !part.core && !part.panel.hidden);
+    if (event.key === "Escape" && selected) {
+      event.preventDefault();
+      closePart(selected);
+    }
+  });
+  const anchoredElement = anchor ? document.getElementById(anchor) : null;
+  const anchoredPart = partViews.find((part) => part.panel.contains(anchoredElement));
+  if (anchoredPart) {
+    if (!anchoredPart.core) selectOptionalPart(anchoredPart);
+    anchoredPart.panel.querySelectorAll<HTMLElement>(".mermaid").forEach((node) => { delete node.dataset.roadmapDeferred; });
+  }
+  roadmapNavigation = { path: routePath, moveTo };
+  view.addEventListener("click", (event) => {
+    if (!(event instanceof MouseEvent) || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>("a") : null;
+    const href = link?.getAttribute("href");
+    if (!href?.startsWith(`${routePrefix}#`) || link?.hasAttribute("download") || (link?.target && link.target !== "_self")) return;
+    const id = decodeURIComponent(href.slice(routePrefix.length + 1));
+    if (!view.contains(document.getElementById(id))) return;
+    event.preventDefault();
+    visitAnchor(id);
+  });
+  return moveTo;
+}
+
+function setupRoadmapDiagramTargets(root: HTMLElement): void {
+  const overview = root.querySelector<HTMLElement>(".roadmap-overview");
+  if (!overview) return;
+  const viewport = overview.querySelector<HTMLElement>(".mermaid-shell");
+  const canvas = overview.querySelector<HTMLElement>(".mermaid");
+  const svg = canvas?.querySelector<SVGSVGElement>("svg");
+  const zoomOut = overview.querySelector<HTMLButtonElement>('[data-roadmap-action="zoom-out"]');
+  const zoomIn = overview.querySelector<HTMLButtonElement>('[data-roadmap-action="zoom-in"]');
+  const reset = overview.querySelector<HTMLButtonElement>('[data-roadmap-action="reset"]');
+  const status = overview.querySelector<HTMLOutputElement>(".roadmap-zoom-status");
+  if (!viewport || !canvas || !svg || !zoomOut || !zoomIn || !reset || !status) {
+    throw new Error("The roadmap diagram and its controls could not be initialized.");
+  }
+  const firstStage = [...svg.querySelectorAll<SVGGElement>(".cluster")].find((stage) =>
+    stage.querySelector(".cluster-label")?.textContent?.trim().replace(/^Stage\s*/i, "").replace(/\s+/g, "") === overview.dataset.roadmapStartStage,
+  );
+  if (!firstStage) throw new Error("The roadmap's first stage is missing from the diagram.");
+  const baseWidth = Math.max(1100, svg.viewBox.baseVal.width / 2);
+  let zoom = 1;
+  svg.style.maxWidth = "none";
+  const buttons = [...overview.querySelectorAll<HTMLButtonElement>(".roadmap-part-button")];
+  const targets: Array<{ node: SVGGElement; button: HTMLButtonElement }> = [];
+  for (const node of svg.querySelectorAll<SVGGElement>(".node")) {
+    const number = node.textContent?.trim().match(/^(\d{2})\s*-/)?.[1];
+    const label = node.textContent?.replace(/\s+/g, "");
+    const button = buttons.find((item) => number
+      ? item.dataset.roadmapNumber === number
+      : item.dataset.roadmapLabel === label,
+    );
+    if (!button) {
+      if (number) throw new Error(`Roadmap diagram part ${number} has no matching topic points.`);
+      continue;
+    }
+    if (targets.some((target) => target.button === button)) {
+      throw new Error(`Roadmap diagram topic "${button.title}" has more than one matching box.`);
+    }
+    node.setAttribute("aria-hidden", "true");
+    targets.push({ node, button });
+  }
+  if (targets.length !== buttons.length) throw new Error("Some roadmap topics are missing from the diagram.");
+  canvas.append(...buttons);
+
+  const positionTargets = (): void => {
+    if (!overview.isConnected) return;
+    const frame = canvas.getBoundingClientRect();
+    if (frame.width <= 0 || frame.height <= 0) return;
+    for (const { node, button } of targets) {
+      const bounds = node.getBBox();
+      const matrix = node.getCTM();
+      if (!matrix) throw new Error(`Roadmap diagram topic "${button.title}" has no coordinate transform.`);
+      const corners = [
+        new DOMPoint(bounds.x, bounds.y),
+        new DOMPoint(bounds.x + bounds.width, bounds.y),
+        new DOMPoint(bounds.x, bounds.y + bounds.height),
+        new DOMPoint(bounds.x + bounds.width, bounds.y + bounds.height),
+      ].map((point) => point.matrixTransform(matrix));
+      const left = Math.min(...corners.map((point) => point.x));
+      const top = Math.min(...corners.map((point) => point.y));
+      button.style.left = `${left}px`;
+      button.style.top = `${top}px`;
+      button.style.width = `${Math.max(...corners.map((point) => point.x)) - left}px`;
+      button.style.height = `${Math.max(...corners.map((point) => point.y)) - top}px`;
+      button.hidden = false;
+    }
+  };
+  const firstStageCenter = (): number => {
+    const bounds = firstStage.getBBox();
+    const matrix = firstStage.getCTM();
+    if (!matrix) throw new Error("The roadmap's first stage has no coordinate transform.");
+    return new DOMPoint(bounds.x + bounds.width / 2, bounds.y).matrixTransform(matrix).x;
+  };
+  const centerFirstStage = (): void => {
+    const frame = viewport.getBoundingClientRect();
+    viewport.scrollLeft += canvas.getBoundingClientRect().left + firstStageCenter() - (frame.left + viewport.clientLeft + viewport.clientWidth / 2);
+    viewport.scrollTop = 0;
+  };
+  const canvasInset = (): number =>
+    canvas.getBoundingClientRect().left - viewport.getBoundingClientRect().left - viewport.clientLeft + viewport.scrollLeft;
+  const updateViewportPadding = (): void => {
+    const stageCenter = firstStageCenter();
+    const halfWidth = viewport.clientWidth / 2;
+    const padding = parseFloat(getComputedStyle(viewport).paddingTop);
+    viewport.style.paddingLeft = `${Math.max(padding, halfWidth - stageCenter)}px`;
+    viewport.style.paddingRight = `${Math.max(padding, halfWidth - (canvas.getBoundingClientRect().width - stageCenter))}px`;
+  };
+  let viewportWidth = viewport.clientWidth;
+  let viewportInset = canvasInset();
+  const preserveViewportCenter = (): void => {
+    updateViewportPadding();
+    const width = viewport.clientWidth;
+    const inset = canvasInset();
+    viewport.scrollLeft += (viewportWidth - width) / 2 + inset - viewportInset;
+    viewportWidth = width;
+    viewportInset = inset;
+  };
+  const updateZoom = (nextZoom: number, resetView = false): void => {
+    preserveViewportCenter();
+    const frame = viewport.getBoundingClientRect();
+    const previous = canvas.getBoundingClientRect();
+    const centerX = frame.left + viewport.clientLeft + viewport.clientWidth / 2;
+    const centerY = frame.top + viewport.clientTop + viewport.clientHeight / 2;
+    const focusX = (centerX - previous.left) / previous.width;
+    const focusY = (centerY - previous.top) / previous.height;
+    zoom = Math.min(2, Math.max(0.5, nextZoom));
+    canvas.style.width = `${baseWidth * zoom}px`;
+    canvas.style.minWidth = `${baseWidth * zoom}px`;
+    status.value = `${Math.round(zoom * 100)}%`;
+    zoomOut.disabled = zoom <= 0.5;
+    zoomIn.disabled = zoom >= 2;
+    reset.disabled = false;
+    updateViewportPadding();
+    positionTargets();
+    if (resetView) {
+      centerFirstStage();
+    } else {
+      const current = canvas.getBoundingClientRect();
+      viewport.scrollLeft += current.left + focusX * current.width - centerX;
+      viewport.scrollTop += current.top + focusY * current.height - centerY;
+    }
+    viewportInset = canvasInset();
+  };
+  zoomOut.addEventListener("click", () => updateZoom(zoom / 1.2));
+  zoomIn.addEventListener("click", () => updateZoom(zoom * 1.2));
+  reset.addEventListener("click", () => updateZoom(1, true));
+  updateZoom(1, true);
+  const observer = new ResizeObserver(() => {
+    try {
+      preserveViewportCenter();
+      positionTargets();
+    } catch (error) {
+      observer.disconnect();
+      if (roadmapDiagramObserver === observer) roadmapDiagramObserver = null;
+      showDiagramError(overview, error);
+    }
+  });
+  roadmapDiagramObserver?.disconnect();
+  roadmapDiagramObserver = observer;
+  roadmapDiagramRefresh = positionTargets;
+  observer.observe(overview);
+  observer.observe(svg);
+}
+
+function showDiagramError(root: HTMLElement, error: unknown): void {
+  console.error("Unable to render one or more diagrams.", error);
+  root.insertAdjacentHTML("beforeend", '<p class="diagram-error" role="alert">A diagram could not be displayed. The written content is still available.</p>');
 }
 
 function renderUnavailable(title = "This page is not available yet.", summary = "The route is reserved for a future issue of the notebook."): string {
@@ -1343,7 +1852,7 @@ function finishRoute(route: RouteState): void {
   setupReaderImages();
   refreshIcons(mainElement);
   if (route.anchor) {
-    requestAnimationFrame(() => document.getElementById(route.anchor)?.scrollIntoView());
+    if (!roadmapNavigation) requestAnimationFrame(() => document.getElementById(route.anchor)?.scrollIntoView());
   } else if (hasRendered) {
     window.scrollTo({ top: 0, behavior: "instant" });
     mainElement.querySelector<HTMLElement>("h1")?.focus({ preventScroll: true });
@@ -1352,8 +1861,15 @@ function finishRoute(route: RouteState): void {
 }
 
 async function renderRoute(): Promise<void> {
-  const version = ++renderVersion;
   const route = parseRoute();
+  if (roadmapNavigation?.path === route.path && roadmapNavigation.moveTo(route.anchor)) return;
+  roadmapDiagramObserver?.disconnect();
+  roadmapDiagramObserver = null;
+  roadmapDiagramRefresh = null;
+  roadmapPartObserver?.disconnect();
+  roadmapPartObserver = null;
+  roadmapNavigation = null;
+  const version = ++renderVersion;
   const resolved = resolveRoute(route);
   const contentLayout = mainElement.parentElement;
   contentLayout?.classList.remove("app-content-layout--wide");
@@ -1397,7 +1913,7 @@ async function renderRoute(): Promise<void> {
         try {
           await renderDiagrams(mainElement);
         } catch (error) {
-          console.error("Unable to render one or more diagrams.", error);
+          if (version === renderVersion) showDiagramError(mainElement, error);
         }
       }
       return;
@@ -1427,7 +1943,23 @@ async function renderRoute(): Promise<void> {
   });
 
   setupHomeCarousel();
+  let moveToRoadmap: ((anchor: string) => boolean) | undefined;
+  try {
+    moveToRoadmap = setupRoadmapOverview(route.anchor);
+  } catch (error) {
+    console.error("Unable to initialize the roadmap overview.", error);
+    mainElement.insertAdjacentHTML("beforeend", '<p class="diagram-error" role="alert">The interactive roadmap could not be displayed. Its written topics are still available.</p>');
+  }
   finishRoute(route);
+  try {
+    await renderDiagrams(mainElement);
+    if (version === renderVersion) {
+      setupRoadmapPartObserver();
+      if (route.anchor) moveToRoadmap?.(route.anchor);
+    }
+  } catch (error) {
+    if (version === renderVersion) showDiagramError(mainElement, error);
+  }
 }
 
 function shellMarkup(): string {
