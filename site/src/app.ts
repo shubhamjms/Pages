@@ -59,6 +59,8 @@ const icons = {
 };
 
 let mainElement: HTMLElement;
+let contentScrollTop = 0;
+const contentScrollMedia = window.matchMedia("screen and (min-width: 48rem)");
 let menuButton: HTMLButtonElement;
 let siteNavigation: HTMLElement;
 let readerImageDialog: HTMLDialogElement | null = null;
@@ -105,6 +107,34 @@ function escapeHtml(value: string): string {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function scrollContentIntoView(element: HTMLElement, behavior: ScrollBehavior = "instant"): void {
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  element.scrollIntoView({ behavior: reduceMotion ? "instant" : behavior, block: "start" });
+  contentScrollTop = contentScrollMedia.matches ? mainElement.scrollTop : window.scrollY;
+}
+
+function resetContentScroll(): void {
+  contentScrollTop = 0;
+  if (contentScrollMedia.matches) mainElement.scrollTo({ top: 0, behavior: "instant" });
+  else window.scrollTo({ top: 0, behavior: "instant" });
+}
+
+function syncContentScrollMode(): void {
+  const top = contentScrollTop;
+  if (contentScrollMedia.matches) {
+    window.scrollTo({ top: 0, behavior: "instant" });
+    mainElement.scrollTo({ top, behavior: "instant" });
+  } else {
+    mainElement.scrollTo({ top: 0, behavior: "instant" });
+    window.scrollTo({ top, behavior: "instant" });
+  }
+  closeReaderContents();
+  roadmapPartObserver?.disconnect();
+  roadmapPartObserver = null;
+  setupRoadmapPartObserver();
+  roadmapDiagramRefresh?.();
 }
 
 function formatDate(value: string): string {
@@ -835,7 +865,7 @@ function setupRoadmapPartObserver(): void {
     for (const entry of entries) {
       if (entry.isIntersecting && entry.target instanceof HTMLElement) void renderRoadmapPart(entry.target);
     }
-  }, { rootMargin: "400px 0px" });
+  }, { root: contentScrollMedia.matches ? mainElement : null, rootMargin: "400px 0px" });
   roadmapPartObserver = observer;
   panels.forEach((panel) => {
     if (panel.querySelector('[data-roadmap-deferred="true"]')) observer.observe(panel);
@@ -938,11 +968,11 @@ function setupRoadmapOverview(anchor: string): ((anchor: string) => boolean) | u
     const version = ++navigationVersion;
     destination.tabIndex = -1;
     destination.focus({ preventScroll: true });
-    destination.scrollIntoView({ behavior: "instant", block: "start" });
+    scrollContentIntoView(destination);
     if (part) {
       void renderRoadmapPart(part.panel).then(() => {
         if (view.isConnected && version === navigationVersion && document.activeElement === destination) {
-          destination.scrollIntoView({ behavior: "instant", block: "start" });
+          scrollContentIntoView(destination);
         }
       });
     }
@@ -1031,10 +1061,15 @@ function setupRoadmapOverview(anchor: string): ((anchor: string) => boolean) | u
       visual.setAttribute("aria-label", "Part concept diagram");
       const points = document.createElement("div");
       points.className = "roadmap-details-points";
+      const walkthrough = document.createElement("div");
+      walkthrough.className = "roadmap-details-walkthrough";
       const notes = document.createElement("div");
       notes.className = "roadmap-details-notes";
       const content = !area.core && partIndex === 0 ? [...area.intro, ...part.content] : part.content;
+      let inWalkthrough = false;
       for (const node of content) {
+        if (node instanceof HTMLHeadingElement && /^H[4-6]$/.test(node.tagName)) inWalkthrough = true;
+        const textContainer = inWalkthrough ? walkthrough : points;
         if (node.classList.contains("mermaid-shell")) {
           if (area.core) {
             node.querySelectorAll<HTMLElement>(".mermaid").forEach((diagram) => { diagram.dataset.roadmapDeferred = "true"; });
@@ -1052,19 +1087,26 @@ function setupRoadmapOverview(anchor: string): ((anchor: string) => boolean) | u
               note.append(node);
               notes.append(note);
             } else {
-              points.append(node);
+              textContainer.append(node);
             }
           }
         } else {
-          points.append(node);
+          textContainer.append(node);
         }
       }
       if (!visual.children.length) {
         visual.hidden = true;
         body.classList.add("roadmap-details-body--text-only");
       }
+      if (!points.children.length) {
+        points.hidden = true;
+        body.classList.add("roadmap-details-body--visual-only");
+      }
+      body.hidden = !visual.children.length && !points.children.length;
       body.append(visual, points);
-      panel.append(header, body, notes);
+      panel.append(header, body);
+      if (walkthrough.children.length) panel.append(walkthrough);
+      panel.append(notes);
       if (area.core) panel.append(backFooter());
       (stage ?? details).append(panel);
       const partView = { heading: part.heading, panel, trigger, core: area.core };
@@ -1383,9 +1425,20 @@ function positionReaderContents(button: HTMLButtonElement, sidebar: HTMLElement)
   const readerBounds = sidebar.closest<HTMLElement>(".reader-view")?.getBoundingClientRect();
   const mobile = window.matchMedia("(max-width: 47.99rem)").matches;
   const rightAllowance = mobile ? 28 : 16;
-  const panelWidth = Math.min(340, window.innerWidth - rightAllowance - 16);
-  const left = Math.max(8, Math.min(buttonBounds.left, window.innerWidth - panelWidth - rightAllowance));
-  const viewportTop = buttonBounds.bottom + 12;
+  const pane = contentScrollMedia.matches ? mainElement.getBoundingClientRect() : null;
+  const viewportLeft = pane?.left ?? 0;
+  const viewportRight = pane ? pane.left + mainElement.clientWidth : window.innerWidth - rightAllowance;
+  const viewportBottom = pane ? pane.top + mainElement.clientHeight : window.innerHeight;
+  const viewportStart = pane?.top ?? 0;
+  const panelWidth = Math.min(340, viewportRight - viewportLeft - 16);
+  const left = Math.max(viewportLeft + 8, Math.min(buttonBounds.left, viewportRight - panelWidth - 8));
+  const below = Math.max(0, viewportBottom - buttonBounds.bottom - 20);
+  const above = Math.max(0, buttonBounds.top - viewportStart - 20);
+  const useBelow = below >= Math.min(240, above);
+  const height = Math.min(520, useBelow ? below : above);
+  const viewportTop = useBelow ? buttonBounds.bottom + 12 : buttonBounds.top - height - 12;
+  sidebar.style.width = `${Math.max(1, panelWidth)}px`;
+  sidebar.style.setProperty("--reader-contents-max-height", `${height}px`);
   sidebar.style.setProperty("--reader-contents-top", `${Math.round(viewportTop - (readerBounds?.top ?? 0))}px`);
   sidebar.style.setProperty("--reader-contents-left", `${Math.round(left - (readerBounds?.left ?? 0))}px`);
   sidebar.style.setProperty("--reader-contents-viewport-top", `${Math.round(viewportTop)}px`);
@@ -1820,7 +1873,8 @@ function setupToolProductTabs(anchor?: string): void {
     for (const panel of panels) panel.hidden = panel.dataset.toolPanel !== name;
     if (moveFocus) {
       selectedTab.focus({ preventScroll: true });
-      mainElement.querySelector<HTMLElement>(".tool-product-tabs")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      const tabs = mainElement.querySelector<HTMLElement>(".tool-product-tabs");
+      if (tabs) scrollContentIntoView(tabs, "smooth");
     }
   };
 
@@ -1852,9 +1906,12 @@ function finishRoute(route: RouteState): void {
   setupReaderImages();
   refreshIcons(mainElement);
   if (route.anchor) {
-    if (!roadmapNavigation) requestAnimationFrame(() => document.getElementById(route.anchor)?.scrollIntoView());
+    if (!roadmapNavigation) requestAnimationFrame(() => {
+      const destination = document.getElementById(route.anchor);
+      if (destination) scrollContentIntoView(destination);
+    });
   } else if (hasRendered) {
-    window.scrollTo({ top: 0, behavior: "instant" });
+    resetContentScroll();
     mainElement.querySelector<HTMLElement>("h1")?.focus({ preventScroll: true });
   }
   hasRendered = true;
@@ -1985,7 +2042,7 @@ function shellMarkup(): string {
       <div id="app-main-fox-field" aria-hidden="true"><span class="crystal-fox crystal-fox--primary">🦊</span><span class="crystal-fox crystal-fox--middle">🦊</span><span class="crystal-fox crystal-fox--lower">🦊</span></div>
 
       <div id="app-content-layout">
-        <main id="app-main" tabindex="-1"></main>
+        <main id="app-main" tabindex="0" aria-label="Page content"></main>
         <aside id="app-social-author-rail" aria-label="Shubhamm Jadhav, AI Dev">
           <button id="social-author-rail-toggle" class="social-author-rail__toggle" type="button" aria-controls="social-author-rail-content" aria-expanded="false" aria-label="Open social sidebar"><i class="social-author-rail__open-icon" data-lucide="chevron-left"></i><i class="social-author-rail__close-icon" data-lucide="chevron-right"></i></button>
           <div id="social-author-rail-content" class="social-author-rail__content">
@@ -2033,6 +2090,23 @@ export function startApplication(root: HTMLDivElement): void {
   setupReaderImageViewer(root);
   refreshIcons(root);
   setMobileSocialRail(false);
+  root.querySelector<HTMLAnchorElement>(".skip-link")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    mainElement.focus({ preventScroll: true });
+  });
+  mainElement.addEventListener("scroll", () => {
+    if (contentScrollMedia.matches) {
+      contentScrollTop = mainElement.scrollTop;
+      closeReaderContents();
+    }
+  }, { passive: true });
+  window.addEventListener("scroll", () => {
+    if (!contentScrollMedia.matches) {
+      contentScrollTop = window.scrollY;
+      closeReaderContents();
+    }
+  }, { passive: true });
+  contentScrollMedia.addEventListener("change", syncContentScrollMode);
   menuButton.addEventListener("click", () => {
     const open = menuButton.getAttribute("aria-expanded") === "true";
     menuButton.setAttribute("aria-expanded", String(!open));
